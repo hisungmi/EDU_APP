@@ -22,12 +22,7 @@ class MyApp extends StatelessWidget {
       title: 'first app',
       theme: ThemeData(
         appBarTheme: const AppBarTheme(backgroundColor: Color(0xff0099FF)),
-        textTheme: const TextTheme(
-          displayLarge: TextStyle(
-            color: Color(0xff9C9C9C),
-            fontSize: 16,
-          ),
-        ),
+        textTheme: const TextTheme(),
       ),
     );
   }
