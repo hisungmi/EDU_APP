@@ -145,7 +145,9 @@ class MainPageState extends State<MainPage> {
                           Container(
                             margin: EdgeInsets.only(left: 10),
                             child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/home');
+                                },
                                 child: Text("login"),
                                 style: ElevatedButton.styleFrom(
                                     shadowColor: Colors.white,
