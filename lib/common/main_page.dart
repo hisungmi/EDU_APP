@@ -32,7 +32,7 @@ class MainPageState extends State<MainPage> {
                   top: 0,
                   child: Transform.rotate(
                     angle: 180 * pi / 180,
-                    child: Container(height: 294, child: WaveWidget()),
+                    child: SizedBox(height: 294, child: WaveWidget()),
                   )),
               if (!isLogin)
                 Container(
@@ -148,12 +148,12 @@ class MainPageState extends State<MainPage> {
                                 onPressed: () {
                                   Navigator.pushNamed(context, '/home');
                                 },
-                                child: Text("login"),
                                 style: ElevatedButton.styleFrom(
                                     shadowColor: Colors.white,
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
-                                            BorderRadius.circular(9)))),
+                                            BorderRadius.circular(9))),
+                                child: Text("login")),
                           )
                         ],
                       ),
@@ -164,7 +164,7 @@ class MainPageState extends State<MainPage> {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                child: Container(height: 294, child: WaveWidget()),
+                child: SizedBox(height: 294, child: WaveWidget()),
               )
             ],
           ),

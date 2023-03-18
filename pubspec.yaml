@@ -37,6 +37,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   image_picker: ^0.8.7
   image_cropper: ^3.0.1
+  font_awesome_flutter: ^10.4.0
+  iconoir_flutter: ^6.4.0
 
 dev_dependencies:
   flutter_test:
