@@ -339,7 +339,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 fontWeight: FontWeight.bold,
                               )),
                           subtitle: Divider(thickness: 1),
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
                         ),
                       ),
                     ),
@@ -359,7 +361,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 fontWeight: FontWeight.bold,
                               )),
                           subtitle: Divider(thickness: 1),
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
                         ),
                       ),
                     ),
@@ -381,7 +385,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 fontWeight: FontWeight.bold,
                               )),
                           subtitle: Divider(thickness: 1),
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
                         ),
                       ),
                     ),
@@ -403,7 +409,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 fontWeight: FontWeight.bold,
                               )),
                           subtitle: Divider(thickness: 1),
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
                         ),
                       ),
                     ),
@@ -425,7 +433,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 fontWeight: FontWeight.bold,
                               )),
                           subtitle: Divider(thickness: 1),
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
                         ),
                       ),
                     ),
@@ -447,7 +457,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 fontWeight: FontWeight.bold,
                               )),
                           subtitle: Divider(thickness: 1),
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
                         ),
                       ),
                     ),
@@ -469,7 +481,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 fontWeight: FontWeight.bold,
                               )),
                           subtitle: Divider(thickness: 1),
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
                         ),
                       ),
                     ),
@@ -491,7 +505,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 fontWeight: FontWeight.bold,
                               )),
                           subtitle: Divider(thickness: 1),
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
                         ),
                       ),
                     ),

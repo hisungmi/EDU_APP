@@ -1,6 +1,7 @@
 import 'package:edu_application_pre/common/main_page.dart';
 import 'package:edu_application_pre/user/myprofile_page.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 void main() {
   runApp(const MyApp());
@@ -61,6 +62,37 @@ class MyHomePage extends StatelessWidget {
             },
           )
         ],
+      ),
+      body: Padding(
+        padding: EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  IconButton(
+                      onPressed: () {},
+                      icon: FaIcon(FontAwesomeIcons.clipboardCheck)),
+                  IconButton(
+                      onPressed: () {}, icon: FaIcon(FontAwesomeIcons.userPen)),
+                  IconButton(
+                      onPressed: () {}, icon: FaIcon(FontAwesomeIcons.book)),
+                ],
+              ),
+              Row(
+                children: [
+                  IconButton(
+                      onPressed: () {}, icon: FaIcon(FontAwesomeIcons.qrcode)),
+                  IconButton(
+                      onPressed: () {},
+                      icon: FaIcon(FontAwesomeIcons.envelopeOpen)),
+                  IconButton(
+                      onPressed: () {}, icon: FaIcon(FontAwesomeIcons.gear))
+                ],
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
