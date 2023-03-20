@@ -183,15 +183,14 @@ class _MyProfilePageState extends State<MyProfilePage> {
                               showModalBottomSheet(
                                   //밑에서 열리는 메뉴
                                   context: context,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(20.0),
-                                        topRight: Radius.circular(20.0)),
-                                  ),
                                   builder: (BuildContext context) {
                                     return Container(
                                         height: 200,
-                                        color: Colors.white,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
                                         child: Center(
                                             child: Column(
                                                 mainAxisSize:
@@ -387,6 +386,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           subtitle: Divider(thickness: 1),
                           onTap: () {
                             Navigator.pop(context);
+                            Navigator.pushNamed(context, '/qr');
                           },
                         ),
                       ),

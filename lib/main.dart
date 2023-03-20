@@ -1,5 +1,6 @@
 import 'package:edu_application_pre/common/main_page.dart';
 import 'package:edu_application_pre/user/myprofile_page.dart';
+import 'package:edu_application_pre/user/qr.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => MainPage(),
         '/home': (context) => MyHomePage(),
         '/profile': (context) => MyProfilePage(),
+        '/qr': (context) => QrCheck(),
       },
       debugShowCheckedModeBanner: false,
       title: 'first app',
@@ -67,34 +69,28 @@ class MyHomePage extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
         child: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment
+                    .spaceEvenly, //정렬, spaceAround: 간격의 절반 양끝 여백, spaceBetween: 여백x, spaceEvenly: 간격 만큼 여백
                 children: [
                   IconButton(
                     onPressed: () {},
                     icon: FaIcon(FontAwesomeIcons.clipboardCheck),
                     color: Color(0xff9c9c9c),
-                    iconSize: 50,
-                  ),
-                  SizedBox(
-                    width: 30,
+                    iconSize: 55,
                   ),
                   IconButton(
                     onPressed: () {},
                     icon: FaIcon(FontAwesomeIcons.userPen),
                     color: Color(0xff9c9c9c),
-                    iconSize: 50,
-                  ),
-                  SizedBox(
-                    width: 30,
+                    iconSize: 55,
                   ),
                   IconButton(
                     onPressed: () {},
                     icon: FaIcon(FontAwesomeIcons.book),
                     color: Color(0xff9c9c9c),
-                    iconSize: 50,
+                    iconSize: 55,
                   ),
                 ],
               ),
@@ -102,31 +98,27 @@ class MyHomePage extends StatelessWidget {
                 height: 20,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/qr');
+                    },
                     icon: FaIcon(FontAwesomeIcons.qrcode),
                     color: Color(0xff9c9c9c),
-                    iconSize: 50,
-                  ),
-                  SizedBox(
-                    width: 30,
+                    iconSize: 55,
                   ),
                   IconButton(
                     onPressed: () {},
                     icon: FaIcon(FontAwesomeIcons.envelopeOpen),
                     color: Color(0xff9c9c9c),
-                    iconSize: 50,
-                  ),
-                  SizedBox(
-                    width: 30,
+                    iconSize: 55,
                   ),
                   IconButton(
                     onPressed: () {},
                     icon: FaIcon(FontAwesomeIcons.gear),
                     color: Color(0xff9c9c9c),
-                    iconSize: 50,
+                    iconSize: 55,
                   )
                 ],
               ),
