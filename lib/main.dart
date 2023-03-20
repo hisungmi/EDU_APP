@@ -67,29 +67,69 @@ class MyHomePage extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
         child: SingleChildScrollView(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                      onPressed: () {},
-                      icon: FaIcon(FontAwesomeIcons.clipboardCheck)),
+                    onPressed: () {},
+                    icon: FaIcon(FontAwesomeIcons.clipboardCheck),
+                    color: Color(0xff9c9c9c),
+                    iconSize: 50,
+                  ),
+                  SizedBox(
+                    width: 30,
+                  ),
                   IconButton(
-                      onPressed: () {}, icon: FaIcon(FontAwesomeIcons.userPen)),
+                    onPressed: () {},
+                    icon: FaIcon(FontAwesomeIcons.userPen),
+                    color: Color(0xff9c9c9c),
+                    iconSize: 50,
+                  ),
+                  SizedBox(
+                    width: 30,
+                  ),
                   IconButton(
-                      onPressed: () {}, icon: FaIcon(FontAwesomeIcons.book)),
+                    onPressed: () {},
+                    icon: FaIcon(FontAwesomeIcons.book),
+                    color: Color(0xff9c9c9c),
+                    iconSize: 50,
+                  ),
                 ],
               ),
+              SizedBox(
+                height: 20,
+              ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                      onPressed: () {}, icon: FaIcon(FontAwesomeIcons.qrcode)),
+                    onPressed: () {},
+                    icon: FaIcon(FontAwesomeIcons.qrcode),
+                    color: Color(0xff9c9c9c),
+                    iconSize: 50,
+                  ),
+                  SizedBox(
+                    width: 30,
+                  ),
                   IconButton(
-                      onPressed: () {},
-                      icon: FaIcon(FontAwesomeIcons.envelopeOpen)),
+                    onPressed: () {},
+                    icon: FaIcon(FontAwesomeIcons.envelopeOpen),
+                    color: Color(0xff9c9c9c),
+                    iconSize: 50,
+                  ),
+                  SizedBox(
+                    width: 30,
+                  ),
                   IconButton(
-                      onPressed: () {}, icon: FaIcon(FontAwesomeIcons.gear))
+                    onPressed: () {},
+                    icon: FaIcon(FontAwesomeIcons.gear),
+                    color: Color(0xff9c9c9c),
+                    iconSize: 50,
+                  )
                 ],
-              )
+              ),
             ],
           ),
         ),
