@@ -1,4 +1,5 @@
 import 'package:edu_application_pre/common/main_page.dart';
+import 'package:edu_application_pre/layout/splash_screen.dart';
 import 'package:edu_application_pre/user/myprofile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/',
       routes: {
-        '/': (context) => MainPage(),
+        '/': (context) => SplashScreen(),
         '/home': (context) => MyHomePage(),
         '/profile': (context) => MyProfilePage(),
       },
