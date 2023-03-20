@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class MyProfilePage extends StatefulWidget {
   const MyProfilePage({Key? key}) : super(key: key);
@@ -16,6 +17,12 @@ class _MyProfilePageState extends State<MyProfilePage> {
   final emailController = TextEditingController();
   final addController = TextEditingController();
 
+  bool isValidEmailFormat() {
+    return RegExp(
+            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+        .hasMatch(this as String);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -26,25 +33,30 @@ class _MyProfilePageState extends State<MyProfilePage> {
     return Scaffold(
       appBar: isEdit
           ? AppBar(
-              title: Image.asset(
-                "assets/img/whitelogo.png",
-                height: 80,
+              title: InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, '/home');
+                },
+                child: Image.asset(
+                  "assets/img/whitelogo.png",
+                  height: 80,
+                ),
               ),
-              centerTitle: true,
+              automaticallyImplyLeading: false, //기본 왼ㅉ고 토굴 안생기게
               backgroundColor: Color(0xff0099FF),
               toolbarHeight: 80,
               elevation: 0.0, //앱바 입체감 없애기
-              leading: IconButton(
+              // leading: Image.asset(
+              //   "assets/img/whitelogo.png",
+              //   height: 100,
+              // ),
+              actions: [
+                IconButton(
                   icon: Icon(Icons.menu),
                   iconSize: 30,
                   onPressed: () {
-                    print("클릭");
-                  }),
-              actions: [
-                IconButton(
-                  icon: Icon(Icons.perm_identity),
-                  iconSize: 30,
-                  onPressed: () {},
+                    fullMenu();
+                  },
                 )
               ],
             )
@@ -167,7 +179,78 @@ class _MyProfilePageState extends State<MyProfilePage> {
                             constraints: BoxConstraints(), //아이콘위젯 패딩아예없애는법
                             icon: Icon(Icons.photo_camera),
                             color: Color(0xff9C9C9C),
-                            onPressed: () {},
+                            onPressed: () {
+                              showModalBottomSheet(
+                                  //밑에서 열리는 메뉴
+                                  context: context,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(20.0),
+                                        topRight: Radius.circular(20.0)),
+                                  ),
+                                  builder: (BuildContext context) {
+                                    return Container(
+                                        height: 200,
+                                        color: Colors.white,
+                                        child: Center(
+                                            child: Column(
+                                                mainAxisSize:
+                                                    MainAxisSize.min, //크기만큼만 차지
+                                                children: [
+                                              SizedBox(
+                                                //카드형식 높이주기위해 감쌈
+                                                height: 52,
+                                                child: Card(
+                                                  //카드형식
+                                                  elevation: 0,
+                                                  child: ListTile(
+                                                    leading: Icon(
+                                                        Icons.photo_camera),
+                                                    iconColor:
+                                                        Color(0xff9c9c9c),
+                                                    title: Text('카메라',
+                                                        style: TextStyle(
+                                                          color:
+                                                              Color(0xff9c9c9c),
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        )),
+                                                    subtitle:
+                                                        Divider(thickness: 1),
+                                                    onTap: () {},
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              SizedBox(
+                                                height: 52,
+                                                child: Card(
+                                                  elevation: 0,
+                                                  child: ListTile(
+                                                    leading: Icon(Icons.photo),
+                                                    iconColor:
+                                                        Color(0xff9c9c9c),
+                                                    title: Text('라이브러리',
+                                                        style: TextStyle(
+                                                          color:
+                                                              Color(0xff9c9c9c),
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        )),
+                                                    subtitle:
+                                                        Divider(thickness: 1),
+                                                    onTap: () {},
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 20,
+                                              ),
+                                            ])));
+                                  });
+                            },
                           ),
                         ),
                       ),
@@ -178,7 +261,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
               Container(
                 height: 280,
                 margin: EdgeInsets.fromLTRB(40.0, 0.0, 0.0, 0.0),
-                child: isEdit ? profileLabel() : editProfileLabel(),
+                child: isEdit ? profileForm() : editProfileForm(),
               ), //프로필 정보
               SizedBox(
                 height: 25.0,
@@ -225,6 +308,216 @@ class _MyProfilePageState extends State<MyProfilePage> {
     );
   }
 
+  Future fullMenu() {
+    return showModalBottomSheet(
+        //밑에서 열리는 메뉴
+        context: context,
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        builder: (BuildContext context) {
+          return Container(
+              height: MediaQuery.of(context).size.height * 0.7,
+              color: Colors.white,
+              child: Center(
+                  child: Column(
+                      mainAxisSize: MainAxisSize.min, //크기만큼만 차지
+                      children: [
+                    SizedBox(
+                      //카드형식 높이주기위해 감쌈
+                      height: 52,
+                      child: Card(
+                        //카드형식
+                        elevation: 0,
+                        child: ListTile(
+                          leading: FaIcon(FontAwesomeIcons.circleUser),
+                          iconColor: Color(0xff9c9c9c),
+                          title: Text('프로필',
+                              style: TextStyle(
+                                color: Color(0xff9c9c9c),
+                                fontWeight: FontWeight.bold,
+                              )),
+                          subtitle: Divider(thickness: 1),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    SizedBox(
+                      height: 52,
+                      child: Card(
+                        elevation: 0,
+                        child: ListTile(
+                          leading: FaIcon(FontAwesomeIcons.chartPie),
+                          iconColor: Color(0xff9c9c9c),
+                          title: Text('시간표',
+                              style: TextStyle(
+                                color: Color(0xff9c9c9c),
+                                fontWeight: FontWeight.bold,
+                              )),
+                          subtitle: Divider(thickness: 1),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    SizedBox(
+                      //카드형식 높이주기위해 감쌈
+                      height: 52,
+                      child: Card(
+                        //카드형식
+                        elevation: 0,
+                        child: ListTile(
+                          leading: FaIcon(FontAwesomeIcons.qrcode),
+                          iconColor: Color(0xff9c9c9c),
+                          title: Text('출석 QR',
+                              style: TextStyle(
+                                color: Color(0xff9c9c9c),
+                                fontWeight: FontWeight.bold,
+                              )),
+                          subtitle: Divider(thickness: 1),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    SizedBox(
+                      //카드형식 높이주기위해 감쌈
+                      height: 52,
+                      child: Card(
+                        //카드형식
+                        elevation: 0,
+                        child: ListTile(
+                          leading: FaIcon(FontAwesomeIcons.clipboardCheck),
+                          iconColor: Color(0xff9c9c9c),
+                          title: Text('출석 현황',
+                              style: TextStyle(
+                                color: Color(0xff9c9c9c),
+                                fontWeight: FontWeight.bold,
+                              )),
+                          subtitle: Divider(thickness: 1),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    SizedBox(
+                      //카드형식 높이주기위해 감쌈
+                      height: 52,
+                      child: Card(
+                        //카드형식
+                        elevation: 0,
+                        child: ListTile(
+                          leading: FaIcon(FontAwesomeIcons.userPen),
+                          iconColor: Color(0xff9c9c9c),
+                          title: Text('시험',
+                              style: TextStyle(
+                                color: Color(0xff9c9c9c),
+                                fontWeight: FontWeight.bold,
+                              )),
+                          subtitle: Divider(thickness: 1),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    SizedBox(
+                      //카드형식 높이주기위해 감쌈
+                      height: 52,
+                      child: Card(
+                        //카드형식
+                        elevation: 0,
+                        child: ListTile(
+                          leading: FaIcon(FontAwesomeIcons.book),
+                          iconColor: Color(0xff9c9c9c),
+                          title: Text('과제',
+                              style: TextStyle(
+                                color: Color(0xff9c9c9c),
+                                fontWeight: FontWeight.bold,
+                              )),
+                          subtitle: Divider(thickness: 1),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    SizedBox(
+                      //카드형식 높이주기위해 감쌈
+                      height: 52,
+                      child: Card(
+                        //카드형식
+                        elevation: 0,
+                        child: ListTile(
+                          leading: FaIcon(FontAwesomeIcons.envelopeOpen),
+                          iconColor: Color(0xff9c9c9c),
+                          title: Text('건의사항',
+                              style: TextStyle(
+                                color: Color(0xff9c9c9c),
+                                fontWeight: FontWeight.bold,
+                              )),
+                          subtitle: Divider(thickness: 1),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    SizedBox(
+                      //카드형식 높이주기위해 감쌈
+                      height: 52,
+                      child: Card(
+                        //카드형식
+                        elevation: 0,
+                        child: ListTile(
+                          leading: FaIcon(FontAwesomeIcons.gear),
+                          iconColor: Color(0xff9c9c9c),
+                          title: Text('설정',
+                              style: TextStyle(
+                                color: Color(0xff9c9c9c),
+                                fontWeight: FontWeight.bold,
+                              )),
+                          subtitle: Divider(thickness: 1),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                  ])));
+        });
+  }
+
   Widget profileImage() {
     return Container(
       decoration: BoxDecoration(
@@ -237,308 +530,342 @@ class _MyProfilePageState extends State<MyProfilePage> {
     );
   }
 
-  Widget profileLabel() {
-    return Row(
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: const [
-            SizedBox(
-              height: 25.0,
-            ),
-            Text.rich(
-              //Default Textstyle을 기본적으로 적용 - RichText는 기본스타일을 명시해줘야함
-              TextSpan(
-                //글자, ,문장을 모아 문단을 구성
-                children: <TextSpan>[
-                  TextSpan(
-                      text: '*',
-                      style: TextStyle(
-                        color: Color(0xffFA2A2A),
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 2.0,
-                      )),
-                  TextSpan(
-                      text: '학교',
-                      style: TextStyle(
-                        color: Color(0xff9C9C9C),
-                        fontWeight: FontWeight.w600,
-                      )),
-                ],
+  Widget profileForm() {
+    return Form(
+      child: Row(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: const [
+              SizedBox(
+                height: 25.0,
               ),
-            ),
-            SizedBox(
-              height: 25.0,
-            ),
-            Text(
-              "생년월일",
-              style: TextStyle(
-                  color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
-            ),
-            SizedBox(
-              height: 25.0,
-            ),
-            Text.rich(
-              TextSpan(
-                children: <TextSpan>[
-                  TextSpan(
-                      text: '*',
-                      style: TextStyle(
-                        color: Color(0xffFA2A2A),
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 2.0,
-                      )),
-                  TextSpan(
-                      text: '번호',
-                      style: TextStyle(
-                        color: Color(0xff9C9C9C),
-                        fontWeight: FontWeight.w600,
-                      )),
-                ],
+              Text.rich(
+                //Default Textstyle을 기본적으로 적용 - RichText는 기본스타일을 명시해줘야함
+                TextSpan(
+                  //글자, ,문장을 모아 문단을 구성
+                  children: <TextSpan>[
+                    TextSpan(
+                        text: '*',
+                        style: TextStyle(
+                          color: Color(0xffFA2A2A),
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 2.0,
+                        )),
+                    TextSpan(
+                        text: '학교',
+                        style: TextStyle(
+                          color: Color(0xff9C9C9C),
+                          fontWeight: FontWeight.w600,
+                        )),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(
-              height: 25.0,
-            ),
-            Text.rich(
-              TextSpan(
-                children: <TextSpan>[
-                  TextSpan(
-                      text: '*',
-                      style: TextStyle(
-                        color: Color(0xffFA2A2A),
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 2.0,
-                      )),
-                  TextSpan(
-                      text: '이메일',
-                      style: TextStyle(
-                        color: Color(0xff9C9C9C),
-                        fontWeight: FontWeight.w600,
-                      )),
-                ],
+              SizedBox(
+                height: 25.0,
               ),
-            ),
-            SizedBox(
-              height: 25.0,
-            ),
-            Text(
-              "주소",
-              style: TextStyle(
-                  color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-        SizedBox(
-          width: 30.0,
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: 25.0,
-            ),
-            Text(
-              "서정중학교 2학년",
-              style: TextStyle(
-                  color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
-            ),
-            SizedBox(
-              height: 25.0,
-            ),
-            Text(
-              "2001년 02월 07일",
-              style: TextStyle(
-                  color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
-            ),
-            SizedBox(
-              height: 25.0,
-            ),
-            Container(
-              margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
-              child: Text(
-                editNumber,
+              Text(
+                "생년월일",
                 style: TextStyle(
                     color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
               ),
-            ),
-            SizedBox(
-              height: 25.0,
-            ),
-            Container(
-              margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
-              child: Text(
-                editEmail,
+              SizedBox(
+                height: 25.0,
+              ),
+              Text.rich(
+                TextSpan(
+                  children: <TextSpan>[
+                    TextSpan(
+                        text: '*',
+                        style: TextStyle(
+                          color: Color(0xffFA2A2A),
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 2.0,
+                        )),
+                    TextSpan(
+                        text: '번호',
+                        style: TextStyle(
+                          color: Color(0xff9C9C9C),
+                          fontWeight: FontWeight.w600,
+                        )),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 25.0,
+              ),
+              Text.rich(
+                TextSpan(
+                  children: <TextSpan>[
+                    TextSpan(
+                        text: '*',
+                        style: TextStyle(
+                          color: Color(0xffFA2A2A),
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 2.0,
+                        )),
+                    TextSpan(
+                        text: '이메일',
+                        style: TextStyle(
+                          color: Color(0xff9C9C9C),
+                          fontWeight: FontWeight.w600,
+                        )),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 25.0,
+              ),
+              Text(
+                "주소",
                 style: TextStyle(
                     color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
               ),
-            ),
-            SizedBox(
-              height: 25.0,
-              width: 50.0,
-            ),
-            Container(
-              width: 230, //너비를 지정해주면
-              margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
-              child: Text(
-                editAddress,
-                overflow: TextOverflow.ellipsis, //줄바꿈
-                maxLines: 3, //개수
+            ],
+          ),
+          SizedBox(
+            width: 30.0,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 25.0,
+              ),
+              Text(
+                "서정고등학교 2학년",
                 style: TextStyle(
                     color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
               ),
-            ),
-          ],
-        )
-      ],
+              SizedBox(
+                height: 25.0,
+              ),
+              Text(
+                "2001년 02월 07일",
+                style: TextStyle(
+                    color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
+              ),
+              SizedBox(
+                height: 25.0,
+              ),
+              Container(
+                margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
+                child: Text(
+                  editNumber,
+                  style: TextStyle(
+                      color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
+                ),
+              ),
+              SizedBox(
+                height: 25.0,
+              ),
+              Container(
+                margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
+                child: Text(
+                  editEmail,
+                  style: TextStyle(
+                      color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
+                ),
+              ),
+              SizedBox(
+                height: 25.0,
+                width: 50.0,
+              ),
+              Container(
+                width: 230, //너비를 지정해주면
+                margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
+                child: Text(
+                  editAddress,
+                  overflow: TextOverflow.ellipsis, //줄바꿈
+                  maxLines: 3, //개수
+                  style: TextStyle(
+                      color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 
-  Widget editProfileLabel() {
-    return Row(
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: const [
-            SizedBox(
-              height: 25.0,
-            ),
-            Text.rich(
-              //Default Textstyle을 기본적으로 적용 - RichText는 기본스타일을 명시해줘야함
-              TextSpan(
-                //글자, ,문장을 모아 문단을 구성
-                children: <TextSpan>[
-                  TextSpan(
-                      text: '*',
-                      style: TextStyle(
-                        color: Color(0xffFFB0B0),
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 2.0,
-                      )),
-                  TextSpan(
-                      text: '학교',
-                      style: TextStyle(
-                        color: Color(0xffCFCFCF),
-                        fontWeight: FontWeight.w600,
-                      )),
-                ],
+  Widget editProfileForm() {
+    return Form(
+      child: Row(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: const [
+              SizedBox(
+                height: 25.0,
               ),
-            ),
-            SizedBox(
-              height: 25.0,
-            ),
-            Text(
-              "생년월일",
-              style: TextStyle(
-                  color: Color(0xffCFCFCF), fontWeight: FontWeight.w600),
-            ),
-            SizedBox(
-              height: 25.0,
-            ),
-            Text.rich(
-              TextSpan(
-                children: <TextSpan>[
-                  TextSpan(
-                      text: '*',
-                      style: TextStyle(
-                        color: Color(0xffFA2A2A),
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 2.0,
-                      )),
-                  TextSpan(
-                      text: '번호',
-                      style: TextStyle(
-                        color: Color(0xff9C9C9C),
-                        fontWeight: FontWeight.w600,
-                      )),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 25.0,
-            ),
-            Text.rich(
-              TextSpan(
-                children: <TextSpan>[
-                  TextSpan(
-                      text: '*',
-                      style: TextStyle(
-                        color: Color(0xffFA2A2A),
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 2.0,
-                      )),
-                  TextSpan(
-                      text: '이메일',
-                      style: TextStyle(
-                        color: Color(0xff9C9C9C),
-                        fontWeight: FontWeight.w600,
-                      )),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 25.0,
-            ),
-            Text(
-              "주소",
-              style: TextStyle(
-                  color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-        SizedBox(
-          width: 30.0,
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: 20.0,
-            ),
-            Container(
-              width: 230,
-              height: 30,
-              padding: EdgeInsets.fromLTRB(10.0, 3.0, 0.0, 0.0),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  width: 2,
-                  color: Color(0xffCFCFCF),
+              Text.rich(
+                //Default Textstyle을 기본적으로 적용 - RichText는 기본스타일을 명시해줘야함
+                TextSpan(
+                  //글자, ,문장을 모아 문단을 구성
+                  children: <TextSpan>[
+                    TextSpan(
+                        text: '*',
+                        style: TextStyle(
+                          color: Color(0xffFFB0B0),
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 2.0,
+                        )),
+                    TextSpan(
+                        text: '학교',
+                        style: TextStyle(
+                          color: Color(0xffCFCFCF),
+                          fontWeight: FontWeight.w600,
+                        )),
+                  ],
                 ),
-                borderRadius: BorderRadius.circular(10),
               ),
-              child: Text(
-                "서정중학교 2학년",
+              SizedBox(
+                height: 25.0,
+              ),
+              Text(
+                "생년월일",
                 style: TextStyle(
                     color: Color(0xffCFCFCF), fontWeight: FontWeight.w600),
               ),
-            ),
-            SizedBox(
-              height: 15.0,
-            ),
-            Container(
-              width: 230,
-              height: 30,
-              padding: EdgeInsets.fromLTRB(10.0, 3.0, 0.0, 0.0),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  width: 2,
-                  color: Color(0xffCFCFCF),
+              SizedBox(
+                height: 25.0,
+              ),
+              Text.rich(
+                TextSpan(
+                  children: <TextSpan>[
+                    TextSpan(
+                        text: '*',
+                        style: TextStyle(
+                          color: Color(0xffFA2A2A),
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 2.0,
+                        )),
+                    TextSpan(
+                        text: '번호',
+                        style: TextStyle(
+                          color: Color(0xff9C9C9C),
+                          fontWeight: FontWeight.w600,
+                        )),
+                  ],
                 ),
-                borderRadius: BorderRadius.circular(10),
               ),
-              child: Text(
-                "2001년 02월 07일",
+              SizedBox(
+                height: 25.0,
+              ),
+              Text.rich(
+                TextSpan(
+                  children: <TextSpan>[
+                    TextSpan(
+                        text: '*',
+                        style: TextStyle(
+                          color: Color(0xffFA2A2A),
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 2.0,
+                        )),
+                    TextSpan(
+                        text: '이메일',
+                        style: TextStyle(
+                          color: Color(0xff9C9C9C),
+                          fontWeight: FontWeight.w600,
+                        )),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 25.0,
+              ),
+              Text(
+                "주소",
                 style: TextStyle(
-                    color: Color(0xffCFCFCF), fontWeight: FontWeight.w600),
+                    color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
               ),
-            ),
-            SizedBox(
-              height: 15.0,
-            ),
-            Container(
+            ],
+          ),
+          SizedBox(
+            width: 30.0,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 20.0,
+              ),
+              Container(
                 width: 230,
                 height: 30,
-                padding: EdgeInsets.fromLTRB(10.0, 5.0, 0.0, 0.0),
+                padding: EdgeInsets.fromLTRB(10.0, 3.0, 0.0, 0.0),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    width: 2,
+                    color: Color(0xffCFCFCF),
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  "서정중학교 2학년",
+                  style: TextStyle(
+                      color: Color(0xffCFCFCF), fontWeight: FontWeight.w600),
+                ),
+              ),
+              SizedBox(
+                height: 15.0,
+              ),
+              Container(
+                width: 230,
+                height: 30,
+                padding: EdgeInsets.fromLTRB(10.0, 3.0, 0.0, 0.0),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    width: 2,
+                    color: Color(0xffCFCFCF),
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  "2001년 02월 07일",
+                  style: TextStyle(
+                      color: Color(0xffCFCFCF), fontWeight: FontWeight.w600),
+                ),
+              ),
+              SizedBox(
+                height: 15.0,
+              ),
+              Container(
+                  width: 230,
+                  height: 30,
+                  padding: EdgeInsets.fromLTRB(10.0, 5.0, 0.0, 0.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      width: 2,
+                      color: Color(0xff9c9c9c),
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: TextField(
+                    controller: numController, //컨트롤러에  필드 부여
+                    style: TextStyle(
+                      color: Color(0xff9c9c9c),
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                    decoration: InputDecoration(
+                        border: InputBorder.none, //테두리없앰
+                        hintStyle:
+                            TextStyle(fontSize: 14, color: Color(0xff9c9c9c))),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly, //숫자만
+                      NumberFormatter(),
+                      LengthLimitingTextInputFormatter(13) //최대 13글자
+                    ],
+                  )),
+              SizedBox(
+                height: 15.0,
+              ),
+              Container(
+                width: 230,
+                height: 30,
+                padding: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 1.0),
                 decoration: BoxDecoration(
                   border: Border.all(
                     width: 2,
@@ -547,37 +874,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: TextField(
-                  controller: numController, //컨트롤러에  필드 부여
-                  style: TextStyle(
-                    color: Color(0xff9c9c9c),
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14,
-                  ),
-                  decoration: InputDecoration(
-                      border: InputBorder.none, //테두리없앰
-                      hintStyle:
-                          TextStyle(fontSize: 14, color: Color(0xff9c9c9c))),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly, //숫자만
-                    NumberFormatter(),
-                    LengthLimitingTextInputFormatter(13) //최대 13글자
-                  ],
-                )),
-            SizedBox(
-              height: 15.0,
-            ),
-            Container(
-              width: 230,
-              height: 30,
-              padding: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 1.0),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  width: 2,
-                  color: Color(0xff9c9c9c),
-                ),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: TextField(
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                   style: TextStyle(
@@ -588,236 +884,246 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   decoration: InputDecoration(
                       border: InputBorder.none, //테두리없앰
                       hintStyle:
-                          TextStyle(fontSize: 14, color: Color(0xff9c9c9c)))),
-            ),
-            SizedBox(
-              height: 15.0,
-              width: 50.0,
-            ),
-            Flexible(
-              child: Container(
-                width: 230, //너비를 지정해주면
-                height: 60,
-                padding: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    width: 2,
-                    color: Color(0xff9c9c9c),
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: TextField(
-                  controller: addController,
-                  maxLines: 5,
-                  style: TextStyle(
-                      fontSize: 14,
-                      overflow: TextOverflow.ellipsis,
-                      color: Color(0xff9c9c9c),
-                      fontWeight: FontWeight.w600),
-                  decoration: InputDecoration(
-                      border: InputBorder.none, //테두리없앰
-                      hintStyle:
                           TextStyle(fontSize: 14, color: Color(0xff9c9c9c))),
                 ),
               ),
-            ),
-          ],
-        )
-      ],
+              SizedBox(
+                height: 15.0,
+                width: 50.0,
+              ),
+              Flexible(
+                child: Container(
+                  width: 230, //너비를 지정해주면
+                  height: 60,
+                  padding: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      width: 2,
+                      color: Color(0xff9c9c9c),
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: TextField(
+                    controller: addController,
+                    maxLines: 5,
+                    style: TextStyle(
+                        fontSize: 14,
+                        overflow: TextOverflow.ellipsis,
+                        color: Color(0xff9c9c9c),
+                        fontWeight: FontWeight.w600),
+                    decoration: InputDecoration(
+                        border: InputBorder.none, //테두리없앰
+                        hintStyle:
+                            TextStyle(fontSize: 14, color: Color(0xff9c9c9c))),
+                  ),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 
   Widget guardProfile() {
-    return Stack(children: [
-      Positioned(
-        top: 13,
-        child: Container(
-          width: 450,
-          height: 2,
-          color: Color(0xff9C9C9C),
-        ),
-      ),
-      Container(
-        margin: EdgeInsets.fromLTRB(30.0, 0.0, 0.0, 0.0),
-        width: 110.0,
-        height: 30.0,
-        color: Colors.white,
-        child: Text(
-          "보호자 프로필",
-          style: TextStyle(
-            color: Color(0xff5A5A5A),
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
+    return Form(
+      child: Stack(children: [
+        Positioned(
+          top: 13,
+          child: Container(
+            width: 450,
+            height: 2,
+            color: Color(0xff9C9C9C),
           ),
         ),
-      ), //보호자프로필
-      Container(
-        height: 200,
-        margin: EdgeInsets.fromLTRB(65.0, 30.0, 0.0, 0.0),
-        child: Row(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: const [
-                SizedBox(
-                  height: 25.0,
-                ),
-                Text(
-                  "성함",
-                  style: TextStyle(
-                      color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
-                ),
-                SizedBox(
-                  height: 25.0,
-                ),
-                Text(
-                  "번호",
-                  style: TextStyle(
-                      color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
-                ),
-              ],
+        Container(
+          margin: EdgeInsets.fromLTRB(30.0, 0.0, 0.0, 0.0),
+          width: 114.0,
+          height: 30.0,
+          color: Colors.white,
+          child: Text(
+            "보호자 프로필",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Color(0xff5A5A5A),
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
             ),
-            SizedBox(
-              width: 30.0,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 25.0,
-                ),
-                Text(
-                  "박신비",
-                  style: TextStyle(
-                      color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
-                ),
-                SizedBox(
-                  height: 25.0,
-                ),
-                Container(
-                  margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
-                  child: Text(
-                    "010-7894-4949",
+          ),
+        ), //보호자프로필
+        Container(
+          height: 200,
+          margin: EdgeInsets.fromLTRB(65.0, 30.0, 0.0, 0.0),
+          child: Row(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: const [
+                  SizedBox(
+                    height: 25.0,
+                  ),
+                  Text(
+                    "성함",
                     style: TextStyle(
                         color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
                   ),
-                ),
-              ],
-            )
-          ],
-        ),
-      ), //보호자 프로필
-    ]);
+                  SizedBox(
+                    height: 25.0,
+                  ),
+                  Text(
+                    "번호",
+                    style: TextStyle(
+                        color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
+              SizedBox(
+                width: 30.0,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 25.0,
+                  ),
+                  Text(
+                    "박신비",
+                    style: TextStyle(
+                        color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
+                  ),
+                  SizedBox(
+                    height: 25.0,
+                  ),
+                  Container(
+                    margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
+                    child: Text(
+                      "010-7894-4949",
+                      style: TextStyle(
+                          color: Color(0xff9C9C9C),
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ), //보호자 프로필
+      ]),
+    );
   }
 
   Widget editGuardProfile() {
-    return Stack(children: [
-      Positioned(
-        top: 13,
-        child: Container(
-          width: 450,
-          height: 2,
-          color: Color(0xffCFCFCF),
-        ),
-      ),
-      Container(
-        margin: EdgeInsets.fromLTRB(30.0, 0.0, 0.0, 0.0),
-        width: 110.0,
-        height: 30.0,
-        color: Colors.white,
-        child: Text(
-          "보호자 프로필",
-          style: TextStyle(
+    return Form(
+      child: Stack(children: [
+        Positioned(
+          top: 13,
+          child: Container(
+            width: 450,
+            height: 2,
             color: Color(0xffCFCFCF),
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
           ),
         ),
-      ), //보호자프로필
-      Container(
-        margin: EdgeInsets.fromLTRB(0.0, 30.0, 0.0, 0.0),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 65.0,
+        Container(
+          margin: EdgeInsets.fromLTRB(30.0, 0.0, 0.0, 0.0),
+          width: 110.0,
+          height: 30.0,
+          color: Colors.white,
+          child: Text(
+            "보호자 프로필",
+            style: TextStyle(
+              color: Color(0xffCFCFCF),
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: const [
-                SizedBox(
-                  height: 25.0,
-                ),
-                Text(
-                  "성함",
-                  style: TextStyle(
-                      color: Color(0xffCFCFCF), fontWeight: FontWeight.w600),
-                ),
-                SizedBox(
-                  height: 25.0,
-                ),
-                Text(
-                  "번호",
-                  style: TextStyle(
-                      color: Color(0xffCFCFCF), fontWeight: FontWeight.w600),
-                ),
-              ],
-            ),
-            SizedBox(
-              width: 20.0,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 25.0,
-                ),
-                Container(
-                  width: 230,
-                  height: 30,
-                  padding: EdgeInsets.fromLTRB(10.0, 3.0, 0.0, 0.0),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      width: 2,
-                      color: Color(0xffCFCFCF),
-                    ),
-                    borderRadius: BorderRadius.circular(10),
+          ),
+        ), //보호자프로필
+        Container(
+          margin: EdgeInsets.fromLTRB(0.0, 30.0, 0.0, 0.0),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 65.0,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: const [
+                  SizedBox(
+                    height: 25.0,
                   ),
-                  child: Text(
-                    "박신비",
+                  Text(
+                    "성함",
                     style: TextStyle(
                         color: Color(0xffCFCFCF), fontWeight: FontWeight.w600),
                   ),
-                ),
-                SizedBox(
-                  height: 15.0,
-                ),
-                Container(
-                  width: 230,
-                  height: 30,
-                  padding: EdgeInsets.fromLTRB(10.0, 5.0, 0.0, 0.0),
-                  margin: EdgeInsets.fromLTRB(0.0, 2.0, 0.0, 0.0),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      width: 2,
-                      color: Color(0xffCFCFCF),
-                    ),
-                    borderRadius: BorderRadius.circular(10),
+                  SizedBox(
+                    height: 25.0,
                   ),
-                  child: Text(
-                    "010-7894-4949",
+                  Text(
+                    "번호",
                     style: TextStyle(
                         color: Color(0xffCFCFCF), fontWeight: FontWeight.w600),
                   ),
-                ),
-              ],
-            )
-          ],
+                ],
+              ),
+              SizedBox(
+                width: 20.0,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 25.0,
+                  ),
+                  Container(
+                    width: 230,
+                    height: 30,
+                    padding: EdgeInsets.fromLTRB(10.0, 3.0, 0.0, 0.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        width: 2,
+                        color: Color(0xffCFCFCF),
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      "박신비",
+                      style: TextStyle(
+                          color: Color(0xffCFCFCF),
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15.0,
+                  ),
+                  Container(
+                    width: 230,
+                    height: 30,
+                    padding: EdgeInsets.fromLTRB(10.0, 5.0, 0.0, 0.0),
+                    margin: EdgeInsets.fromLTRB(0.0, 2.0, 0.0, 0.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        width: 2,
+                        color: Color(0xffCFCFCF),
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      "010-7894-4949",
+                      style: TextStyle(
+                          color: Color(0xffCFCFCF),
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
-      ),
-      SizedBox(
-        height: 30.0,
-      ), //보호자 프로필
-    ]);
+        SizedBox(
+          height: 30.0,
+        ), //보호자 프로필
+      ]),
+    );
   }
 }
 
