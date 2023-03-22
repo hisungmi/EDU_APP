@@ -62,7 +62,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
             )
           : AppBar(
               backgroundColor: Color(0xff0099FF),
-              toolbarHeight: 60,
+              toolbarHeight: 70,
               elevation: 0.0, //앱바 입체감 없애기
               leading: TextButton(
                   style: TextButton.styleFrom(
@@ -104,7 +104,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
               ],
             ),
       body: Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
+        padding: EdgeInsets.fromLTRB(0.0, 40.0, 0.0, 0.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start, //글자들이 왼쪽에 붙게
@@ -183,15 +183,14 @@ class _MyProfilePageState extends State<MyProfilePage> {
                               showModalBottomSheet(
                                   //밑에서 열리는 메뉴
                                   context: context,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(20.0),
-                                        topRight: Radius.circular(20.0)),
-                                  ),
                                   builder: (BuildContext context) {
                                     return Container(
                                         height: 200,
-                                        color: Colors.white,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
                                         child: Center(
                                             child: Column(
                                                 mainAxisSize:
@@ -387,6 +386,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           subtitle: Divider(thickness: 1),
                           onTap: () {
                             Navigator.pop(context);
+                            Navigator.pushNamed(context, '/qr');
                           },
                         ),
                       ),
