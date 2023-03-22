@@ -62,7 +62,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
             )
           : AppBar(
               backgroundColor: Color(0xff0099FF),
-              toolbarHeight: 60,
+              toolbarHeight: 70,
               elevation: 0.0, //앱바 입체감 없애기
               leading: TextButton(
                   style: TextButton.styleFrom(
@@ -104,7 +104,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
               ],
             ),
       body: Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
+        padding: EdgeInsets.fromLTRB(0.0, 40.0, 0.0, 0.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start, //글자들이 왼쪽에 붙게

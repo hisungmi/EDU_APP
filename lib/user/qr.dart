@@ -42,8 +42,9 @@ class _QrCheckState extends State<QrCheck> {
             children: [
               Container(
                 width: 310,
+                height: 420,
                 margin: EdgeInsets.fromLTRB(0.0, 40.0, 0.0, 0.0),
-                padding: EdgeInsets.fromLTRB(20, 25, 50, 90),
+                padding: EdgeInsets.fromLTRB(20, 25, 50, 0.0),
                 decoration: BoxDecoration(
                     color: Color(0xfff2f2f2),
                     borderRadius: BorderRadius.circular(20)),
@@ -102,8 +103,8 @@ class _QrCheckState extends State<QrCheck> {
                                   right: 50,
                                   child: MaterialButton(
                                     color: Colors.white,
-                                    shape: CircleBorder(),
-                                    padding: EdgeInsets.all(10), //원으로 변해라
+                                    shape: CircleBorder(), //원으로 변해라
+                                    padding: EdgeInsets.all(10),
                                     onPressed: () {
                                       setState(() {
                                         isCount = !isCount;
