@@ -1,4 +1,3 @@
-import 'package:edu_application_pre/common/main_page.dart';
 import 'package:edu_application_pre/layout/splash_screen.dart';
 import 'package:edu_application_pre/user/myprofile_page.dart';
 import 'package:edu_application_pre/user/qr.dart';
