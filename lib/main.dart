@@ -1,4 +1,5 @@
 import 'package:edu_application_pre/common/main_page.dart';
+import 'package:edu_application_pre/layout/splash_screen.dart';
 import 'package:edu_application_pre/user/myprofile_page.dart';
 import 'package:edu_application_pre/user/qr.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/',
       routes: {
-        '/': (context) => MainPage(),
+        '/': (context) => SplashScreen(),
         '/home': (context) => MyHomePage(),
         '/profile': (context) => MyProfilePage(),
         '/qr': (context) => QrCheck(),
@@ -27,7 +28,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
         appBarTheme: const AppBarTheme(backgroundColor: Color(0xff0099FF)),
-        textTheme: const TextTheme(),
+        textTheme: const TextTheme(
+            bodyMedium: TextStyle(
+          fontSize: 18,
+          color: Color(0xff9c9c9c),
+          fontWeight: FontWeight.w600,
+        )),
       ),
     );
   }
