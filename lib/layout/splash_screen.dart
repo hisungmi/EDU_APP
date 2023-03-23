@@ -47,24 +47,23 @@ class SplashScreenState extends State<SplashScreen> {
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Container(
-                    //   padding: EdgeInsets.all(2),
-                    //   margin: EdgeInsets.only(bottom: 14),
-                    //   height: 10,
-                    //   width: 149,
-                    //   decoration: BoxDecoration(
-                    //       border:
-                    //           Border.all(width: 1, color: Color(0xff9C9C9C)),
-                    //       borderRadius: BorderRadius.circular(4)),
-                    //   child: const LinearProgressIndicator(
-                    //     backgroundColor: Colors.white,
-                    //   ),
-                    // ),
                     Container(
-                      margin: const EdgeInsets.only(left: 8),
-                      child: Image.asset(
-                        'assets/img/logo.png',
-                        width: 141,
+                        margin: const EdgeInsets.only(left: 8),
+                        child: Image.asset(
+                          'assets/img/logo.png',
+                          width: 141,
+                        )),
+                    Container(
+                      padding: EdgeInsets.all(2),
+                      margin: EdgeInsets.only(top: 20),
+                      height: 10,
+                      width: 149,
+                      decoration: BoxDecoration(
+                          border:
+                              Border.all(width: 1, color: Color(0xff9C9C9C)),
+                          borderRadius: BorderRadius.circular(4)),
+                      child: const LinearProgressIndicator(
+                        backgroundColor: Colors.white,
                       ),
                     ),
                   ])),
