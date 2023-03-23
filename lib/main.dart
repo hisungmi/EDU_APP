@@ -29,11 +29,12 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         appBarTheme: const AppBarTheme(backgroundColor: Color(0xff0099FF)),
         textTheme: const TextTheme(
-            bodyMedium: TextStyle(
-          fontSize: 18,
-          color: Color(0xff9c9c9c),
-          fontWeight: FontWeight.w600,
-        )),
+            //     bodyMedium: TextStyle(
+            //   fontSize: 16,
+            //   color: Color(0xff9c9c9c),
+            //   fontWeight: FontWeight.w600,
+            // )
+            ),
       ),
     );
   }
