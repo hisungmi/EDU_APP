@@ -46,10 +46,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
               backgroundColor: Color(0xff0099FF),
               toolbarHeight: 80,
               elevation: 0.0, //앱바 입체감 없애기
-              // leading: Image.asset(
-              //   "assets/img/whitelogo.png",
-              //   height: 100,
-              // ),
               actions: [
                 IconButton(
                   icon: Icon(Icons.menu),
@@ -549,26 +545,16 @@ class _MyProfilePageState extends State<MyProfilePage> {
                         text: '*',
                         style: TextStyle(
                           color: Color(0xffFA2A2A),
-                          fontWeight: FontWeight.w600,
                           letterSpacing: 2.0,
                         )),
-                    TextSpan(
-                        text: '학교',
-                        style: TextStyle(
-                          color: Color(0xff9C9C9C),
-                          fontWeight: FontWeight.w600,
-                        )),
+                    TextSpan(text: '학교'),
                   ],
                 ),
               ),
               SizedBox(
                 height: 25.0,
               ),
-              Text(
-                "생년월일",
-                style: TextStyle(
-                    color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
-              ),
+              Text("생년월일"),
               SizedBox(
                 height: 25.0,
               ),
@@ -579,15 +565,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                         text: '*',
                         style: TextStyle(
                           color: Color(0xffFA2A2A),
-                          fontWeight: FontWeight.w600,
                           letterSpacing: 2.0,
                         )),
-                    TextSpan(
-                        text: '번호',
-                        style: TextStyle(
-                          color: Color(0xff9C9C9C),
-                          fontWeight: FontWeight.w600,
-                        )),
+                    TextSpan(text: '번호'),
                   ],
                 ),
               ),
@@ -601,26 +581,16 @@ class _MyProfilePageState extends State<MyProfilePage> {
                         text: '*',
                         style: TextStyle(
                           color: Color(0xffFA2A2A),
-                          fontWeight: FontWeight.w600,
                           letterSpacing: 2.0,
                         )),
-                    TextSpan(
-                        text: '이메일',
-                        style: TextStyle(
-                          color: Color(0xff9C9C9C),
-                          fontWeight: FontWeight.w600,
-                        )),
+                    TextSpan(text: '이메일'),
                   ],
                 ),
               ),
               SizedBox(
                 height: 25.0,
               ),
-              Text(
-                "주소",
-                style: TextStyle(
-                    color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
-              ),
+              Text("주소"),
             ],
           ),
           SizedBox(
@@ -632,40 +602,24 @@ class _MyProfilePageState extends State<MyProfilePage> {
               SizedBox(
                 height: 25.0,
               ),
-              Text(
-                "서정고등학교 2학년",
-                style: TextStyle(
-                    color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
-              ),
+              Text("서정중학교 2학년"),
               SizedBox(
                 height: 25.0,
               ),
-              Text(
-                "2001년 02월 07일",
-                style: TextStyle(
-                    color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
+              Text("2001년 02월 07일"),
+              SizedBox(
+                height: 25.0,
+              ),
+              Container(
+                margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
+                child: Text(editNumber),
               ),
               SizedBox(
                 height: 25.0,
               ),
               Container(
                 margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
-                child: Text(
-                  editNumber,
-                  style: TextStyle(
-                      color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
-                ),
-              ),
-              SizedBox(
-                height: 25.0,
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
-                child: Text(
-                  editEmail,
-                  style: TextStyle(
-                      color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
-                ),
+                child: Text(editEmail),
               ),
               SizedBox(
                 height: 25.0,
@@ -678,8 +632,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   editAddress,
                   overflow: TextOverflow.ellipsis, //줄바꿈
                   maxLines: 3, //개수
-                  style: TextStyle(
-                      color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
                 ),
               ),
             ],
@@ -708,14 +660,12 @@ class _MyProfilePageState extends State<MyProfilePage> {
                         text: '*',
                         style: TextStyle(
                           color: Color(0xffFFB0B0),
-                          fontWeight: FontWeight.w600,
                           letterSpacing: 2.0,
                         )),
                     TextSpan(
                         text: '학교',
                         style: TextStyle(
                           color: Color(0xffCFCFCF),
-                          fontWeight: FontWeight.w600,
                         )),
                   ],
                 ),
@@ -726,7 +676,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
               Text(
                 "생년월일",
                 style: TextStyle(
-                    color: Color(0xffCFCFCF), fontWeight: FontWeight.w600),
+                  color: Color(0xffCFCFCF),
+                ),
               ),
               SizedBox(
                 height: 25.0,
@@ -738,14 +689,12 @@ class _MyProfilePageState extends State<MyProfilePage> {
                         text: '*',
                         style: TextStyle(
                           color: Color(0xffFA2A2A),
-                          fontWeight: FontWeight.w600,
                           letterSpacing: 2.0,
                         )),
                     TextSpan(
                         text: '번호',
                         style: TextStyle(
                           color: Color(0xff9C9C9C),
-                          fontWeight: FontWeight.w600,
                         )),
                   ],
                 ),
@@ -760,26 +709,16 @@ class _MyProfilePageState extends State<MyProfilePage> {
                         text: '*',
                         style: TextStyle(
                           color: Color(0xffFA2A2A),
-                          fontWeight: FontWeight.w600,
                           letterSpacing: 2.0,
                         )),
-                    TextSpan(
-                        text: '이메일',
-                        style: TextStyle(
-                          color: Color(0xff9C9C9C),
-                          fontWeight: FontWeight.w600,
-                        )),
+                    TextSpan(text: '이메일'),
                   ],
                 ),
               ),
               SizedBox(
                 height: 25.0,
               ),
-              Text(
-                "주소",
-                style: TextStyle(
-                    color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
-              ),
+              Text("주소"),
             ],
           ),
           SizedBox(
@@ -793,7 +732,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
               ),
               Container(
                 width: 230,
-                height: 30,
+                height: 32,
                 padding: EdgeInsets.fromLTRB(10.0, 3.0, 0.0, 0.0),
                 decoration: BoxDecoration(
                   border: Border.all(
@@ -805,15 +744,16 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 child: Text(
                   "서정중학교 2학년",
                   style: TextStyle(
-                      color: Color(0xffCFCFCF), fontWeight: FontWeight.w600),
+                    color: Color(0xffCFCFCF),
+                  ),
                 ),
               ),
               SizedBox(
-                height: 15.0,
+                height: 17.0,
               ),
               Container(
                 width: 230,
-                height: 30,
+                height: 32,
                 padding: EdgeInsets.fromLTRB(10.0, 3.0, 0.0, 0.0),
                 decoration: BoxDecoration(
                   border: Border.all(
@@ -824,16 +764,15 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 ),
                 child: Text(
                   "2001년 02월 07일",
-                  style: TextStyle(
-                      color: Color(0xffCFCFCF), fontWeight: FontWeight.w600),
+                  style: TextStyle(color: Color(0xffCFCFCF)),
                 ),
               ),
               SizedBox(
-                height: 15.0,
+                height: 17.0,
               ),
               Container(
                   width: 230,
-                  height: 30,
+                  height: 32,
                   padding: EdgeInsets.fromLTRB(10.0, 5.0, 0.0, 0.0),
                   decoration: BoxDecoration(
                     border: Border.all(
@@ -843,16 +782,14 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: TextField(
-                    controller: numController, //컨트롤러에  필드 부여
+                    controller: numController, //컨트롤러롤 넘컨트롤러에 값을 박아
                     style: TextStyle(
                       color: Color(0xff9c9c9c),
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
                     ),
                     decoration: InputDecoration(
                         border: InputBorder.none, //테두리없앰
-                        hintStyle:
-                            TextStyle(fontSize: 14, color: Color(0xff9c9c9c))),
+                        hintStyle: TextStyle(color: Color(0xff9c9c9c))),
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly, //숫자만
                       NumberFormatter(),
@@ -864,7 +801,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
               ),
               Container(
                 width: 230,
-                height: 30,
+                height: 32,
                 padding: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 1.0),
                 decoration: BoxDecoration(
                   border: Border.all(
@@ -877,10 +814,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                   style: TextStyle(
-                    color: Color(0xff9c9c9c),
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14,
-                  ),
+                      color: Color(0xff9c9c9c), fontWeight: FontWeight.w500),
                   decoration: InputDecoration(
                       border: InputBorder.none, //테두리없앰
                       hintStyle:
@@ -894,7 +828,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
               Flexible(
                 child: Container(
                   width: 230, //너비를 지정해주면
-                  height: 60,
+                  height: 65,
                   padding: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
                   decoration: BoxDecoration(
                     border: Border.all(
@@ -907,10 +841,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     controller: addController,
                     maxLines: 5,
                     style: TextStyle(
-                        fontSize: 14,
                         overflow: TextOverflow.ellipsis,
                         color: Color(0xff9c9c9c),
-                        fontWeight: FontWeight.w600),
+                        fontWeight: FontWeight.w500),
                     decoration: InputDecoration(
                         border: InputBorder.none, //테두리없앰
                         hintStyle:
@@ -1030,6 +963,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
           color: Colors.white,
           child: Text(
             "보호자 프로필",
+            textAlign: TextAlign.center,
             style: TextStyle(
               color: Color(0xffCFCFCF),
               fontWeight: FontWeight.bold,
@@ -1076,7 +1010,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   ),
                   Container(
                     width: 230,
-                    height: 30,
+                    height: 32,
                     padding: EdgeInsets.fromLTRB(10.0, 3.0, 0.0, 0.0),
                     decoration: BoxDecoration(
                       border: Border.all(
@@ -1097,9 +1031,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   ),
                   Container(
                     width: 230,
-                    height: 30,
+                    height: 32,
                     padding: EdgeInsets.fromLTRB(10.0, 5.0, 0.0, 0.0),
-                    margin: EdgeInsets.fromLTRB(0.0, 2.0, 0.0, 0.0),
+                    margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
                     decoration: BoxDecoration(
                       border: Border.all(
                         width: 2,
