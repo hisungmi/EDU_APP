@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'package:edu_application_pre/layout/wave_widget.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
+import '../http_setup.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
