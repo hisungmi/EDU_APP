@@ -18,7 +18,7 @@ class MainPageState extends State<MainPage> {
     // async await 잊지 말고 걸어주기!
     Map<String, dynamic> data = {
       'userType': 'TEA',
-      'id': '신비-1024'
+      'id': '신비-1024',
     }; // Map<String, dynamic>이 우리가 사용하는 {key: value} 형식의 데이터
 
     // axios 사용해서 날릴 때도 {key: value} 형식의 데이터를 json으로 변환해서 날려줬죠?? 여기서도 마찬가지로 json 형태로 변환해서 데이터에 실어 보내줍니다!
@@ -163,7 +163,10 @@ class MainPageState extends State<MainPage> {
                           Container(
                             margin: EdgeInsets.only(left: 10),
                             child: ElevatedButton(
-                                onPressed: doLogin,
+                                onPressed: () {
+                                  doLogin();
+                                  Navigator.pushNamed(context, ("/home"));
+                                },
                                 style: ElevatedButton.styleFrom(
                                     shadowColor: Colors.white,
                                     shape: RoundedRectangleBorder(
