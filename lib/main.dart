@@ -1,6 +1,7 @@
 import 'package:edu_application_pre/layout/splash_screen.dart';
 import 'package:edu_application_pre/user/myprofile_page.dart';
 import 'package:edu_application_pre/user/qr.dart';
+import 'package:edu_application_pre/user/suggestions.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => MyHomePage(),
         '/profile': (context) => MyProfilePage(),
         '/qr': (context) => QrCheck(),
+        '/suggestion': (context) => Suggestions(),
       },
       debugShowCheckedModeBanner: false,
       title: 'first app',
@@ -28,12 +30,12 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         appBarTheme: const AppBarTheme(backgroundColor: Color(0xff0099FF)),
         textTheme: const TextTheme(
-            //     bodyMedium: TextStyle(
-            //   fontSize: 16,
-            //   color: Color(0xff9c9c9c),
-            //   fontWeight: FontWeight.w600,
-            // )
-            ),
+            bodyMedium: TextStyle(
+          //전체 바디 폰트 스타일 미디움?? 이건 뭔지 모르겠음 일단 전체 적용됨.
+          fontSize: 16,
+          color: Color(0xff9c9c9c),
+          fontWeight: FontWeight.w600,
+        )),
       ),
     );
   }
@@ -115,7 +117,9 @@ class MyHomePage extends StatelessWidget {
                     iconSize: 55,
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/suggestion');
+                    },
                     icon: FaIcon(FontAwesomeIcons.envelopeOpen),
                     color: Color(0xff9c9c9c),
                     iconSize: 55,
