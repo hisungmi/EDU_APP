@@ -1,4 +1,6 @@
 import 'package:edu_application_pre/layout/splash_screen.dart';
+import 'package:edu_application_pre/user/check_suggestion.dart';
+import 'package:edu_application_pre/user/enter_suggestion.dart';
 import 'package:edu_application_pre/user/myprofile_page.dart';
 import 'package:edu_application_pre/user/qr.dart';
 import 'package:edu_application_pre/user/suggestions.dart';
@@ -23,6 +25,8 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => MyProfilePage(),
         '/qr': (context) => QrCheck(),
         '/suggestion': (context) => Suggestions(),
+        '/enter-suggestion': (context) => EnterSuggestion(),
+        '/check-suggestion': (context) => CheckSuggestion(),
       },
       debugShowCheckedModeBanner: false,
       title: 'first app',

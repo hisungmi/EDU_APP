@@ -479,6 +479,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           subtitle: Divider(thickness: 1),
                           onTap: () {
                             Navigator.pop(context);
+                            Navigator.pushNamed(context, '/suggestion');
                           },
                         ),
                       ),
