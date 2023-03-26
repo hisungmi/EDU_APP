@@ -421,13 +421,18 @@ class _SuggestionsState extends State<Suggestions> {
                                           child: Container(
                                             width: 160,
                                             child: Center(
-                                              child: Text(
-                                                "버스좀 늘려주세요",
-                                                textAlign: TextAlign.end,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.normal),
+                                              child: GestureDetector(
+                                                onTap: () {},
+                                                child: Text(
+                                                  "버스좀 늘려주세요",
+                                                  textAlign: TextAlign.end,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    decoration: TextDecoration
+                                                        .underline,
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -456,13 +461,22 @@ class _SuggestionsState extends State<Suggestions> {
                                           child: Container(
                                             height: 40,
                                             child: Center(
-                                              child: Text(
-                                                "학원시러시러시러시러시러시러시러",
-                                                textAlign: TextAlign.end,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.normal),
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  Navigator.pushNamed(context,
+                                                      '/check-suggestion');
+                                                },
+                                                child: Text(
+                                                  "학원시러시러시러시러시러시러시러",
+                                                  textAlign: TextAlign.end,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      decoration: TextDecoration
+                                                          .underline,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -485,7 +499,9 @@ class _SuggestionsState extends State<Suggestions> {
                       border: Border.all(width: 2, color: Color(0xff9c9c9c))),
                   child: Center(
                     child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/enter-suggestion');
+                        },
                         style: ElevatedButton.styleFrom(
                           elevation: 0.0,
                           primary: Colors.white, //버튼 색변경
@@ -495,8 +511,10 @@ class _SuggestionsState extends State<Suggestions> {
                         ),
                         child: Text(
                           "건의하기",
-                          style:
-                              TextStyle(color: Color(0xff9c9c9c), fontSize: 16),
+                          style: TextStyle(
+                              color: Color(0xff9c9c9c),
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
                         )),
                   ),
                 ),
