@@ -13,21 +13,29 @@ class MainPage extends StatefulWidget {
 
 class MainPageState extends State<MainPage> {
   bool isLogin = false;
+  String id = '';
 
   void doLogin() async {
     // async await 잊지 말고 걸어주기!
-    Map<String, dynamic> data = {
-      'userType': 'TEA',
-      'id': '신비-1024',
-    }; // Map<String, dynamic>이 우리가 사용하는 {key: value} 형식의 데이터
+    if (id == 'kiosk') {
+      await Navigator.pushNamed(context, '/kiosk');
+    } else {
+      Map<String, dynamic> data = {
+        'userType': 'TEA',
+        'id': id,
+      }; // Map<String, dynamic>이 우리가 사용하는 {key: value} 형식의 데이터
 
-    // axios 사용해서 날릴 때도 {key: value} 형식의 데이터를 json으로 변환해서 날려줬죠?? 여기서도 마찬가지로 json 형태로 변환해서 데이터에 실어 보내줍니다!
-    var result = await post(
-        '/members/compare/',
-        jsonEncode(
-            data)); // axios에서 await ApiClient(url, data) 형식으로 사용했던 것과 형태가 매우 유사하죠?
-    // json 형태의 데이터를 다시 원래 형태로 변환, 즉 데이터 파싱은 jsonDecode(utf8.decode(result.bodyBytes))로 진행해주면 됩니다. 그럼 우리가 원하는 데이터 값을 얻을 수 있어요!
-    print(jsonDecode(utf8.decode(result.bodyBytes)));
+      // axios 사용해서 날릴 때도 {key: value} 형식의 데이터를 json으로 변환해서 날려줬죠?? 여기서도 마찬가지로 json 형태로 변환해서 데이터에 실어 보내줍니다!
+      var result = await post(
+          '/members/compare/',
+          jsonEncode(
+              data)); // axios에서 await ApiClient(url, data) 형식으로 사용했던 것과 형태가 매우 유사하죠?
+      // json 형태의 데이터를 다시 원래 형태로 변환, 즉 데이터 파싱은 jsonDecode(utf8.decode(result.bodyBytes))로 진행해주면 됩니다. 그럼 우리가 원하는 데이터 값을 얻을 수 있어요!
+      print(jsonDecode(utf8.decode(result.bodyBytes)));
+
+      if (!mounted) return;
+      await Navigator.pushNamed(context, "/home");
+    }
   }
 
   @override
@@ -158,6 +166,11 @@ class MainPageState extends State<MainPage> {
                           Flexible(
                             child: TextField(
                               decoration: InputDecoration(labelText: 'ID'),
+                              onChanged: (text) {
+                                setState(() {
+                                  id = text;
+                                });
+                              },
                             ),
                           ),
                           Container(
@@ -165,7 +178,6 @@ class MainPageState extends State<MainPage> {
                             child: ElevatedButton(
                                 onPressed: () {
                                   doLogin();
-                                  Navigator.pushNamed(context, ("/home"));
                                 },
                                 style: ElevatedButton.styleFrom(
                                     shadowColor: Colors.white,
