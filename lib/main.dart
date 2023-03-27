@@ -1,3 +1,4 @@
+import 'package:edu_application_pre/common/kiosk_main.dart';
 import 'package:edu_application_pre/layout/splash_screen.dart';
 import 'package:edu_application_pre/user/check_suggestion.dart';
 import 'package:edu_application_pre/user/enter_suggestion.dart';
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => SplashScreen(),
+        '/kiosk': (context) => KioskMain(),
         '/home': (context) => MyHomePage(),
         '/profile': (context) => MyProfilePage(),
         '/qr': (context) => QrCheck(),

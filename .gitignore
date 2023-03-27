@@ -67,3 +67,9 @@ lib/generated_plugin_registrant.dart
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 
 # End of https://www.toptal.com/developers/gitignore/api/flutter
+/android/.idea/.gitignore
+/android/.idea/compiler.xml
+/android/.idea/gradle.xml
+/android/.idea/jarRepositories.xml
+/android/.idea/misc.xml
+/android/.idea/vcs.xml
