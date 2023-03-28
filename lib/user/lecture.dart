@@ -7,3 +7,4 @@ class LectureInformation {
   LectureInformation(
       this.lectureTime, this.lectureNam, this.location, this.name);
 }
+//MyData data = mylist[index]; , mylist.length

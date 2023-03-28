@@ -1,3 +1,4 @@
+import 'package:edu_application_pre/user/class.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -7,6 +8,7 @@ class AttendanceStatus extends StatelessWidget {
   const AttendanceStatus({
     Key? key,
     required this.lecture,
+    required MyData sunlecture,
   }) : super(key: key);
 
   //컬리브레이스를 가지고 있음 ->Key? , required가 붙어서 반드시 구현해야하는 알규먼트

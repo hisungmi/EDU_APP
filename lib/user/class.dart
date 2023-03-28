@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:edu_application_pre/user/attendance_status.dart';
 import 'package:flutter/material.dart';
-import 'newList.dart';
 import 'lecture.dart';
 
 class Class extends StatefulWidget {
@@ -16,6 +15,7 @@ class MyData {
   final String place;
   final String time;
   MyData(this.lectureName, this.person, this.place, this.time);
+  //mydata변수에 각 샘플데이터 정의
   //List<Map<String,String>>형식으로 받아와서 List<MyData>로 변환->fromMap() 생성자를 구현하여 Map 데이터를 MyData 객체로 변환
   MyData.fromMap(Map<String, dynamic> map)
       : lectureName = map['lectureName'],
@@ -57,14 +57,14 @@ class _ClassState extends State<Class> {
   ];
 
   final List<Map<String, String>> mydatalist = [
-    {'lectureName': '수학', 'person': 'rosa', 'place': 'NIT', 'time': '17시 화,수'},
-    {'lectureName': '국어', 'person': 'sin', 'place': 'RNR', 'time': '17시 화,목'},
-    {'lectureName': '영어', 'person': 'chnn', 'place': 'SII', 'time': '18시 월,수'},
+    {'lectureName': '수학', 'person': 'rosa', 'place': 'NIT', 'time': '12시 화,수'},
+    {'lectureName': '국어', 'person': 'sin', 'place': 'RNR', 'time': '10시 화,목'},
+    {'lectureName': '영어', 'person': 'chnn', 'place': 'SII', 'time': '11시 월,수'},
     {
       'lectureName': '한국사',
       'person': 'rosa',
       'place': 'NIT',
-      'time': '18시 월,화,수'
+      'time': '11시 월,화,수'
     },
   ];
 
@@ -76,6 +76,7 @@ class _ClassState extends State<Class> {
   //강의 데이터 변수
   @override
   Widget build(BuildContext context) {
+    //list를 MyData클래스의 list로 변환, fromMap으로 Map을 MyData객체로 변환, toList로 map()에서 반환된 Iterable을 리스트로 변환
     List<MyData> mylist =
         mydatalist.map((data) => MyData.fromMap(data)).toList();
     return Scaffold(
@@ -212,8 +213,8 @@ class _ClassState extends State<Class> {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => AttendanceStatus(
                                         lecture: lectureData[index],
+                                        sunlecture: mylist[index],
                                       )));
-                              print(lectureData[index].name);
                             },
                             child: Container(
                               width: 358,
@@ -314,17 +315,112 @@ class _ClassState extends State<Class> {
                         },
                       )
                     : ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: mylist.length,
                         itemBuilder: (context, index) {
                           MyData data = mylist[index];
-                          return ListTile(
-                            title: Text(data.person),
-                            subtitle: Column(
-                              children: [
-                                for (final entry in mydatalist[index].entries)
-                                  Text(entry.value),
-                              ],
+                          return InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => AttendanceStatus(
+                                        sunlecture: mylist[index],
+                                        lecture: lectureData[index],
+                                      )));
+                            },
+                            child: Container(
+                              width: 358,
+                              height: 71,
+                              margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 15.0),
+                              padding: EdgeInsets.fromLTRB(15.0, 0.0, 0.0, 0.0),
+                              decoration: BoxDecoration(
+                                  color: Color(0xffE39177),
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    width: 110,
+                                    child: Text(
+                                      data.time,
+                                      style: TextStyle(
+                                          fontSize: 18, color: Colors.white),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 115,
+                                    alignment: Alignment.center,
+                                    child: AutoSizeText(
+                                      data.lectureName,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                      minFontSize: 14,
+                                      style: TextStyle(
+                                          fontSize: 18, color: Colors.white),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 30,
+                                  ),
+                                  Container(
+                                    width: 73,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text.rich(
+                                          TextSpan(
+                                            children: <TextSpan>[
+                                              TextSpan(
+                                                text: '강의실|',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                              TextSpan(
+                                                text: data.place,
+                                                style: TextStyle(
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  color: Colors.white,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Text.rich(
+                                          TextSpan(
+                                            children: <TextSpan>[
+                                              TextSpan(
+                                                text: '강사명|',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                              TextSpan(
+                                                text: data.person,
+                                                style: TextStyle(
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  color: Colors.white,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           );
                         },

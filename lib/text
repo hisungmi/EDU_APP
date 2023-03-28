@@ -32,3 +32,21 @@ ListView.builder(
                           );
                         },
                       ),
+
+
+ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: mylist.length,
+                        itemBuilder: (context, index) {
+                          MyData data = mylist[index];
+                          return ListTile(
+                            title: Text(data.person),
+                            subtitle: Column(
+                              children: [
+                                for (final entry in mydatalist[index].entries)
+                                  Text(entry.value),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
