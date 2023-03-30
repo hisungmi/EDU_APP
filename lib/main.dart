@@ -2,7 +2,6 @@ import 'package:edu_application_pre/common/kiosk_main.dart';
 import 'package:edu_application_pre/layout/splash_screen.dart';
 import 'package:edu_application_pre/user/check_suggestion.dart';
 import 'package:edu_application_pre/user/class.dart';
-import 'package:edu_application_pre/user/check_suggestion.dart';
 import 'package:edu_application_pre/user/enter_suggestion.dart';
 import 'package:edu_application_pre/user/myprofile_page.dart';
 import 'package:edu_application_pre/user/qr.dart';
@@ -32,8 +31,6 @@ class MyApp extends StatelessWidget {
         '/enter-suggestion': (context) => EnterSuggestion(),
         '/check-suggestion': (context) => CheckSuggestion(),
         '/class': (context) => Class(),
-
-
       },
       debugShowCheckedModeBanner: false,
       title: 'first app',
