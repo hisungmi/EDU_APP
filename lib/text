@@ -1,0 +1,52 @@
+class MyData {
+  final String title;
+  final String content;
+  MyData(this.title, this.content);
+  //List<Map<String,String>>형식으로 받아와서 List<MyData>로 변환->fromMap() 생성자를 구현하여 Map 데이터를 MyData 객체로 변환
+  MyData.fromMap(Map<String, dynamic> map)
+      : title = map['title'],
+        content = map['content'];
+}
+
+List<Map<String, String>> mydatalist = [
+    {'title': 'Lname', 'content': '수학'},
+    {'title': 'Lplace', 'content': 'NID'},
+    {'title': 'Lperson', 'content': 'rosa'},
+    {'title': 'Ltime', 'content': '17시 화,금'},
+  ];
+
+  List<MyData> mylist =
+          mydatalist.map((data) => MyData.fromMap(data)).toList();
+
+ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: mylist.length,
+                        itemBuilder: (context, index) {
+                          MyData data = mylist[index];
+                          return ListTile(
+                            title: Text(
+                              data.title,
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            subtitle: Text(data.content),
+                          );
+                        },
+                      ),
+
+
+ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: mylist.length,
+                        itemBuilder: (context, index) {
+                          MyData data = mylist[index];
+                          return ListTile(
+                            title: Text(data.person),
+                            subtitle: Column(
+                              children: [
+                                for (final entry in mydatalist[index].entries)
+                                  Text(entry.value),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
