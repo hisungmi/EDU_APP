@@ -1,6 +1,7 @@
 import 'package:edu_application_pre/common/kiosk_main.dart';
 import 'package:edu_application_pre/layout/splash_screen.dart';
 import 'package:edu_application_pre/user/check_suggestion.dart';
+import 'package:edu_application_pre/user/class.dart';
 import 'package:edu_application_pre/user/enter_suggestion.dart';
 import 'package:edu_application_pre/user/myprofile_page.dart';
 import 'package:edu_application_pre/user/qr.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
         '/suggestion': (context) => Suggestions(),
         '/enter-suggestion': (context) => EnterSuggestion(),
         '/check-suggestion': (context) => CheckSuggestion(),
+        '/class': (context) => Class(),
       },
       debugShowCheckedModeBanner: false,
       title: 'first app',
@@ -89,7 +91,9 @@ class MyHomePage extends StatelessWidget {
                     .spaceEvenly, //정렬, spaceAround: 간격의 절반 양끝 여백, spaceBetween: 여백x, spaceEvenly: 간격 만큼 여백
                 children: [
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/class');
+                    },
                     icon: FaIcon(FontAwesomeIcons.clipboardCheck),
                     color: Color(0xff9c9c9c),
                     iconSize: 55,
