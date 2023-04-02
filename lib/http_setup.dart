@@ -13,8 +13,7 @@ Map<String, String> getHeaders() {
 Future<http.Response> post(String url, String body) async {
   // post 메소드
   final headers = getHeaders();
-  print('$baseUrl/$url');
-  final response = await httpClient.post(Uri.parse('$baseUrl/$url'),
+  final response = await httpClient.post(Uri.parse('$baseUrl$url'),
       headers: headers, body: body);
   return response;
 }
