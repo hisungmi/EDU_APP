@@ -31,7 +31,7 @@ class MainPageState extends State<MainPage> {
           jsonEncode(
               data)); // axios에서 await ApiClient(url, data) 형식으로 사용했던 것과 형태가 매우 유사하죠?
       // json 형태의 데이터를 다시 원래 형태로 변환, 즉 데이터 파싱은 jsonDecode(utf8.decode(result.bodyBytes))로 진행해주면 됩니다. 그럼 우리가 원하는 데이터 값을 얻을 수 있어요!
-      print(jsonDecode(utf8.decode(result.bodyBytes)));
+      print(result.data);
 
       if (!mounted) return;
       await Navigator.pushNamed(context, "/home");
