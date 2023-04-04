@@ -152,7 +152,7 @@ class _ClassState extends State<Class> {
     },
   ];
 
-  //강의 데이터 변수ㅡㅛ
+  //강의 데이터 변수
   @override
   Widget build(BuildContext context) {
     //list를 MyData클래스의 list로 변환, fromMap으로 Map을 MyData객체로 변환, toList로 map()에서 반환된 Iterable을 리스트로 변환
