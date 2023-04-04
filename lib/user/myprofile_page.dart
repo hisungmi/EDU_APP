@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyProfilePage extends StatefulWidget {
   const MyProfilePage({Key? key}) : super(key: key);
@@ -17,15 +20,44 @@ class _MyProfilePageState extends State<MyProfilePage> {
   final emailController = TextEditingController();
   final addController = TextEditingController();
 
-  bool isValidEmailFormat() {
-    return RegExp(
-            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-        .hasMatch(this as String);
+  String name = '';
+  String id = '';
+  String birth = '';
+  String sex = '';
+  String phone = '';
+  String emergency = '';
+  String school = '';
+  String grade = '';
+  String address = '';
+  String profileImg = '';
+  String parentKey = '';
+
+  void loadData() async {
+    // 로컬 스토리지에서 데이터 불러오기
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userData = prefs.getString('userData');
+    if (userData != null) {
+      Map<String, dynamic> dataMap = jsonDecode(userData);
+      setState(() {
+        name = dataMap['name'] ?? '';
+        id = dataMap['id'] ?? '';
+        birth = dataMap['birth'] ?? '';
+        sex = dataMap['sex'] ?? '';
+        phone = dataMap['phone'] ?? '';
+        emergency = dataMap['emergency'] ?? '';
+        school = dataMap['school'] ?? '';
+        grade = dataMap['grade'] ?? '';
+        address = dataMap['address'] ?? '';
+        profileImg = dataMap['profileImg'] ?? '';
+        parentKey = dataMap['parentKey'] ?? '';
+      });
+    }
   }
 
   @override
   void initState() {
     super.initState();
+    loadData();
   }
 
   @override
@@ -133,7 +165,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                             width: 100,
                             height: 25,
                             child: Text(
-                              "김성미 (여)",
+                              '$name($sex)',
                               style: TextStyle(
                                 letterSpacing: 1.5,
                                 fontSize: 18,

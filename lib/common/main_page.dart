@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:edu_application_pre/layout/wave_widget.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import '../http_setup.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -21,7 +23,7 @@ class MainPageState extends State<MainPage> {
       await Navigator.pushNamed(context, '/kiosk');
     } else {
       Map<String, dynamic> data = {
-        'userType': 'TEA',
+        'userType': 'STU',
         'id': id,
       }; // Map<String, dynamic>이 우리가 사용하는 {key: value} 형식의 데이터
 
@@ -32,6 +34,10 @@ class MainPageState extends State<MainPage> {
               data)); // axios에서 await ApiClient(url, data) 형식으로 사용했던 것과 형태가 매우 유사하죠?
       // json 형태의 데이터를 다시 원래 형태로 변환, 즉 데이터 파싱은 jsonDecode(utf8.decode(result.bodyBytes))로 진행해주면 됩니다. 그럼 우리가 원하는 데이터 값을 얻을 수 있어요!
       print(result.data);
+      // result.data를 로컬 스토리지에 저장하기
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString(
+          'userData', jsonEncode(result.data)); //JSON 형식의 문자열로 변환하여 저장
 
       if (!mounted) return;
       await Navigator.pushNamed(context, "/home");
