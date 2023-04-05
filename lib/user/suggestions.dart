@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:edu_application_pre/http_setup.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Suggestions extends StatefulWidget {
   const Suggestions({Key? key}) : super(key: key);
@@ -7,32 +11,61 @@ class Suggestions extends StatefulWidget {
   State<Suggestions> createState() => _SuggestionsState();
 }
 
-TableRow tableData = TableRow(children: [
-  TableCell(
-    child: Text(
-      "건의일자",
-      textAlign: TextAlign.center,
-    ),
-  ),
-  TableCell(
-    child: Text(
-      "유형",
-      textAlign: TextAlign.center,
-    ),
-  ),
-  TableCell(
-    child: Container(
-      height: 80,
-      child: Text(
-        "내용",
-        textAlign: TextAlign.center,
-      ),
-    ),
-  ),
-]);
-
 class _SuggestionsState extends State<Suggestions> {
   bool isProcess = true;
+  static List<dynamic> ySuggestList = [];
+  static List<dynamic> nSuggestList = [];
+
+  String studentKey = '';
+  Future<void> loadData() async {
+    // 로컬 스토리지에서 데이터 불러오기
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userData = prefs.getString('userData');
+    if (userData != null) {
+      Map<String, dynamic> dataMap = jsonDecode(userData);
+      setState(() {
+        studentKey = dataMap['studentKey'] ?? '';
+      });
+      print('key: $studentKey');
+      //stdentKey를 사용하여 getSuggestList() 함수 호출
+      await getSuggestList(studentKey);
+    }
+  }
+
+  //건의사항 리스트 불러오기
+  //void는 반환값이 없음을 나타냄
+  //퓨터void는 비동기작업의 결과를반환함
+  Future<void> getSuggestList(String studentKey) async {
+    //data 맵 객체 생성시 매개변수로 전달
+    Map<String, dynamic> data = {
+      'userKey': studentKey,
+      'userType': 'STU',
+      'search': '',
+      'writerType': '',
+    };
+    ySuggestList = [];
+    nSuggestList = [];
+    var res = await post('/info/getSuggestList/', jsonEncode(data));
+    if (res.statusCode == 200) {
+      for (Map<String, dynamic> suggest in res.data['resultData']) {
+        //state - Y or N
+        print('suggest : $suggest');
+        if (suggest['state'] == 'Y') {
+          ySuggestList.add(suggest);
+        }
+        if (suggest['state'] == 'N') {
+          nSuggestList.add(suggest);
+        }
+      }
+      // lectureList = res.data['resultData'];
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -176,255 +209,128 @@ class _SuggestionsState extends State<Suggestions> {
                       child: Column(
                         // mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          Table(
+                            border: TableBorder(
+                              verticalInside: BorderSide(
+                                color: Color(0xffcfcfcf),
+                                width: 1,
+                              ),
+                            ),
+                            columnWidths: const {
+                              0: FlexColumnWidth(3),
+                              1: FlexColumnWidth(2),
+                              2: FlexColumnWidth(4),
+                            },
+                            defaultVerticalAlignment:
+                                TableCellVerticalAlignment.middle,
+                            children: <TableRow>[
+                              // tableData,
+                              TableRow(children: [
+                                TableCell(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        border: Border(
+                                            bottom: BorderSide(
+                                                width: 1,
+                                                color: Color(0xff9c9c9c)))),
+                                    height: 30,
+                                    child: Center(
+                                      child: Text(
+                                        "건의일자",
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                TableCell(
+                                  child: Container(
+                                    height: 30,
+                                    decoration: BoxDecoration(
+                                        border: Border(
+                                            bottom: BorderSide(
+                                                width: 1,
+                                                color: Color(0xff9c9c9c)))),
+                                    child: Center(
+                                      child: Text(
+                                        "유형",
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                TableCell(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        border: Border(
+                                            bottom: BorderSide(
+                                                width: 1,
+                                                color: Color(0xff9c9c9c)))),
+                                    height: 30,
+                                    child: Center(
+                                      child: Text(
+                                        "내용",
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ]),
+                            ],
+                          ),
                           isProcess
-                              ? Table(
-                                  border: TableBorder(
-                                    verticalInside: BorderSide(
-                                      color: Color(0xffcfcfcf),
-                                      width: 1,
-                                    ),
-                                  ),
-                                  columnWidths: const {
-                                    0: FlexColumnWidth(3),
-                                    1: FlexColumnWidth(2),
-                                    2: FlexColumnWidth(4),
-                                  },
-                                  defaultVerticalAlignment:
-                                      TableCellVerticalAlignment.middle,
-                                  children: <TableRow>[
-                                    // tableData,
-                                    TableRow(children: [
-                                      TableCell(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              border: Border(
-                                                  bottom: BorderSide(
-                                                      width: 1,
-                                                      color:
-                                                          Color(0xff9c9c9c)))),
-                                          height: 30,
-                                          child: Center(
-                                            child: Text(
-                                              "건의일자",
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      TableCell(
-                                        child: Container(
-                                          height: 30,
-                                          decoration: BoxDecoration(
-                                              border: Border(
-                                                  bottom: BorderSide(
-                                                      width: 1,
-                                                      color:
-                                                          Color(0xff9c9c9c)))),
-                                          child: Center(
-                                            child: Text(
-                                              "유형",
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      TableCell(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              border: Border(
-                                                  bottom: BorderSide(
-                                                      width: 1,
-                                                      color:
-                                                          Color(0xff9c9c9c)))),
-                                          height: 30,
-                                          child: Center(
-                                            child: Text(
-                                              "내용",
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ]),
-                                    TableRow(
-                                      children: [
-                                        TableCell(
-                                          child: Container(
-                                            height: 40,
-                                            child: Center(
-                                              child: Text(
-                                                "2023/03/16",
+                              ? ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: ySuggestList.length,
+                                  itemBuilder: (context, index) {
+                                    String createDate = ySuggestList[index]
+                                            ['createDate']
+                                        .toString(); //문자열로 변환
+                                    DateTime dateTime = DateTime.parse(
+                                        createDate); //datetime객체로변환후 날짜정보추출
+                                    String dateString =
+                                        '${dateTime.year}/${dateTime.month}/${dateTime.day}';
+                                    String type = ySuggestList[index]['type'];
+                                    String content =
+                                        ySuggestList[index]['content'];
+                                    return Container(
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                              width: 106.6,
+                                              height: 40,
+                                              decoration: BoxDecoration(
+                                                  border: Border(
+                                                      right: BorderSide(
+                                                          width: 1,
+                                                          color: Color(
+                                                              0xffcfcfcf)))),
+                                              child: Center(
+                                                  child: Text(
+                                                dateString,
                                                 textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        TableCell(
-                                          child: Text(
-                                            "학생",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                        ),
-                                        TableCell(
-                                          child: Container(
-                                            width: 160,
-                                            child: Center(
-                                              child: Text(
-                                                "내 짝이 이상해욜로욜로욜로욜로리욜로리",
-                                                textAlign: TextAlign.end,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    TableRow(
-                                      children: [
-                                        TableCell(
-                                          child: Text(
-                                            "2023/03/14",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                        ),
-                                        TableCell(
-                                          child: Text(
-                                            "시설물",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                        ),
-                                        TableCell(
-                                          child: Container(
+                                              ))),
+                                          Container(
+                                              width: 70.9,
+                                              height: 40,
+                                              decoration: BoxDecoration(
+                                                  border: Border(
+                                                      right: BorderSide(
+                                                          width: 1,
+                                                          color: Color(
+                                                              0xffcfcfcf)))),
+                                              child: Center(
+                                                  child: Text(type,
+                                                      textAlign:
+                                                          TextAlign.center))),
+                                          Container(
+                                            width: 141,
                                             height: 40,
-                                            child: Center(
-                                              child: Text(
-                                                "너무 낡음.어쩌구어저국저거거주겆거적ㅈ거적ㅈ겆거",
-                                                textAlign: TextAlign.end,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                )
-                              : Table(
-                                  border: TableBorder(
-                                    verticalInside: BorderSide(
-                                      color: Color(0xffcfcfcf),
-                                      width: 1,
-                                    ),
-                                  ),
-                                  columnWidths: const {
-                                    0: FlexColumnWidth(3),
-                                    1: FlexColumnWidth(2),
-                                    2: FlexColumnWidth(4),
-                                  },
-                                  defaultVerticalAlignment:
-                                      TableCellVerticalAlignment.middle,
-                                  children: <TableRow>[
-                                    // tableData,
-                                    TableRow(children: [
-                                      TableCell(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              border: Border(
-                                                  bottom: BorderSide(
-                                                      width: 1,
-                                                      color:
-                                                          Color(0xff9c9c9c)))),
-                                          height: 30,
-                                          child: Center(
-                                            child: Text(
-                                              "건의일자",
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      TableCell(
-                                        child: Container(
-                                          height: 30,
-                                          decoration: BoxDecoration(
-                                              border: Border(
-                                                  bottom: BorderSide(
-                                                      width: 1,
-                                                      color:
-                                                          Color(0xff9c9c9c)))),
-                                          child: Center(
-                                            child: Text(
-                                              "유형",
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      TableCell(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              border: Border(
-                                                  bottom: BorderSide(
-                                                      width: 1,
-                                                      color:
-                                                          Color(0xff9c9c9c)))),
-                                          height: 30,
-                                          child: Center(
-                                            child: Text(
-                                              "내용",
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ]),
-                                    TableRow(
-                                      children: [
-                                        TableCell(
-                                          child: Container(
-                                            height: 40,
-                                            child: Center(
-                                              child: Text(
-                                                "2023/03/08",
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        TableCell(
-                                          child: Text(
-                                            "기타",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                        ),
-                                        TableCell(
-                                          child: Container(
-                                            width: 160,
+                                            decoration: BoxDecoration(),
                                             child: Center(
                                               child: GestureDetector(
                                                 onTap: () {},
                                                 child: Text(
-                                                  "버스좀 늘려주세요",
+                                                  content,
                                                   textAlign: TextAlign.end,
                                                   overflow:
                                                       TextOverflow.ellipsis,
@@ -436,54 +342,79 @@ class _SuggestionsState extends State<Suggestions> {
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    TableRow(
-                                      children: [
-                                        TableCell(
-                                          child: Text(
-                                            "2023/03/01",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                        ),
-                                        TableCell(
-                                          child: Text(
-                                            "기타",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                        ),
-                                        TableCell(
-                                          child: Container(
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                )
+                              : ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: nSuggestList.length,
+                                  itemBuilder: (context, index) {
+                                    String createDate = nSuggestList[index]
+                                            ['createDate']
+                                        .toString(); //문자열로 변환
+                                    DateTime dateTime = DateTime.parse(
+                                        createDate); //datetime객체로변환후 날짜정보추출
+                                    String dateString =
+                                        '${dateTime.year}/${dateTime.month}/${dateTime.day}';
+                                    String type = nSuggestList[index]['type'];
+                                    String content =
+                                        nSuggestList[index]['content'];
+                                    return Container(
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                              width: 106.6,
+                                              height: 40,
+                                              decoration: BoxDecoration(
+                                                  border: Border(
+                                                      right: BorderSide(
+                                                          width: 1,
+                                                          color: Color(
+                                                              0xffcfcfcf)))),
+                                              child: Center(
+                                                  child: Text(
+                                                dateString,
+                                                textAlign: TextAlign.center,
+                                              ))),
+                                          Container(
+                                              width: 70.9,
+                                              height: 40,
+                                              decoration: BoxDecoration(
+                                                  border: Border(
+                                                      right: BorderSide(
+                                                          width: 1,
+                                                          color: Color(
+                                                              0xffcfcfcf)))),
+                                              child: Center(
+                                                  child: Text(type,
+                                                      textAlign:
+                                                          TextAlign.center))),
+                                          Container(
+                                            width: 141,
                                             height: 40,
+                                            decoration: BoxDecoration(),
                                             child: Center(
                                               child: GestureDetector(
-                                                onTap: () {
-                                                  Navigator.pushNamed(context,
-                                                      '/check-suggestion');
-                                                },
+                                                onTap: () {},
                                                 child: Text(
-                                                  "학원시러시러시러시러시러시러시러",
+                                                  content,
                                                   textAlign: TextAlign.end,
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                      decoration: TextDecoration
-                                                          .underline,
-                                                      fontWeight:
-                                                          FontWeight.w600),
+                                                    decoration: TextDecoration
+                                                        .underline,
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                        ],
+                                      ),
+                                    );
+                                  },
                                 ),
                         ],
                       )),

@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EnterSuggestion extends StatefulWidget {
   const EnterSuggestion({Key? key}) : super(key: key);
@@ -13,6 +15,27 @@ class _EnterSuggestionState extends State<EnterSuggestion> {
   var now = DateTime.now();
   final typeList = ['강의', '학생', '강사', '시설물', '기타'];
   var selectValue = '기타';
+
+  String name = '';
+  String phone = '';
+  void loadData() async {
+    // 로컬 스토리지에서 데이터 불러오기
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userData = prefs.getString('userData');
+    if (userData != null) {
+      Map<String, dynamic> dataMap = jsonDecode(userData);
+      setState(() {
+        name = dataMap['name'] ?? '';
+        phone = dataMap['phone'] ?? '';
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +113,7 @@ class _EnterSuggestionState extends State<EnterSuggestion> {
                       border: Border(
                           bottom:
                               BorderSide(width: 2, color: Color(0xffcfcfcf)))),
-                  child: Text('김성미-0207',
+                  child: Text(name,
                       style: TextStyle(
                         color: Color(0xffcfcfcf),
                       )),
@@ -181,7 +204,7 @@ class _EnterSuggestionState extends State<EnterSuggestion> {
                       border: Border(
                           bottom:
                               BorderSide(width: 2, color: Color(0xffcfcfcf)))),
-                  child: Text('010-7894-4848',
+                  child: Text(phone,
                       style: TextStyle(
                         color: Color(0xffcfcfcf),
                       )),

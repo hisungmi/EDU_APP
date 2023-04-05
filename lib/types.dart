@@ -1,3 +1,84 @@
+//유저데이터
+class UserData {
+  final String studentKey;
+  final String name;
+  final String id;
+  final String birth;
+  final String sex;
+  final String phone;
+  final String emergency;
+  final String school;
+  final String grade;
+  final String address;
+  final String profileImg;
+  final String parentKey;
+  final String remark;
+  final String delState;
+  final String createData;
+  final String editData;
+
+  UserData({
+    required this.studentKey,
+    required this.name,
+    required this.id,
+    required this.birth,
+    required this.sex,
+    required this.phone,
+    required this.emergency,
+    required this.school,
+    required this.grade,
+    required this.address,
+    required this.profileImg,
+    required this.parentKey,
+    required this.remark,
+    required this.delState,
+    required this.createData,
+    required this.editData,
+  });
+  //Map타입의 객체를 받아서 userdata 객체로 변환함
+  factory UserData.fromJson(Map<String, dynamic> json) {
+    return UserData(
+      studentKey: json['studentKey'],
+      name: json['name'] ?? '',
+      id: json['id'] as String,
+      birth: json['birth'],
+      sex: json['sex'],
+      phone: json['phone'],
+      emergency: json['emergency'],
+      school: json['school'],
+      grade: json['grade'],
+      address: json['address'],
+      profileImg: json['profileImg'],
+      parentKey: json['parentKey'],
+      remark: json['remark'],
+      delState: json['delState'],
+      createData: json['createData'],
+      editData: json['editData'],
+    );
+  }
+  //toJson 으로 map으로 변환
+  Map<String, dynamic> toJson() {
+    return {
+      'studentKey': studentKey,
+      'name': name,
+      'id': id,
+      'birth': birth,
+      'sex': sex,
+      'phone': phone,
+      'emergency': emergency,
+      'school': school,
+      'grade': grade,
+      'address': address,
+      'remark': remark,
+      'delState': delState,
+      'profileImg': profileImg,
+      'createData': createData,
+      'editData': editData,
+      'parentKey': parentKey,
+    };
+  }
+}
+
 class LectureInterface {
   final String lectureKey;
   final String roomKey_id;

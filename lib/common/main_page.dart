@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:dio/dio.dart';
 import 'package:edu_application_pre/layout/wave_widget.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
@@ -36,11 +35,12 @@ class MainPageState extends State<MainPage> {
       print(result.data);
       // result.data를 로컬 스토리지에 저장하기
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString(
-          'userData', jsonEncode(result.data)); //JSON 형식의 문자열로 변환하여 저장
+      //JSON 형식의 문자열로 변환하여 저장
+      String userJsonData = jsonEncode(result.data);
+      await prefs.setString('userData', userJsonData);
 
       if (!mounted) return;
-      await Navigator.pushNamed(context, "/home");
+      await Navigator.pushReplacementNamed(context, "/home");
     }
   }
 
