@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -13,11 +12,8 @@ class MyProfilePage extends StatefulWidget {
 
 class _MyProfilePageState extends State<MyProfilePage> {
   bool isEdit = true;
-  String editNumber = "010-7894-7894";
-  String editEmail = "sungmi@sungmi.com";
-  String editAddress = "경기도 고양시 덕양구 고양동 중부대 828호 줄바꿈도 돼";
+
   final numController = TextEditingController(); //텍스트컨트롤러를 생성하여 필드에 할당
-  final emailController = TextEditingController();
   final addController = TextEditingController();
 
   String name = '';
@@ -60,6 +56,19 @@ class _MyProfilePageState extends State<MyProfilePage> {
     loadData();
   }
 
+  // Future<void> loadData() async {
+  //   // 로컬 스토리지에서 데이터 불러오기
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   final String? userJsonData = prefs.getString('userData');
+  //   print(userJsonData);
+  //   if (userJsonData != null) {
+  //     final Map<String, dynamic> userMapData = jsonDecode(userJsonData);
+  //     setState(() {
+  //       userData = UserData.fromJson(userMapData);
+  //     });
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,9 +107,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   ),
                   onPressed: () {
                     setState(() {
-                      numController.text = editNumber;
-                      emailController.text = editEmail;
-                      addController.text = editAddress;
+                      numController.text = phone;
+                      addController.text = address;
                       isEdit = !isEdit;
                     });
                   },
@@ -118,9 +126,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     onPressed: () {
                       setState(() {
-                        editNumber = numController.text;
-                        editEmail = emailController.text;
-                        editAddress = addController.text;
+                        phone = numController.text;
+                        address = addController.text;
                         isEdit = !isEdit;
                       });
                     },
@@ -188,6 +195,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           color: Color(0xff9C9C9C),
                           onPressed: () {
                             setState(() {
+                              numController.text = phone;
+                              addController.text = address;
                               isEdit = !isEdit;
                             });
                           },
@@ -566,7 +575,14 @@ class _MyProfilePageState extends State<MyProfilePage> {
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: const [
+            children: [
+              SizedBox(
+                height: 25.0,
+              ),
+              Container(
+                margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 1.0),
+                child: Text('ID'),
+              ),
               SizedBox(
                 height: 25.0,
               ),
@@ -574,7 +590,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 //Default Textstyle을 기본적으로 적용 - RichText는 기본스타일을 명시해줘야함
                 TextSpan(
                   //글자, ,문장을 모아 문단을 구성
-                  children: <TextSpan>[
+                  children: const <TextSpan>[
                     TextSpan(
                         text: '*',
                         style: TextStyle(
@@ -594,7 +610,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
               ),
               Text.rich(
                 TextSpan(
-                  children: <TextSpan>[
+                  children: const <TextSpan>[
                     TextSpan(
                         text: '*',
                         style: TextStyle(
@@ -602,22 +618,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           letterSpacing: 2.0,
                         )),
                     TextSpan(text: '번호'),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 25.0,
-              ),
-              Text.rich(
-                TextSpan(
-                  children: <TextSpan>[
-                    TextSpan(
-                        text: '*',
-                        style: TextStyle(
-                          color: Color(0xffFA2A2A),
-                          letterSpacing: 2.0,
-                        )),
-                    TextSpan(text: '이메일'),
                   ],
                 ),
               ),
@@ -636,24 +636,21 @@ class _MyProfilePageState extends State<MyProfilePage> {
               SizedBox(
                 height: 25.0,
               ),
-              Text("서정중학교 2학년"),
+              Text(id),
               SizedBox(
                 height: 25.0,
               ),
-              Text("2001년 02월 07일"),
+              Text("$school $grade학년"),
               SizedBox(
-                height: 25.0,
+                height: 27.0,
+              ),
+              Text(birth),
+              SizedBox(
+                height: 27.0,
               ),
               Container(
                 margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
-                child: Text(editNumber),
-              ),
-              SizedBox(
-                height: 25.0,
-              ),
-              Container(
-                margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
-                child: Text(editEmail),
+                child: Text(phone),
               ),
               SizedBox(
                 height: 25.0,
@@ -663,7 +660,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 width: 230, //너비를 지정해주면
                 margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
                 child: Text(
-                  editAddress,
+                  address,
                   overflow: TextOverflow.ellipsis, //줄바꿈
                   maxLines: 3, //개수
                 ),
@@ -681,7 +678,14 @@ class _MyProfilePageState extends State<MyProfilePage> {
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: const [
+            children: [
+              SizedBox(
+                height: 25.0,
+              ),
+              Container(
+                margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 1.0),
+                child: Text('ID', style: TextStyle(color: Color(0xffCFCFCF))),
+              ),
               SizedBox(
                 height: 25.0,
               ),
@@ -736,22 +740,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
               SizedBox(
                 height: 25.0,
               ),
-              Text.rich(
-                TextSpan(
-                  children: <TextSpan>[
-                    TextSpan(
-                        text: '*',
-                        style: TextStyle(
-                          color: Color(0xffFA2A2A),
-                          letterSpacing: 2.0,
-                        )),
-                    TextSpan(text: '이메일'),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 25.0,
-              ),
               Text("주소"),
             ],
           ),
@@ -767,8 +755,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
               Container(
                 width: 230,
                 height: 32,
-                padding: EdgeInsets.fromLTRB(10.0, 3.0, 0.0, 0.0),
+                padding: EdgeInsets.fromLTRB(10.0, 2.0, 0.0, 0.0),
                 decoration: BoxDecoration(
+                  color: Color(0xffd9d9d9).withOpacity(0.3),
                   border: Border.all(
                     width: 2,
                     color: Color(0xffCFCFCF),
@@ -776,7 +765,29 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  "서정중학교 2학년",
+                  id,
+                  style: TextStyle(
+                    color: Color(0xffCFCFCF),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 18.0,
+              ),
+              Container(
+                width: 230,
+                height: 32,
+                padding: EdgeInsets.fromLTRB(10.0, 2.0, 0.0, 0.0),
+                decoration: BoxDecoration(
+                  color: Color(0xffd9d9d9).withOpacity(0.3),
+                  border: Border.all(
+                    width: 2,
+                    color: Color(0xffCFCFCF),
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  "$school $grade학년",
                   style: TextStyle(
                     color: Color(0xffCFCFCF),
                   ),
@@ -788,8 +799,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
               Container(
                 width: 230,
                 height: 32,
-                padding: EdgeInsets.fromLTRB(10.0, 3.0, 0.0, 0.0),
+                padding: EdgeInsets.fromLTRB(10.0, 5.0, 0.0, 0.0),
                 decoration: BoxDecoration(
+                  color: Color(0xffd9d9d9).withOpacity(0.3),
                   border: Border.all(
                     width: 2,
                     color: Color(0xffCFCFCF),
@@ -797,7 +809,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  "2001년 02월 07일",
+                  birth,
                   style: TextStyle(color: Color(0xffCFCFCF)),
                 ),
               ),
@@ -830,31 +842,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
                       LengthLimitingTextInputFormatter(13) //최대 13글자
                     ],
                   )),
-              SizedBox(
-                height: 15.0,
-              ),
-              Container(
-                width: 230,
-                height: 32,
-                padding: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 1.0),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    width: 2,
-                    color: Color(0xff9c9c9c),
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: TextField(
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  style: TextStyle(
-                      color: Color(0xff9c9c9c), fontWeight: FontWeight.w500),
-                  decoration: InputDecoration(
-                      border: InputBorder.none, //테두리없앰
-                      hintStyle:
-                          TextStyle(fontSize: 14, color: Color(0xff9c9c9c))),
-                ),
-              ),
               SizedBox(
                 height: 15.0,
                 width: 50.0,
@@ -1047,6 +1034,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     height: 32,
                     padding: EdgeInsets.fromLTRB(10.0, 3.0, 0.0, 0.0),
                     decoration: BoxDecoration(
+                      color: Color(0xffd9d9d9).withOpacity(0.3),
                       border: Border.all(
                         width: 2,
                         color: Color(0xffCFCFCF),
@@ -1069,6 +1057,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     padding: EdgeInsets.fromLTRB(10.0, 5.0, 0.0, 0.0),
                     margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
                     decoration: BoxDecoration(
+                      color: Color(0xffd9d9d9).withOpacity(0.3),
                       border: Border.all(
                         width: 2,
                         color: Color(0xffCFCFCF),
@@ -1076,7 +1065,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
-                      "010-7894-4949",
+                      emergency,
                       style: TextStyle(
                           color: Color(0xffCFCFCF),
                           fontWeight: FontWeight.w600),

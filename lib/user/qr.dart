@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class QrCheck extends StatefulWidget {
   const QrCheck({Key? key}) : super(key: key);
@@ -40,10 +42,24 @@ class _QrCheckState extends State<QrCheck> {
     });
   }
 
+  String studentKey = '';
+  void loadData() async {
+    // 로컬 스토리지에서 데이터 불러오기
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userData = prefs.getString('userData');
+    if (userData != null) {
+      Map<String, dynamic> dataMap = jsonDecode(userData);
+      setState(() {
+        studentKey = dataMap['studentKey'] ?? '';
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     startTimer();
+    loadData();
   }
 
   @override
@@ -102,7 +118,7 @@ class _QrCheckState extends State<QrCheck> {
                     isCount
                         ? Container(
                             child: QrImage(
-                              data: "김성미",
+                              data: studentKey,
                               foregroundColor: Color(0xff0099ff),
                               size: 220,
                             ),
@@ -112,7 +128,7 @@ class _QrCheckState extends State<QrCheck> {
                             children: [
                               Container(
                                 child: QrImage(
-                                  data: "김성미",
+                                  data: studentKey,
                                   foregroundColor: Color(0xff0099ff),
                                   size: 220,
                                 ),
