@@ -8,22 +8,29 @@ class WaveWidget extends StatefulWidget {
   State<WaveWidget> createState() => _WaveWidgetState();
 }
 
-class _WaveWidgetState extends State<WaveWidget> with SingleTickerProviderStateMixin {
+class _WaveWidgetState extends State<WaveWidget>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
 
   @override
   void initState() {
-    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 4500));
-    _animation = Tween<double>(begin: 0, end: 2*pi).animate(_animationController);
+    _animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 4500));
+    _animation =
+        Tween<double>(begin: 0, end: 2 * pi).animate(_animationController);
 
     _animationController.addListener(() {
-      setState(() {
-
-      });
+      setState(() {});
     });
     _animationController.repeat();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -31,7 +38,7 @@ class _WaveWidgetState extends State<WaveWidget> with SingleTickerProviderStateM
     return ClipPath(
       clipper: WaveClipper(_animation.value),
       child: Container(
-      color: const Color(0xff0099FF),
+        color: const Color(0xff0099FF),
       ),
     );
   }
@@ -46,8 +53,9 @@ class WaveClipper extends CustomClipper<Path> {
     var p = Path();
     var points = <Offset>[];
 
-    for(var x = 0; x<size.width; x++) {
-      points.add(Offset(x.toDouble(), WaveClipper.getYWithX(x, animationValue)));
+    for (var x = 0; x < size.width; x++) {
+      points
+          .add(Offset(x.toDouble(), WaveClipper.getYWithX(x, animationValue)));
     }
 
     p.moveTo(0, WaveClipper.getYWithX(0, animationValue));
