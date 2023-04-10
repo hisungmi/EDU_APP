@@ -207,7 +207,6 @@ class _SuggestionsState extends State<Suggestions> {
                         ),
                       ),
                       child: Column(
-                        // mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Table(
                             border: TableBorder(
@@ -293,55 +292,63 @@ class _SuggestionsState extends State<Suggestions> {
                                     String content =
                                         ySuggestList[index]['content'];
                                     return Container(
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                              width: 106.6,
-                                              height: 40,
-                                              decoration: BoxDecoration(
-                                                  border: Border(
-                                                      right: BorderSide(
-                                                          width: 1,
-                                                          color: Color(
-                                                              0xffcfcfcf)))),
-                                              child: Center(
+                                      child: Table(
+                                        border: TableBorder(
+                                          verticalInside: BorderSide(
+                                            color: Color(0xffcfcfcf),
+                                            width: 1,
+                                          ),
+                                        ),
+                                        columnWidths: const {
+                                          0: FlexColumnWidth(3),
+                                          1: FlexColumnWidth(2),
+                                          2: FlexColumnWidth(4),
+                                        },
+                                        defaultVerticalAlignment:
+                                            TableCellVerticalAlignment.middle,
+                                        children: <TableRow>[
+                                          // tableData,
+                                          TableRow(children: [
+                                            TableCell(
+                                              child: Container(
+                                                height: 40,
+                                                child: Center(
                                                   child: Text(
-                                                dateString,
-                                                textAlign: TextAlign.center,
-                                              ))),
-                                          Container(
-                                              width: 70.9,
-                                              height: 40,
-                                              decoration: BoxDecoration(
-                                                  border: Border(
-                                                      right: BorderSide(
-                                                          width: 1,
-                                                          color: Color(
-                                                              0xffcfcfcf)))),
-                                              child: Center(
-                                                  child: Text(type,
-                                                      textAlign:
-                                                          TextAlign.center))),
-                                          Container(
-                                            width: 141,
-                                            height: 40,
-                                            decoration: BoxDecoration(),
-                                            child: Center(
-                                              child: GestureDetector(
-                                                onTap: () {},
-                                                child: Text(
-                                                  content,
-                                                  textAlign: TextAlign.end,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                    decoration: TextDecoration
-                                                        .underline,
+                                                    dateString,
+                                                    textAlign: TextAlign.center,
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
+                                            TableCell(
+                                              child: Container(
+                                                height: 40,
+                                                child: Center(
+                                                  child: Text(
+                                                    type,
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            TableCell(
+                                              child: Container(
+                                                height: 40,
+                                                child: Center(
+                                                  child: Text(
+                                                    content,
+                                                    textAlign: TextAlign.end,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      decoration: TextDecoration
+                                                          .underline,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ]),
                                         ],
                                       ),
                                     );
@@ -362,55 +369,63 @@ class _SuggestionsState extends State<Suggestions> {
                                     String content =
                                         nSuggestList[index]['content'];
                                     return Container(
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                              width: 106.6,
-                                              height: 40,
-                                              decoration: BoxDecoration(
-                                                  border: Border(
-                                                      right: BorderSide(
-                                                          width: 1,
-                                                          color: Color(
-                                                              0xffcfcfcf)))),
-                                              child: Center(
+                                      child: Table(
+                                        border: TableBorder(
+                                          verticalInside: BorderSide(
+                                            color: Color(0xffcfcfcf),
+                                            width: 1,
+                                          ),
+                                        ),
+                                        columnWidths: const {
+                                          0: FlexColumnWidth(3),
+                                          1: FlexColumnWidth(2),
+                                          2: FlexColumnWidth(4),
+                                        },
+                                        defaultVerticalAlignment:
+                                            TableCellVerticalAlignment.middle,
+                                        children: <TableRow>[
+                                          // tableData,
+                                          TableRow(children: [
+                                            TableCell(
+                                              child: Container(
+                                                height: 40,
+                                                child: Center(
                                                   child: Text(
-                                                dateString,
-                                                textAlign: TextAlign.center,
-                                              ))),
-                                          Container(
-                                              width: 70.9,
-                                              height: 40,
-                                              decoration: BoxDecoration(
-                                                  border: Border(
-                                                      right: BorderSide(
-                                                          width: 1,
-                                                          color: Color(
-                                                              0xffcfcfcf)))),
-                                              child: Center(
-                                                  child: Text(type,
-                                                      textAlign:
-                                                          TextAlign.center))),
-                                          Container(
-                                            width: 141,
-                                            height: 40,
-                                            decoration: BoxDecoration(),
-                                            child: Center(
-                                              child: GestureDetector(
-                                                onTap: () {},
-                                                child: Text(
-                                                  content,
-                                                  textAlign: TextAlign.end,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                    decoration: TextDecoration
-                                                        .underline,
+                                                    dateString,
+                                                    textAlign: TextAlign.center,
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
+                                            TableCell(
+                                              child: Container(
+                                                height: 40,
+                                                child: Center(
+                                                  child: Text(
+                                                    type,
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            TableCell(
+                                              child: Container(
+                                                height: 40,
+                                                child: Center(
+                                                  child: Text(
+                                                    content,
+                                                    textAlign: TextAlign.end,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      decoration: TextDecoration
+                                                          .underline,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ]),
                                         ],
                                       ),
                                     );

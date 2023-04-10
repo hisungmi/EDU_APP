@@ -27,6 +27,7 @@ class _WaveWidgetState extends State<WaveWidget>
     super.initState();
   }
 
+  //해당 위젯이 dispose 되기 전에 _animationController라는 Ticker 객체를 dispose 해주는 예시입니다. 이렇게 하면 해당 Ticker 객체가 활성화된 상태로 dispose 되는 것을 방지
   @override
   void dispose() {
     _animationController.dispose();
