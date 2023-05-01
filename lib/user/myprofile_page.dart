@@ -722,7 +722,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
               ),
               Text.rich(
                 TextSpan(
-                  children: <TextSpan>[
+                  children: const <TextSpan>[
                     TextSpan(
                         text: '*',
                         style: TextStyle(

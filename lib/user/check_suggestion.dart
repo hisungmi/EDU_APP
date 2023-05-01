@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 
-class CheckSuggestion extends StatefulWidget {
-  const CheckSuggestion({Key? key}) : super(key: key);
+class CheckSuggestion extends StatelessWidget {
+  const CheckSuggestion({
+    Key? key,
+    required this.isProcess,
+    required this.suggestList,
+  }) : super(key: key);
 
-  @override
-  State<CheckSuggestion> createState() => _CheckSuggestionState();
-}
+  final bool isProcess;
+  final Map<String, dynamic> suggestList;
 
-class _CheckSuggestionState extends State<CheckSuggestion> {
+  static const routeName = "/cheack-suggestion";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +75,7 @@ class _CheckSuggestionState extends State<CheckSuggestion> {
                               border: Border(
                                   bottom: BorderSide(
                                       width: 2, color: Color(0xffcfcfcf)))),
-                          child: Text('유형',
+                          child: Text(suggestList['type'].toString(),
                               style: TextStyle(
                                 color: Color(0xffcfcfcf),
                               )),

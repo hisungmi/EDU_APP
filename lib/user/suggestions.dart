@@ -1,7 +1,8 @@
 import 'dart:convert';
-
 import 'package:edu_application_pre/http_setup.dart';
+import 'package:edu_application_pre/user/check_suggestion.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Suggestions extends StatefulWidget {
@@ -9,6 +10,49 @@ class Suggestions extends StatefulWidget {
 
   @override
   State<Suggestions> createState() => _SuggestionsState();
+}
+
+class SuggestData {
+  final String suggestKey;
+  final String adminKey;
+  final String writerKey;
+  final String writerName;
+  final String writerType;
+  final String type;
+  final String state;
+  final String content;
+  final String answer;
+  final String answerDate;
+  final String createDate;
+  final String editDate;
+
+  SuggestData(
+    this.content,
+    this.adminKey,
+    this.answer,
+    this.answerDate,
+    this.createDate,
+    this.editDate,
+    this.state,
+    this.suggestKey,
+    this.type,
+    this.writerKey,
+    this.writerName,
+    this.writerType,
+  );
+  SuggestData.fromMap(Map<String, dynamic> map)
+      : suggestKey = map['suggestKey'],
+        adminKey = map['adminKey'],
+        writerKey = map['writerKey'],
+        writerName = map['writerName'],
+        writerType = map['writerType'],
+        type = map['type'],
+        state = map['state'],
+        content = map['content'],
+        answer = map['answer'],
+        answerDate = map['answerDate'],
+        createDate = map['createDate'],
+        editDate = map['editDate'];
 }
 
 class _SuggestionsState extends State<Suggestions> {
@@ -281,16 +325,22 @@ class _SuggestionsState extends State<Suggestions> {
                                   shrinkWrap: true,
                                   itemCount: ySuggestList.length,
                                   itemBuilder: (context, index) {
-                                    String createDate = ySuggestList[index]
-                                            ['createDate']
-                                        .toString(); //문자열로 변환
-                                    DateTime dateTime = DateTime.parse(
-                                        createDate); //datetime객체로변환후 날짜정보추출
-                                    String dateString =
-                                        '${dateTime.year}/${dateTime.month}/${dateTime.day}';
-                                    String type = ySuggestList[index]['type'];
-                                    String content =
-                                        ySuggestList[index]['content'];
+                                    Map<String, dynamic> suggestList =
+                                        ySuggestList[index];
+                                    String formattedDate =
+                                        DateFormat('yyyy/MM/dd').format(
+                                            DateTime.parse(
+                                                suggestList['createDate']));
+                                    // String createDate = ySuggestList[index]
+                                    //         ['createDate']
+                                    //     .toString(); //문자열로 변환
+                                    // DateTime dateTime = DateTime.parse(
+                                    //     createDate); //datetime객체로변환후 날짜정보추출
+                                    // String dateString =
+                                    //     '${dateTime.year}/${dateTime.month}/${dateTime.day}';
+                                    // String type = ySuggestList[index]['type'];
+                                    // String content =
+                                    //     ySuggestList[index]['content'];
                                     return Container(
                                       child: Table(
                                         border: TableBorder(
@@ -314,7 +364,7 @@ class _SuggestionsState extends State<Suggestions> {
                                                 height: 40,
                                                 child: Center(
                                                   child: Text(
-                                                    dateString,
+                                                    formattedDate,
                                                     textAlign: TextAlign.center,
                                                   ),
                                                 ),
@@ -325,24 +375,39 @@ class _SuggestionsState extends State<Suggestions> {
                                                 height: 40,
                                                 child: Center(
                                                   child: Text(
-                                                    type,
+                                                    suggestList['type'],
                                                     textAlign: TextAlign.center,
                                                   ),
                                                 ),
                                               ),
                                             ),
                                             TableCell(
-                                              child: Container(
-                                                height: 40,
-                                                child: Center(
-                                                  child: Text(
-                                                    content,
-                                                    textAlign: TextAlign.end,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                      decoration: TextDecoration
-                                                          .underline,
+                                              child: InkWell(
+                                                onTap: () {
+                                                  Navigator.of(context)
+                                                      .push(MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        CheckSuggestion(
+                                                            isProcess:
+                                                                isProcess,
+                                                            suggestList:
+                                                                ySuggestList[
+                                                                    index]),
+                                                  ));
+                                                },
+                                                child: Container(
+                                                  height: 40,
+                                                  child: Center(
+                                                    child: Text(
+                                                      suggestList['content'],
+                                                      textAlign: TextAlign.end,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                        decoration:
+                                                            TextDecoration
+                                                                .underline,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
