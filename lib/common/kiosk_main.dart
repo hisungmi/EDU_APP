@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:math';
-import 'dart:ui';
 import 'package:edu_application_pre/http_setup.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -17,10 +16,39 @@ class KioskMainState extends State<KioskMain> {
     '../assets/img/background01.jpg',
     '../assets/img/background02.jpg',
   ];
-
+  static Map<String, dynamic> todayNotice = {};
+  String newNotice = '';
   static List<dynamic> lectureList = [];
 
-  void getLectureList() async {
+  Future getNotice() async {
+    Map<String, String> data = {
+      'userKey': '',
+      'search': '',
+      'date': DateTime.now().year.toString(),
+      'type': '',
+    };
+
+    var result = await post('/info/getNoticeList/', jsonEncode(data));
+    if (result.statusCode == 200) {
+      setState(() {
+        if (result.data['resultData'].length > 0) {
+          if (int.parse(DateTime.now()
+                  .difference(DateTime.parse(result.data['resultData'][0]
+                          ['createDate']
+                      .toString()
+                      .split('T')[0]
+                      .replaceAll('-', '')))
+                  .inDays
+                  .toString()) <
+              7) {
+            newNotice = result.data['resultData'][0]['content'];
+          }
+        }
+      });
+    }
+  }
+
+  Future getLectureList() async {
     Map<String, dynamic> data = {
       'userKey': '',
       'roomKey': '',
@@ -29,20 +57,28 @@ class KioskMainState extends State<KioskMain> {
       'target': '',
     };
 
-    var res = await post('/lectures/getLectureList/', jsonEncode(data));
-    if (res.statusCode == 200) {
-      for (Map<String, dynamic> lecture in res.data['resultData']) {
-        if (lecture['progress'] == '등록') {
-          lectureList.add(lecture);
-        }
-      }
+    var result = await post('/lectures/getLectureList/', jsonEncode(data));
+    if (result.statusCode == 200) {
+      List<Map<String, dynamic>> filteredLectures =
+          List<Map<String, dynamic>>.from(result.data['resultData'])
+              .where((lecture) => lecture['progress'] == '등록')
+              .toList();
+      setState(() {
+        lectureList = filteredLectures;
+      });
+      // for (Map<String, dynamic> lecture in res.data['resultData']) {
+      //   if (lecture['progress'] == '등록') {
+      //     lectureList.add(lecture);
+      //   }
+      // }
     }
   }
 
   @override
   void initState() {
-    super.initState();
     getLectureList();
+    getNotice();
+    super.initState();
   }
 
   @override
@@ -180,11 +216,13 @@ class KioskMainState extends State<KioskMain> {
                               ),
                               alignment: Alignment.centerLeft,
                               child: Row(
-                                children: const [
+                                children: [
                                   Padding(
                                     padding: EdgeInsets.only(left: 60.0),
                                     child: Icon(
-                                      FontAwesomeIcons.solidBell,
+                                      newNotice.isEmpty
+                                          ? FontAwesomeIcons.solidBellSlash
+                                          : FontAwesomeIcons.solidBell,
                                       size: 55,
                                       color: Color(0xffFFFFFF),
                                     ),
@@ -192,13 +230,19 @@ class KioskMainState extends State<KioskMain> {
                                   Expanded(
                                       child: Align(
                                           alignment: Alignment.center,
-                                          child: Text(
-                                              "06/25~08/01 MIT2 강의실 리모델링 공사 기간",
-                                              style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 36.0,
-                                                fontWeight: FontWeight.w600,
-                                              ))))
+                                          child: newNotice.isEmpty
+                                              ? Text('최신 공지가 없습니다',
+                                                  style: TextStyle(
+                                                    color: Color(0xff565656),
+                                                    fontSize: 36.0,
+                                                    fontWeight: FontWeight.w600,
+                                                  ))
+                                              : Text(newNotice,
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 36.0,
+                                                    fontWeight: FontWeight.w600,
+                                                  )))),
                                 ],
                               ),
                             ),
