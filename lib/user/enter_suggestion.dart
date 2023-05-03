@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:edu_application_pre/http_setup.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -12,12 +13,12 @@ class EnterSuggestion extends StatefulWidget {
 }
 
 class _EnterSuggestionState extends State<EnterSuggestion> {
-  var now = DateTime.now();
   final typeList = ['강의', '학생', '강사', '시설물', '기타'];
   var selectValue = '기타';
+  TextEditingController contentController = TextEditingController();
 
   String name = '';
-  String phone = '';
+  String studentKey = '';
   void loadData() async {
     // 로컬 스토리지에서 데이터 불러오기
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -26,9 +27,25 @@ class _EnterSuggestionState extends State<EnterSuggestion> {
       Map<String, dynamic> dataMap = jsonDecode(userData);
       setState(() {
         name = dataMap['name'] ?? '';
-        phone = dataMap['phone'] ?? '';
+        studentKey = dataMap['studentKey'] ?? '';
       });
+      // await createSuggestList(studentKey, name); //studentKey 을 사용해서 함수 호출 키 전달
     }
+  }
+
+  Future<void> createSuggestList(String studentKey, String name) async {
+    Map<String, dynamic> data = {
+      'writerKey': studentKey,
+      'writerName': name,
+      'writerType': 'STU',
+      'type': selectValue,
+      'content': contentController.text,
+    };
+    var res = await post('/info/createSuggestPlan/', jsonEncode(data));
+    setState(() {
+      print('status ${res.statusCode}');
+      print('data ${res.data}');
+    });
   }
 
   @override
@@ -66,9 +83,8 @@ class _EnterSuggestionState extends State<EnterSuggestion> {
                 padding: EdgeInsets.all(0),
               ),
               onPressed: () {
-                setState(() {
-                  Navigator.pop(context);
-                });
+                createSuggestList(studentKey, name);
+                Navigator.of(context).pop();
               },
               child: Text("건의",
                   style: TextStyle(
@@ -94,7 +110,8 @@ class _EnterSuggestionState extends State<EnterSuggestion> {
                       border: Border(
                           bottom:
                               BorderSide(width: 2, color: Color(0xffcfcfcf)))),
-                  child: Text(DateFormat('yyy.MM.d.EEEE').format(now),
+                  child: Text(
+                      DateFormat('yyyy.MM.dd HH:mm').format(DateTime.now()),
                       style: TextStyle(
                         color: Color(0xffcfcfcf),
                       )),
@@ -179,38 +196,41 @@ class _EnterSuggestionState extends State<EnterSuggestion> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: TextField(
+                    controller: contentController,
+                    maxLines: 50,
+                    textAlignVertical: TextAlignVertical.top,
                     style: TextStyle(
                         overflow: TextOverflow.ellipsis,
                         color: Color(0xff9c9c9c),
                         fontWeight: FontWeight.w500),
                     decoration: InputDecoration(
-                        hintText: '내용 입력',
+                        hintText: '내용 입력 (50줄 이하)',
                         border: InputBorder.none, //테두리없앰
                         hintStyle:
                             TextStyle(fontSize: 14, color: Color(0xff9c9c9c))),
                   ),
                 ),
+                // SizedBox(
+                //   height: 30.0,
+                // ),
+                // Text('연락받을 번호'),
+                // SizedBox(
+                //   height: 9,
+                // ),
+                // Container(
+                //   width: 190,
+                //   padding: EdgeInsets.fromLTRB(3.0, 0.0, 0.0, 7.0),
+                //   decoration: BoxDecoration(
+                //       border: Border(
+                //           bottom:
+                //               BorderSide(width: 2, color: Color(0xffcfcfcf)))),
+                //   child: Text(phone,
+                //       style: TextStyle(
+                //         color: Color(0xffcfcfcf),
+                //       )),
+                // ),
                 SizedBox(
-                  height: 30.0,
-                ),
-                Text('연락받을 번호'),
-                SizedBox(
-                  height: 9,
-                ),
-                Container(
-                  width: 190,
-                  padding: EdgeInsets.fromLTRB(3.0, 0.0, 0.0, 7.0),
-                  decoration: BoxDecoration(
-                      border: Border(
-                          bottom:
-                              BorderSide(width: 2, color: Color(0xffcfcfcf)))),
-                  child: Text(phone,
-                      style: TextStyle(
-                        color: Color(0xffcfcfcf),
-                      )),
-                ),
-                SizedBox(
-                  height: 100,
+                  height: 150,
                 ),
               ],
             ),
