@@ -30,19 +30,21 @@ class KioskMainState extends State<KioskMain> {
 
     var result = await post('/info/getNoticeList/', jsonEncode(data));
     if (result.statusCode == 200) {
-      if (result.data['resultData'].length > 0) {
-        if (int.parse(DateTime.now()
-                .difference(DateTime.parse(result.data['resultData'][0]
-                        ['createDate']
-                    .toString()
-                    .split('T')[0]
-                    .replaceAll('-', '')))
-                .inDays
-                .toString()) <
-            7) {
-          newNotice = result.data['resultData'][0]['content'];
+      setState(() {
+        if (result.data['resultData'].length > 0) {
+          if (int.parse(DateTime.now()
+                  .difference(DateTime.parse(result.data['resultData'][0]
+                          ['createDate']
+                      .toString()
+                      .split('T')[0]
+                      .replaceAll('-', '')))
+                  .inDays
+                  .toString()) <
+              7) {
+            newNotice = result.data['resultData'][0]['content'];
+          }
         }
-      }
+      });
     }
   }
 
