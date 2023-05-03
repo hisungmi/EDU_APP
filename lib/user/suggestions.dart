@@ -57,8 +57,8 @@ class SuggestData {
 
 class _SuggestionsState extends State<Suggestions> {
   bool isProcess = true;
-  static List<dynamic> ySuggestList = [];
   static List<dynamic> nSuggestList = [];
+  static List<dynamic> ySuggestList = [];
 
   String studentKey = '';
   Future<void> loadData() async {
@@ -70,9 +70,9 @@ class _SuggestionsState extends State<Suggestions> {
       setState(() {
         studentKey = dataMap['studentKey'] ?? '';
       });
-      print('key: $studentKey');
+      // print('key: $studentKey');
       //stdentKey를 사용하여 getSuggestList() 함수 호출
-      await getSuggestList(studentKey);
+      getSuggestList(studentKey);
     }
   }
 
@@ -87,20 +87,23 @@ class _SuggestionsState extends State<Suggestions> {
       'search': '',
       'writerType': '',
     };
-    ySuggestList = [];
     nSuggestList = [];
+    ySuggestList = [];
     var res = await post('/info/getSuggestList/', jsonEncode(data));
     if (res.statusCode == 200) {
-      for (Map<String, dynamic> suggest in res.data['resultData']) {
-        //state - Y or N
-        print('suggest : $suggest');
-        if (suggest['state'] == 'Y') {
-          ySuggestList.add(suggest);
+      setState(() {
+        for (Map<String, dynamic> suggest in res.data['resultData']) {
+          //state - Y or N
+          // print('suggest : $suggest');
+          if (suggest['state'] == 'Y') {
+            ySuggestList.add(suggest);
+          }
+          if (suggest['state'] == 'N') {
+            nSuggestList.add(suggest);
+          }
         }
-        if (suggest['state'] == 'N') {
-          nSuggestList.add(suggest);
-        }
-      }
+      });
+
       // lectureList = res.data['resultData'];
     }
   }
@@ -323,10 +326,10 @@ class _SuggestionsState extends State<Suggestions> {
                           isProcess
                               ? ListView.builder(
                                   shrinkWrap: true,
-                                  itemCount: ySuggestList.length,
+                                  itemCount: nSuggestList.length,
                                   itemBuilder: (context, index) {
                                     Map<String, dynamic> suggestList =
-                                        ySuggestList[index];
+                                        nSuggestList[index];
                                     String formattedDate =
                                         DateFormat('yyyy/MM/dd').format(
                                             DateTime.parse(
@@ -341,6 +344,104 @@ class _SuggestionsState extends State<Suggestions> {
                                     // String type = ySuggestList[index]['type'];
                                     // String content =
                                     //     ySuggestList[index]['content'];
+                                    return Container(
+                                      child: Table(
+                                        border: TableBorder(
+                                          verticalInside: BorderSide(
+                                            color: Color(0xffcfcfcf),
+                                            width: 1,
+                                          ),
+                                        ),
+                                        columnWidths: const {
+                                          0: FlexColumnWidth(3),
+                                          1: FlexColumnWidth(2),
+                                          2: FlexColumnWidth(4),
+                                        },
+                                        defaultVerticalAlignment:
+                                            TableCellVerticalAlignment.middle,
+                                        children: <TableRow>[
+                                          // tableData,
+                                          TableRow(children: [
+                                            TableCell(
+                                              child: Container(
+                                                height: 40,
+                                                child: Center(
+                                                  child: Text(
+                                                    formattedDate,
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            TableCell(
+                                              child: Container(
+                                                height: 40,
+                                                child: Center(
+                                                  child: Text(
+                                                    suggestList['type'],
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            TableCell(
+                                              child: InkWell(
+                                                onTap: () {
+                                                  Navigator.of(context)
+                                                      .push(MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        CheckSuggestion(
+                                                            isProcess:
+                                                                isProcess,
+                                                            suggestList:
+                                                                nSuggestList[
+                                                                    index]),
+                                                  ));
+                                                },
+                                                child: Container(
+                                                  height: 40,
+                                                  child: Center(
+                                                    child: Text(
+                                                      suggestList['content'],
+                                                      textAlign: TextAlign.end,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                        decoration:
+                                                            TextDecoration
+                                                                .underline,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ]),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                )
+                              : ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: ySuggestList.length,
+                                  itemBuilder: (context, index) {
+                                    Map<String, dynamic> suggestList =
+                                        ySuggestList[index];
+                                    String formattedDate =
+                                        DateFormat('yyyy/MM/dd').format(
+                                            DateTime.parse(
+                                                suggestList['createDate']));
+                                    // String createDate = nSuggestList[index]
+                                    //         ['createDate']
+                                    //     .toString(); //문자열로 변환
+                                    // DateTime dateTime = DateTime.parse(
+                                    //     createDate); //datetime객체로변환후 날짜정보추출
+                                    // String dateString =
+                                    //     '${dateTime.year}/${dateTime.month}/${dateTime.day}';
+                                    // String type = nSuggestList[index]['type'];
+                                    // String content =
+                                    //     nSuggestList[index]['content'];
                                     return Container(
                                       child: Table(
                                         border: TableBorder(
@@ -408,83 +509,6 @@ class _SuggestionsState extends State<Suggestions> {
                                                             TextDecoration
                                                                 .underline,
                                                       ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ]),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                )
-                              : ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: nSuggestList.length,
-                                  itemBuilder: (context, index) {
-                                    String createDate = nSuggestList[index]
-                                            ['createDate']
-                                        .toString(); //문자열로 변환
-                                    DateTime dateTime = DateTime.parse(
-                                        createDate); //datetime객체로변환후 날짜정보추출
-                                    String dateString =
-                                        '${dateTime.year}/${dateTime.month}/${dateTime.day}';
-                                    String type = nSuggestList[index]['type'];
-                                    String content =
-                                        nSuggestList[index]['content'];
-                                    return Container(
-                                      child: Table(
-                                        border: TableBorder(
-                                          verticalInside: BorderSide(
-                                            color: Color(0xffcfcfcf),
-                                            width: 1,
-                                          ),
-                                        ),
-                                        columnWidths: const {
-                                          0: FlexColumnWidth(3),
-                                          1: FlexColumnWidth(2),
-                                          2: FlexColumnWidth(4),
-                                        },
-                                        defaultVerticalAlignment:
-                                            TableCellVerticalAlignment.middle,
-                                        children: <TableRow>[
-                                          // tableData,
-                                          TableRow(children: [
-                                            TableCell(
-                                              child: Container(
-                                                height: 40,
-                                                child: Center(
-                                                  child: Text(
-                                                    dateString,
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            TableCell(
-                                              child: Container(
-                                                height: 40,
-                                                child: Center(
-                                                  child: Text(
-                                                    type,
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            TableCell(
-                                              child: Container(
-                                                height: 40,
-                                                child: Center(
-                                                  child: Text(
-                                                    content,
-                                                    textAlign: TextAlign.end,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                      decoration: TextDecoration
-                                                          .underline,
                                                     ),
                                                   ),
                                                 ),

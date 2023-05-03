@@ -693,7 +693,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 //Default Textstyle을 기본적으로 적용 - RichText는 기본스타일을 명시해줘야함
                 TextSpan(
                   //글자, ,문장을 모아 문단을 구성
-                  children: <TextSpan>[
+                  children: const <TextSpan>[
                     TextSpan(
                         text: '*',
                         style: TextStyle(
