@@ -41,7 +41,7 @@ class KioskMainState extends State<KioskMain> {
                   .inDays
                   .toString()) <
               7) {
-            newNotice = result.data['resultData'][0]['content'];
+            newNotice = result.data['resultData'][0]['title'];
           }
         }
       });
@@ -66,11 +66,6 @@ class KioskMainState extends State<KioskMain> {
       setState(() {
         lectureList = filteredLectures;
       });
-      // for (Map<String, dynamic> lecture in res.data['resultData']) {
-      //   if (lecture['progress'] == '등록') {
-      //     lectureList.add(lecture);
-      //   }
-      // }
     }
   }
 
@@ -258,7 +253,7 @@ class KioskMainState extends State<KioskMain> {
                     )
                   ],
                 ),
-                Container(
+                SizedBox(
                     height: 580.0,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
@@ -285,7 +280,7 @@ class KioskMainState extends State<KioskMain> {
                           Container(
                               width: 380,
                               height: 550,
-                              margin: EdgeInsets.only(left: 50),
+                              margin: EdgeInsets.fromLTRB(30.00, 0, 30.0, 0),
                               decoration: BoxDecoration(
                                 color: Colors.white.withOpacity(0.4),
                                 borderRadius: BorderRadius.circular(30),
@@ -350,12 +345,12 @@ class KioskMainState extends State<KioskMain> {
                                           style: myTextStyle,
                                           children: <TextSpan>[
                                             TextSpan(
-                                              text: '듣는 애들',
+                                              text: '10',
                                               style: myTextStyle.copyWith(
                                                   fontSize: 36.0),
                                             ),
                                             TextSpan(
-                                              text: ' / 전체 인',
+                                              text: ' / 전체 24 인',
                                               style: myTextStyle.copyWith(
                                                   fontWeight:
                                                       FontWeight.normal),
@@ -373,11 +368,11 @@ class KioskMainState extends State<KioskMain> {
                         // ));
                       },
                     )),
-                Container(
+                SizedBox(
+                  width: 170.0,
                   child: Image.asset(
                     'assets/img/whitelogo.png',
                   ),
-                  width: 170.0,
                 ),
               ],
             )));
