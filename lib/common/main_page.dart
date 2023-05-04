@@ -233,6 +233,7 @@ class MainPageState extends State<MainPage> {
                       children: [
                         SingleChildScrollView(
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
                                 margin: const EdgeInsets.only(right: 15),
@@ -242,13 +243,17 @@ class MainPageState extends State<MainPage> {
                                 ),
                               ),
                               Flexible(
-                                child: TextField(
-                                  decoration: InputDecoration(labelText: 'ID'),
-                                  onChanged: (text) {
-                                    setState(() {
-                                      id = text;
-                                    });
-                                  },
+                                child: SizedBox(
+                                  width: 300.0,
+                                  child: TextField(
+                                    decoration:
+                                        InputDecoration(labelText: 'ID'),
+                                    onChanged: (text) {
+                                      setState(() {
+                                        id = text;
+                                      });
+                                    },
+                                  ),
                                 ),
                               ),
                               Container(

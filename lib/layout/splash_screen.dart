@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'package:edu_application_pre/common/kiosk_main.dart';
 import 'package:edu_application_pre/common/main_page.dart';
 import 'package:edu_application_pre/layout/wave_widget.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
 import 'package:page_transition/page_transition.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -24,7 +26,11 @@ class SplashScreenState extends State<SplashScreen> {
             PageTransition(
                 type: PageTransitionType.fade,
                 reverseDuration: Duration(seconds: 3),
-                child: MainPage())));
+                child: (SharedPreferences.getInstance() as SharedPreferences)
+                            .getString('kioskData') ==
+                        null
+                    ? MainPage()
+                    : KioskMain())));
   }
 
   @override
