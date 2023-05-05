@@ -6,13 +6,13 @@ class AttendanceStatus extends StatefulWidget {
   AttendanceStatus({
     Key? key,
     required this.morning,
-    required this.evening,
+    required this.afternoon,
     required this.isAfternoon,
   }) : super(key: key);
 
-  //컬리브레이스를 가지고 있음 ->Key? , required가 붙어서 반드시 구현해야하는 알규먼트
-  final MyData morning;
-  final MyData evening;
+  //MyData = 컬리브레이스를 가지고 있음 ->Key? , required가 붙어서 반드시 구현해야하는 알규먼트
+  final Map<String, dynamic> morning;
+  final Map<String, dynamic> afternoon;
   final bool isAfternoon;
   static const routeName = "/attendance";
 
@@ -54,6 +54,10 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
 
   @override
   Widget build(BuildContext context) {
+    Color morningtitlecolor =
+        Color(int.parse('0xFF${widget.morning['color'].substring(1)}'));
+    Color afternoontitlecolor =
+        Color(int.parse('0xFF${widget.afternoon['color'].substring(1)}'));
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xff0099FF),
@@ -68,7 +72,7 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
         ),
       ),
       body: Padding(
-          padding: EdgeInsets.fromLTRB(15.0, 50.0, 15.0, 30.0),
+          padding: EdgeInsets.fromLTRB(0.0, 30.0, 0.0, 30.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -77,10 +81,10 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
                       padding: EdgeInsets.fromLTRB(30.0, 5.0, 30.0, 5.0),
                       height: 35,
                       decoration: BoxDecoration(
-                          color: Color(0xff0099ee),
+                          color: morningtitlecolor,
                           borderRadius: BorderRadius.circular(10)),
                       child: Text(
-                        widget.morning.lectureName,
+                        widget.morning['lectureName'],
                         style: TextStyle(
                           fontSize: 18,
                           color: Colors.white,
@@ -91,12 +95,10 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
                       padding: EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
                       height: 35,
                       decoration: BoxDecoration(
-                          color: Color(0xff0099ee),
-                          borderRadius: BorderRadius.horizontal(
-                            right: Radius.circular(10),
-                          )),
+                          color: afternoontitlecolor,
+                          borderRadius: BorderRadius.circular(10)),
                       child: Text(
-                        widget.evening.lectureName,
+                        widget.afternoon['lectureName'],
                         style: TextStyle(
                           fontSize: 18,
                           color: Colors.white,
@@ -107,6 +109,7 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
                 height: 30,
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
                     width: 78,
@@ -134,8 +137,9 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
                 height: 2,
               ),
               Expanded(
+                //스크롤되게
                 child: ListView.builder(
-                  shrinkWrap: true,
+                  shrinkWrap: true, //스크롤되게
                   itemCount: statuslist.length,
                   itemBuilder: (context, index) {
                     String? status = statuslist[index]['status'];
@@ -168,6 +172,7 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
                       width: 360,
                       height: 37,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
                             width: 78,
