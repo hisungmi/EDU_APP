@@ -339,16 +339,6 @@ class _SuggestionsState extends State<Suggestions> {
                                           DateFormat('yyyy/MM/dd').format(
                                               DateTime.parse(
                                                   suggestList['createDate']));
-                                      // String createDate = ySuggestList[index]
-                                      //         ['createDate']
-                                      //     .toString(); //문자열로 변환
-                                      // DateTime dateTime = DateTime.parse(
-                                      //     createDate); //datetime객체로변환후 날짜정보추출
-                                      // String dateString =
-                                      //     '${dateTime.year}/${dateTime.month}/${dateTime.day}';
-                                      // String type = ySuggestList[index]['type'];
-                                      // String content =
-                                      //     ySuggestList[index]['content'];
                                       return Container(
                                         child: Table(
                                           border: TableBorder(
@@ -449,18 +439,6 @@ class _SuggestionsState extends State<Suggestions> {
                                           DateFormat('yyyy/MM/dd').format(
                                               DateTime.parse(
                                                   suggestList['createDate']));
-                                      String content = suggestList['content']
-                                          .replaceAll('\n', ' ');
-                                      // String createDate = nSuggestList[index]
-                                      //         ['createDate']
-                                      //     .toString(); //문자열로 변환
-                                      // DateTime dateTime = DateTime.parse(
-                                      //     createDate); //datetime객체로변환후 날짜정보추출
-                                      // String dateString =
-                                      //     '${dateTime.year}/${dateTime.month}/${dateTime.day}';
-                                      // String type = nSuggestList[index]['type'];
-                                      // String content =
-                                      //     nSuggestList[index]['content'];
                                       return Container(
                                         child: Table(
                                           border: TableBorder(
@@ -521,7 +499,7 @@ class _SuggestionsState extends State<Suggestions> {
                                                     height: 40,
                                                     child: Center(
                                                       child: Text(
-                                                        content,
+                                                        suggestList['content'],
                                                         maxLines: 1,
                                                         textAlign:
                                                             TextAlign.end,

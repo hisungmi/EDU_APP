@@ -42,10 +42,6 @@ class _EnterSuggestionState extends State<EnterSuggestion> {
       'content': contentController.text,
     };
     var res = await post('/info/createSuggestPlan/', jsonEncode(data));
-    setState(() {
-      print('status ${res.statusCode}');
-      print('data ${res.data}');
-    });
   }
 
   @override

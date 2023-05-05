@@ -15,10 +15,11 @@ class MyProfilePage extends StatefulWidget {
 
 class _MyProfilePageState extends State<MyProfilePage> {
   bool isEdit = true;
+  TextEditingController numController =
+      TextEditingController(); //텍스트컨트롤러를 생성하여 필드에 할당
+  TextEditingController addressController = TextEditingController();
 
-  final numController = TextEditingController(); //텍스트컨트롤러를 생성하여 필드에 할당
-  final addController = TextEditingController();
-
+  String studentKey = '';
   String name = '';
   String id = '';
   String birth = '';
@@ -30,16 +31,17 @@ class _MyProfilePageState extends State<MyProfilePage> {
   String address = '';
   String profileImg = '';
   String parentKey = '';
+  String remark = '';
 
   void loadData() async {
     // 로컬 스토리지에서 데이터 불러오기
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userData = prefs.getString('userData');
-    print(userData);
     if (userData != null) {
-      Map<String, dynamic> dataMap = jsonDecode(userData);
+      Map<dynamic, dynamic> dataMap = jsonDecode(userData);
 
       setState(() {
+        studentKey = dataMap['studentKey'] ?? '';
         name = dataMap['name'] ?? '';
         id = dataMap['id'] ?? '';
         birth = dataMap['birth'] ?? '';
@@ -51,8 +53,30 @@ class _MyProfilePageState extends State<MyProfilePage> {
         address = dataMap['address'] ?? '';
         profileImg = dataMap['profileImg'] ?? '';
         parentKey = dataMap['parentKey'] ?? '';
+        remark = dataMap['remark'] ?? '';
       });
     }
+  }
+
+  Future<void> getSuggestList(
+      String studentKey, String grade, String remark, String school) async {
+    //data 맵 객체 생성시 매개변수로 전달
+    Map<String, dynamic> data = {
+      'studentKey': studentKey,
+      'grade': int.parse(grade), //int형으로 변환
+      'remark': remark,
+      'school': school,
+      'phone': numController.text,
+      'address': addressController.text,
+    };
+    var res = await post('/members/editStudent/', jsonEncode(data));
+    setState(() async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      //JSON문자열로 인코딩
+      String updateData = jsonEncode(res.data['resultData']);
+      //수정된 userData 다시 저장
+      prefs.setString('userData', updateData);
+    });
   }
 
   @override
@@ -60,19 +84,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
     super.initState();
     loadData();
   }
-
-  // Future<void> loadData() async {
-  //   // 로컬 스토리지에서 데이터 불러오기
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   final String? userJsonData = prefs.getString('userData');
-  //   print(userJsonData);
-  //   if (userJsonData != null) {
-  //     final Map<String, dynamic> userMapData = jsonDecode(userJsonData);
-  //     setState(() {
-  //       userData = UserData.fromJson(userMapData);
-  //     });
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +125,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   onPressed: () {
                     setState(() {
                       numController.text = phone;
-                      addController.text = address;
+                      addressController.text = address;
                       isEdit = !isEdit;
                     });
                   },
@@ -132,9 +143,10 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     onPressed: () {
                       setState(() {
-                        phone = numController.text;
-                        address = addController.text;
                         isEdit = !isEdit;
+                        phone = numController.text;
+                        address = addressController.text;
+                        getSuggestList(studentKey, grade, remark, school);
                       });
                     },
                     child: Text("완료",
@@ -202,7 +214,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           onPressed: () {
                             setState(() {
                               numController.text = phone;
-                              addController.text = address;
+                              addressController.text = address;
                               isEdit = !isEdit;
                             });
                           },
@@ -850,8 +862,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
                         hintStyle: TextStyle(color: Color(0xff9c9c9c))),
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly, //숫자만
-                      NumberFormatter(),
-                      LengthLimitingTextInputFormatter(13) //최대 13글자
+                      // NumberFormatter(),
+                      LengthLimitingTextInputFormatter(11) //최대 13글자
                     ],
                   )),
               SizedBox(
@@ -871,7 +883,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: TextField(
-                    controller: addController,
+                    controller: addressController,
                     maxLines: 5,
                     style: TextStyle(
                         overflow: TextOverflow.ellipsis,
@@ -963,7 +975,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   Container(
                     margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
                     child: Text(
-                      "010-7894-4949",
+                      emergency,
                       style: TextStyle(
                           color: Color(0xff9C9C9C),
                           fontWeight: FontWeight.w600),
