@@ -18,20 +18,22 @@ class SplashScreen extends StatefulWidget {
 class SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    super.initState();
-    Timer(
-        Duration(seconds: 3),
-        // SharedPreferences를 비롯한 비동기적으로 로드되는 객체를 사용할 때는 Future 객체가 완료될 때까지 기다리는 것이 중요
-        () async => Navigator.push(
-            context,
-            PageTransition(
-                type: PageTransitionType.fade,
-                reverseDuration: Duration(seconds: 3),
-                child: (await SharedPreferences.getInstance())
-                            .getString('kioskData') ==
-                        null
-                    ? MainPage()
-                    : KioskMain())));
+    Future.delayed(Duration(seconds: 3), () async {
+      final sharedPreferences = await SharedPreferences.getInstance();
+      final kioskData = sharedPreferences.getString('kioskData');
+      Widget child = kioskData == null ? MainPage() : KioskMain();
+
+      if (!mounted) return;
+      await Navigator.push(
+        context,
+        PageTransition(
+          type: PageTransitionType.fade,
+          reverseDuration: Duration(seconds: 3),
+          child: child,
+        ),
+      );
+      super.initState();
+    });
   }
 
   @override

@@ -31,6 +31,9 @@ class MainPageState extends State<MainPage> {
   void doLogin() async {
     // async await 잊지 말고 걸어주기!
     if (id == 'kiosk') {
+      final sharedPreferences = await SharedPreferences.getInstance();
+      sharedPreferences.setString('kioskData', 'kiosk');
+
       await Navigator.pushNamed(context, '/kiosk');
     } else {
       if (id == '') {
