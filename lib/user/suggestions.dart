@@ -140,7 +140,7 @@ class _SuggestionsState extends State<Suggestions> {
           ],
         ),
         body: Padding(
-          padding: EdgeInsets.fromLTRB(0.0, 90.0, 0.0, 0.0),
+          padding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -403,6 +403,7 @@ class _SuggestionsState extends State<Suggestions> {
                                                   child: Center(
                                                     child: Text(
                                                       suggestList['content'],
+                                                      maxLines: 1,
                                                       textAlign: TextAlign.end,
                                                       overflow:
                                                           TextOverflow.ellipsis,
@@ -501,6 +502,7 @@ class _SuggestionsState extends State<Suggestions> {
                                                   child: Center(
                                                     child: Text(
                                                       suggestList['content'],
+                                                      maxLines: 1,
                                                       textAlign: TextAlign.end,
                                                       overflow:
                                                           TextOverflow.ellipsis,
@@ -552,6 +554,9 @@ class _SuggestionsState extends State<Suggestions> {
                               fontWeight: FontWeight.bold),
                         )),
                   ),
+                ),
+                SizedBox(
+                  height: 50,
                 ),
               ],
             ),

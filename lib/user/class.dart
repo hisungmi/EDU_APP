@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:edu_application_pre/user/attendance_status.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../http_setup.dart';
 
 class Class extends StatefulWidget {
   const Class({Key? key}) : super(key: key);
@@ -8,158 +11,102 @@ class Class extends StatefulWidget {
   State<Class> createState() => _ClassState();
 }
 
-class MyData {
-  final String lectureName;
-  final String person;
-  final String place;
-  final String time;
-  final String color;
-
-  MyData(
-    this.lectureName,
-    this.person,
-    this.place,
-    this.time,
-    this.color,
-  );
-  //mydata변수에 각 샘플데이터 정의
-  //List<Map<String,String>>형식으로 받아와서 List<MyData>로 변환->fromMap() 생성자를 구현하여 Map 데이터를 MyData 객체로 변환
-  MyData.fromMap(Map<String, dynamic> map)
-      : lectureName = map['lectureName'],
-        place = map['place'],
-        time = map['time'],
-        color = map['color'],
-        person = map['person'];
-}
+// class MyData {
+//   final String lectureKey;
+//   final String person;
+//   final String place;
+//   final String time;
+//   final String color;
+//
+//   MyData(
+//     this.lectureKey,
+//     this.person,
+//     this.place,
+//     this.time,
+//     this.color,
+//   );
+//   //mydata변수에 각 샘플데이터 정의
+//   //List<Map<String,String>>형식으로 받아와서 List<MyData>로 변환->fromMap() 생성자를 구현하여 Map 데이터를 MyData 객체로 변환
+//   MyData.fromMap(Map<String, dynamic> map)
+//       : lectureKey = map['lectureKey'],
+//         place = map['place'],
+//         time = map['time'],
+//         color = map['color'],
+//         person = map['person'];
+// }
 
 class _ClassState extends State<Class> {
   bool isAfternoon = true;
+  static List<dynamic> morningDataList = [];
+  static List<dynamic> afternoonDataList = [];
+  Map<int, dynamic> day = {
+    1: '월요일',
+    2: '화요일',
+    3: '수요일',
+    4: '목요일',
+    5: '금요일',
+    6: '토요일',
+    7: '일요일',
+  };
+  String getDay(int dayNumber) {
+    return day[dayNumber];
+  }
 
-  final List<Map<String, dynamic>> morningdatalist = [
-    {
-      'lectureName': '대회버전1',
-      'person': 'chun',
-      'place': 'MAT',
-      'time': '수요일',
-      'color': 'e55c65'
-    },
-    {
-      'lectureName': '수능논술2',
-      'person': 'Kan',
-      'place': 'MIT',
-      'time': '목요일',
-      'color': 'cc6699'
-    },
-    {
-      'lectureName': '나답게사는법',
-      'person': 'Aan',
-      'place': 'SDF',
-      'time': '월요일',
-      'color': 'a4a6d2'
-    },
-    {
-      'lectureName': '화학과발명',
-      'person': 'dani',
-      'place': 'SKS',
-      'time': '금요일',
-      'color': '678cbf'
-    },
-    {
-      'lectureName': '조선의발자취',
-      'person': 'Anny',
-      'place': 'KOR',
-      'time': '토요일',
-      'color': '80bdca'
-    },
-    {
-      'lectureName': '수능영어1',
-      'person': 'jain',
-      'place': 'TIT',
-      'time': '금요일',
-      'color': 'eeb958'
-    },
-    {
-      'lectureName': '수능국어2',
-      'person': 'sin',
-      'place': 'IDS',
-      'time': '월요일',
-      'color': 'd57a7b'
-    },
-    {
-      'lectureName': '기하와벡터',
-      'person': 'rosa',
-      'place': 'NIT',
-      'time': '일요일',
-      'color': 'e39177'
-    },
-  ];
-  final List<Map<String, dynamic>> eveningdatalist = [
-    {
-      'lectureName': '수능수학',
-      'person': 'rosa',
-      'place': 'NIT',
-      'time': '화요일',
-      'color': 'e39177'
-    },
-    {
-      'lectureName': '수능국어2',
-      'person': 'sin',
-      'place': 'IDS',
-      'time': '목요일',
-      'color': 'd57a7b'
-    },
-    {
-      'lectureName': '수능영어1',
-      'person': 'jain',
-      'place': 'TIT',
-      'time': '금요일',
-      'color': 'eeb958'
-    },
-    {
-      'lectureName': '고려의발전',
-      'person': 'Anny',
-      'place': 'KOR',
-      'time': '토요일',
-      'color': '80bdca'
-    },
-    {
-      'lectureName': '물리적탐구',
-      'person': 'dani',
-      'place': 'SKS',
-      'time': '일요일',
-      'color': '678cbf'
-    },
-    {
-      'lectureName': '무슨수업',
-      'person': 'Aan',
-      'place': 'SDF',
-      'time': '월요일',
-      'color': 'a4a6d2'
-    },
-    {
-      'lectureName': '똑똑해지는법',
-      'person': 'Kan',
-      'place': 'MIT',
-      'time': '수요일',
-      'color': 'cc6699'
-    },
-    {
-      'lectureName': '대회버전2',
-      'person': 'chun',
-      'place': 'MAT',
-      'time': '수요일',
-      'color': 'e55c65'
-    },
-  ];
+  String studentKey = '';
+  Future<void> loadData() async {
+    // 로컬 스토리지에서 데이터 불러오기
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userData = prefs.getString('userData');
+    if (userData != null) {
+      Map<String, dynamic> dataMap = jsonDecode(userData);
+      setState(() {
+        studentKey = dataMap['studentKey'] ?? '';
+      });
+    }
+    // await getLectureList(studentKey);
+  }
+
+  Future<void> getLectureList() async {
+    Map<String, dynamic> data = {
+      'userKey': '',
+      'roomKey': '',
+      'roomName': '',
+      'lectureName': '',
+      'target': '',
+    };
+    afternoonDataList = [];
+    morningDataList = [];
+    var res = await post('/lectures/getLectureList/', jsonEncode(data));
+    if (res.statusCode == 200) {
+      setState(() {
+        for (Map<String, dynamic> lecture in res.data['resultData']) {
+          int startTime = int.parse(lecture['startTime'].substring(0, 2));
+
+          if (lecture['progress'] == "등록" && startTime >= 13) {
+            afternoonDataList.add(lecture);
+          } else if (lecture['progress'] == "등록" && startTime < 13) {
+            morningDataList.add(lecture);
+          }
+        }
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+    getLectureList();
+  }
 
   //강의 데이터 변수
   @override
   Widget build(BuildContext context) {
     //list를 MyData클래스의 list로 변환, fromMap으로 Map을 MyData객체로 변환, toList로 map()에서 반환된 Iterable을 리스트로 변환
-    List<MyData> myeveninglist =
-        eveningdatalist.map((data) => MyData.fromMap(data)).toList();
-    List<MyData> mymorninglist =
-        morningdatalist.map((data) => MyData.fromMap(data)).toList();
+    // List<MyData> myeveninglist =
+    //     eveningdatalist.map((data) => MyData.fromMap(data)).toList();
+    // List<MyData> mymorninglist =
+    //     morningdatalist.map((data) => MyData.fromMap(data)).toList();
 
     return Scaffold(
         appBar: AppBar(
@@ -287,13 +234,16 @@ class _ClassState extends State<Class> {
                   ? Expanded(
                       child: ListView.builder(
                         shrinkWrap: true,
-                        itemCount: mymorninglist.length,
+                        itemCount: afternoonDataList.length,
                         itemBuilder: (context, index) {
-                          MyData data = myeveninglist[index];
+                          Map<String, dynamic> lectureList =
+                              afternoonDataList[index];
                           //컬러타입변환 inp.parse(), 16진수로 표현된 색상코드를 읽어와 알파값을 255로 설정한 color객체 생성
                           // 16진수를 10진수 정수형으로 변환과정  '0xff000000' 은 color에 알파값은 필수, 알파값 = 투명도, 알파값을 255로 설정한 것
-                          Color color = Color(
-                              int.parse(data.color, radix: 16) + 0xFF000000);
+                          //문자열에서 첫번쨰 문자 #을 제거한 나머지 문자열로 색상코드앞에 0xFF를 붙인것 16진수 색상코드 만들기
+                          Color color = Color(int.parse(
+                              '0xFF${lectureList['color'].substring(1)}'));
+                          String getday = getDay(lectureList['day']);
                           return GestureDetector(
                             onTap: () {
                               setState(() {
@@ -302,8 +252,8 @@ class _ClassState extends State<Class> {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => AttendanceStatus(
                                       isAfternoon: isAfternoon,
-                                      morning: mymorninglist[index],
-                                      evening: myeveninglist[index])));
+                                      morning: morningDataList[index],
+                                      afternoon: afternoonDataList[index])));
                             },
                             child: Container(
                               width: 358,
@@ -321,7 +271,7 @@ class _ClassState extends State<Class> {
                                     alignment: Alignment.centerLeft,
                                     width: 110,
                                     child: Text(
-                                      data.time,
+                                      getday,
                                       style: TextStyle(
                                           fontSize: 18, color: Colors.white),
                                     ),
@@ -330,10 +280,9 @@ class _ClassState extends State<Class> {
                                     width: 115,
                                     alignment: Alignment.center,
                                     child: AutoSizeText(
-                                      data.lectureName,
+                                      lectureList['lectureName'],
                                       overflow: TextOverflow.ellipsis,
-                                      maxLines: 2,
-                                      minFontSize: 14,
+                                      maxLines: 1,
                                       style: TextStyle(
                                           fontSize: 18, color: Colors.white),
                                     ),
@@ -360,7 +309,7 @@ class _ClassState extends State<Class> {
                                                 ),
                                               ),
                                               TextSpan(
-                                                text: data.place,
+                                                text: lectureList['roomName'],
                                                 style: TextStyle(
                                                   overflow:
                                                       TextOverflow.ellipsis,
@@ -382,7 +331,8 @@ class _ClassState extends State<Class> {
                                                 ),
                                               ),
                                               TextSpan(
-                                                text: data.person,
+                                                text:
+                                                    lectureList['teacherName'],
                                                 style: TextStyle(
                                                   overflow:
                                                       TextOverflow.ellipsis,
@@ -406,12 +356,14 @@ class _ClassState extends State<Class> {
                   : Expanded(
                       child: ListView.builder(
                         shrinkWrap: true,
-                        itemCount: mymorninglist.length,
+                        itemCount: morningDataList.length,
                         itemBuilder: (context, index) {
-                          MyData data = mymorninglist[index];
+                          Map<String, dynamic> lectureList =
+                              morningDataList[index];
                           //컬러타입변환 inp.parse()
-                          Color color = Color(
-                              int.parse(data.color, radix: 16) + 0xFF000000);
+                          Color color = Color(int.parse(
+                              '0xFF${lectureList['color'].substring(1)}'));
+                          String getday = getDay(lectureList['day']);
                           return GestureDetector(
                             onTap: () {
                               setState(() {
@@ -419,8 +371,8 @@ class _ClassState extends State<Class> {
                               });
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => AttendanceStatus(
-                                        morning: mymorninglist[index],
-                                        evening: myeveninglist[index],
+                                        morning: morningDataList[index],
+                                        afternoon: afternoonDataList[index],
                                         isAfternoon: isAfternoon,
                                       )));
                             },
@@ -440,7 +392,7 @@ class _ClassState extends State<Class> {
                                     alignment: Alignment.centerLeft,
                                     width: 110,
                                     child: Text(
-                                      data.time,
+                                      getday,
                                       style: TextStyle(
                                           fontSize: 18, color: Colors.white),
                                     ),
@@ -449,7 +401,7 @@ class _ClassState extends State<Class> {
                                     width: 115,
                                     alignment: Alignment.center,
                                     child: AutoSizeText(
-                                      data.lectureName,
+                                      lectureList['lectureName'],
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 2,
                                       minFontSize: 14,
@@ -479,7 +431,7 @@ class _ClassState extends State<Class> {
                                                 ),
                                               ),
                                               TextSpan(
-                                                text: data.place,
+                                                text: lectureList['roomName'],
                                                 style: TextStyle(
                                                   overflow:
                                                       TextOverflow.ellipsis,
@@ -501,7 +453,8 @@ class _ClassState extends State<Class> {
                                                 ),
                                               ),
                                               TextSpan(
-                                                text: data.person,
+                                                text:
+                                                    lectureList['teacherName'],
                                                 style: TextStyle(
                                                   overflow:
                                                       TextOverflow.ellipsis,
