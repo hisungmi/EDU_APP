@@ -57,7 +57,8 @@ class MyHomePage extends StatelessWidget {
         title: InkWell(
           //기본적인 클릭이벤트들이 내장되어있음, 애니메이션도 기본 없애려면 Colors.transparent 정의,
           onTap: () {
-            Navigator.pushNamed(context, '/home');
+            Navigator.pushNamedAndRemoveUntil(
+                context, "/home", (route) => false);
           },
           child: Image.asset(
             "assets/img/whitelogo.png",

@@ -101,6 +101,7 @@ class _SuggestionsState extends State<Suggestions> {
           if (suggest['state'] == 'N') {
             nSuggestList.add(suggest);
           }
+          print(nSuggestList);
         }
       });
 
@@ -120,7 +121,9 @@ class _SuggestionsState extends State<Suggestions> {
         appBar: AppBar(
           title: InkWell(
             onTap: () {
-              Navigator.pushNamed(context, '/home');
+              //현재 스택에서 모든 페이지를 제거하고 새 페이지를 스택에 추가
+              Navigator.pushNamedAndRemoveUntil(
+                  context, "/home", (route) => false);
             },
             child: Image.asset(
               "assets/img/whitelogo.png",
@@ -241,7 +244,7 @@ class _SuggestionsState extends State<Suggestions> {
                   Container(
                       height: 450,
                       margin: EdgeInsets.fromLTRB(25.0, 29.0, 25.0, 0),
-                      padding: EdgeInsets.fromLTRB(10.0, 40.0, 10.0, 10.0),
+                      padding: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 20.0),
                       decoration: BoxDecoration(
                         border: Border.all(
                           width: 2,
@@ -324,203 +327,200 @@ class _SuggestionsState extends State<Suggestions> {
                             ],
                           ),
                           isProcess
-                              ? ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: nSuggestList.length,
-                                  itemBuilder: (context, index) {
-                                    Map<String, dynamic> suggestList =
-                                        nSuggestList[index];
-                                    String formattedDate =
-                                        DateFormat('yyyy/MM/dd').format(
-                                            DateTime.parse(
-                                                suggestList['createDate']));
-                                    // String createDate = ySuggestList[index]
-                                    //         ['createDate']
-                                    //     .toString(); //문자열로 변환
-                                    // DateTime dateTime = DateTime.parse(
-                                    //     createDate); //datetime객체로변환후 날짜정보추출
-                                    // String dateString =
-                                    //     '${dateTime.year}/${dateTime.month}/${dateTime.day}';
-                                    // String type = ySuggestList[index]['type'];
-                                    // String content =
-                                    //     ySuggestList[index]['content'];
-                                    return Container(
-                                      child: Table(
-                                        border: TableBorder(
-                                          verticalInside: BorderSide(
-                                            color: Color(0xffcfcfcf),
-                                            width: 1,
+                              ? Expanded(
+                                  //컨테이너 크기에 맞게 리스트 뷰어가 스크롤됨 지리네
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: nSuggestList.length,
+                                    itemBuilder: (context, index) {
+                                      Map<String, dynamic> suggestList =
+                                          nSuggestList[index];
+                                      String formattedDate =
+                                          DateFormat('yyyy/MM/dd').format(
+                                              DateTime.parse(
+                                                  suggestList['createDate']));
+                                      return Container(
+                                        child: Table(
+                                          border: TableBorder(
+                                            verticalInside: BorderSide(
+                                              color: Color(0xffcfcfcf),
+                                              width: 1,
+                                            ),
                                           ),
-                                        ),
-                                        columnWidths: const {
-                                          0: FlexColumnWidth(3),
-                                          1: FlexColumnWidth(2),
-                                          2: FlexColumnWidth(4),
-                                        },
-                                        defaultVerticalAlignment:
-                                            TableCellVerticalAlignment.middle,
-                                        children: <TableRow>[
-                                          // tableData,
-                                          TableRow(children: [
-                                            TableCell(
-                                              child: Container(
-                                                height: 40,
-                                                child: Center(
-                                                  child: Text(
-                                                    formattedDate,
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            TableCell(
-                                              child: Container(
-                                                height: 40,
-                                                child: Center(
-                                                  child: Text(
-                                                    suggestList['type'],
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            TableCell(
-                                              child: InkWell(
-                                                onTap: () {
-                                                  Navigator.of(context)
-                                                      .push(MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        CheckSuggestion(
-                                                            isProcess:
-                                                                isProcess,
-                                                            suggestList:
-                                                                nSuggestList[
-                                                                    index]),
-                                                  ));
-                                                },
+                                          columnWidths: const {
+                                            0: FlexColumnWidth(3),
+                                            1: FlexColumnWidth(2),
+                                            2: FlexColumnWidth(4),
+                                          },
+                                          defaultVerticalAlignment:
+                                              TableCellVerticalAlignment.middle,
+                                          children: <TableRow>[
+                                            // tableData,
+                                            TableRow(children: [
+                                              TableCell(
                                                 child: Container(
                                                   height: 40,
                                                   child: Center(
                                                     child: Text(
-                                                      suggestList['content'],
-                                                      maxLines: 1,
-                                                      textAlign: TextAlign.end,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                        decoration:
-                                                            TextDecoration
-                                                                .underline,
+                                                      formattedDate,
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              TableCell(
+                                                child: Container(
+                                                  height: 40,
+                                                  child: Center(
+                                                    child: Text(
+                                                      suggestList['type'],
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              TableCell(
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    Navigator.of(context)
+                                                        .push(MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          CheckSuggestion(
+                                                              isProcess:
+                                                                  isProcess,
+                                                              suggestList:
+                                                                  nSuggestList[
+                                                                      index]),
+                                                    ));
+                                                  },
+                                                  child: Container(
+                                                    height: 40,
+                                                    padding:
+                                                        EdgeInsets.fromLTRB(
+                                                            10.0,
+                                                            0.0,
+                                                            0.0,
+                                                            10.0),
+                                                    child: Center(
+                                                      child: Text(
+                                                        suggestList['content'],
+                                                        maxLines: 1,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: TextStyle(
+                                                          decoration:
+                                                              TextDecoration
+                                                                  .underline,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                          ]),
-                                        ],
-                                      ),
-                                    );
-                                  },
+                                            ]),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 )
-                              : ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: ySuggestList.length,
-                                  itemBuilder: (context, index) {
-                                    Map<String, dynamic> suggestList =
-                                        ySuggestList[index];
-                                    String formattedDate =
-                                        DateFormat('yyyy/MM/dd').format(
-                                            DateTime.parse(
-                                                suggestList['createDate']));
-                                    // String createDate = nSuggestList[index]
-                                    //         ['createDate']
-                                    //     .toString(); //문자열로 변환
-                                    // DateTime dateTime = DateTime.parse(
-                                    //     createDate); //datetime객체로변환후 날짜정보추출
-                                    // String dateString =
-                                    //     '${dateTime.year}/${dateTime.month}/${dateTime.day}';
-                                    // String type = nSuggestList[index]['type'];
-                                    // String content =
-                                    //     nSuggestList[index]['content'];
-                                    return Container(
-                                      child: Table(
-                                        border: TableBorder(
-                                          verticalInside: BorderSide(
-                                            color: Color(0xffcfcfcf),
-                                            width: 1,
+                              : Expanded(
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: ySuggestList.length,
+                                    itemBuilder: (context, index) {
+                                      Map<String, dynamic> suggestList =
+                                          ySuggestList[index];
+                                      String formattedDate =
+                                          DateFormat('yyyy/MM/dd').format(
+                                              DateTime.parse(
+                                                  suggestList['createDate']));
+                                      return Container(
+                                        child: Table(
+                                          border: TableBorder(
+                                            verticalInside: BorderSide(
+                                              color: Color(0xffcfcfcf),
+                                              width: 1,
+                                            ),
                                           ),
-                                        ),
-                                        columnWidths: const {
-                                          0: FlexColumnWidth(3),
-                                          1: FlexColumnWidth(2),
-                                          2: FlexColumnWidth(4),
-                                        },
-                                        defaultVerticalAlignment:
-                                            TableCellVerticalAlignment.middle,
-                                        children: <TableRow>[
-                                          // tableData,
-                                          TableRow(children: [
-                                            TableCell(
-                                              child: Container(
-                                                height: 40,
-                                                child: Center(
-                                                  child: Text(
-                                                    formattedDate,
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            TableCell(
-                                              child: Container(
-                                                height: 40,
-                                                child: Center(
-                                                  child: Text(
-                                                    suggestList['type'],
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            TableCell(
-                                              child: InkWell(
-                                                onTap: () {
-                                                  Navigator.of(context)
-                                                      .push(MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        CheckSuggestion(
-                                                            isProcess:
-                                                                isProcess,
-                                                            suggestList:
-                                                                ySuggestList[
-                                                                    index]),
-                                                  ));
-                                                },
+                                          columnWidths: const {
+                                            0: FlexColumnWidth(3),
+                                            1: FlexColumnWidth(2),
+                                            2: FlexColumnWidth(4),
+                                          },
+                                          defaultVerticalAlignment:
+                                              TableCellVerticalAlignment.middle,
+                                          children: <TableRow>[
+                                            // tableData,
+                                            TableRow(children: [
+                                              TableCell(
                                                 child: Container(
                                                   height: 40,
                                                   child: Center(
                                                     child: Text(
-                                                      suggestList['content'],
-                                                      maxLines: 1,
-                                                      textAlign: TextAlign.end,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                        decoration:
-                                                            TextDecoration
-                                                                .underline,
+                                                      formattedDate,
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              TableCell(
+                                                child: Container(
+                                                  height: 40,
+                                                  child: Center(
+                                                    child: Text(
+                                                      suggestList['type'],
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              TableCell(
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    Navigator.of(context)
+                                                        .push(MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          CheckSuggestion(
+                                                              isProcess:
+                                                                  isProcess,
+                                                              suggestList:
+                                                                  ySuggestList[
+                                                                      index]),
+                                                    ));
+                                                  },
+                                                  child: Container(
+                                                    height: 40,
+                                                    child: Center(
+                                                      child: Text(
+                                                        suggestList['content'],
+                                                        maxLines: 1,
+                                                        textAlign:
+                                                            TextAlign.end,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: TextStyle(
+                                                          decoration:
+                                                              TextDecoration
+                                                                  .underline,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                          ]),
-                                        ],
-                                      ),
-                                    );
-                                  },
+                                            ]),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ),
                         ],
                       )),

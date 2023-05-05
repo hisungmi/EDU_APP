@@ -1,8 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../http_setup.dart';
 
 class MyProfilePage extends StatefulWidget {
   const MyProfilePage({Key? key}) : super(key: key);
@@ -12,10 +15,11 @@ class MyProfilePage extends StatefulWidget {
 
 class _MyProfilePageState extends State<MyProfilePage> {
   bool isEdit = true;
+  TextEditingController numController =
+      TextEditingController(); //텍스트컨트롤러를 생성하여 필드에 할당
+  TextEditingController addressController = TextEditingController();
 
-  final numController = TextEditingController(); //텍스트컨트롤러를 생성하여 필드에 할당
-  final addController = TextEditingController();
-
+  String studentKey = '';
   String name = '';
   String id = '';
   String birth = '';
@@ -27,14 +31,17 @@ class _MyProfilePageState extends State<MyProfilePage> {
   String address = '';
   String profileImg = '';
   String parentKey = '';
+  String remark = '';
 
   void loadData() async {
     // 로컬 스토리지에서 데이터 불러오기
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userData = prefs.getString('userData');
     if (userData != null) {
-      Map<String, dynamic> dataMap = jsonDecode(userData);
+      Map<dynamic, dynamic> dataMap = jsonDecode(userData);
+
       setState(() {
+        studentKey = dataMap['studentKey'] ?? '';
         name = dataMap['name'] ?? '';
         id = dataMap['id'] ?? '';
         birth = dataMap['birth'] ?? '';
@@ -46,8 +53,30 @@ class _MyProfilePageState extends State<MyProfilePage> {
         address = dataMap['address'] ?? '';
         profileImg = dataMap['profileImg'] ?? '';
         parentKey = dataMap['parentKey'] ?? '';
+        remark = dataMap['remark'] ?? '';
       });
     }
+  }
+
+  Future<void> getSuggestList(
+      String studentKey, String grade, String remark, String school) async {
+    //data 맵 객체 생성시 매개변수로 전달
+    Map<String, dynamic> data = {
+      'studentKey': studentKey,
+      'grade': int.parse(grade), //int형으로 변환
+      'remark': remark,
+      'school': school,
+      'phone': numController.text,
+      'address': addressController.text,
+    };
+    var res = await post('/members/editStudent/', jsonEncode(data));
+    setState(() async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      //JSON문자열로 인코딩
+      String updateData = jsonEncode(res.data['resultData']);
+      //수정된 userData 다시 저장
+      prefs.setString('userData', updateData);
+    });
   }
 
   @override
@@ -56,19 +85,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
     loadData();
   }
 
-  // Future<void> loadData() async {
-  //   // 로컬 스토리지에서 데이터 불러오기
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   final String? userJsonData = prefs.getString('userData');
-  //   print(userJsonData);
-  //   if (userJsonData != null) {
-  //     final Map<String, dynamic> userMapData = jsonDecode(userJsonData);
-  //     setState(() {
-  //       userData = UserData.fromJson(userMapData);
-  //     });
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,7 +92,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
           ? AppBar(
               title: InkWell(
                 onTap: () {
-                  Navigator.pushNamed(context, '/home');
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, "/home", (route) => false);
                 },
                 child: Image.asset(
                   "assets/img/whitelogo.png",
@@ -108,7 +125,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   onPressed: () {
                     setState(() {
                       numController.text = phone;
-                      addController.text = address;
+                      addressController.text = address;
                       isEdit = !isEdit;
                     });
                   },
@@ -126,9 +143,10 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     onPressed: () {
                       setState(() {
-                        phone = numController.text;
-                        address = addController.text;
                         isEdit = !isEdit;
+                        phone = numController.text;
+                        address = addressController.text;
+                        getSuggestList(studentKey, grade, remark, school);
                       });
                     },
                     child: Text("완료",
@@ -196,100 +214,101 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           onPressed: () {
                             setState(() {
                               numController.text = phone;
-                              addController.text = address;
+                              addressController.text = address;
                               isEdit = !isEdit;
                             });
                           },
                         ),
                       )
-                    : Positioned(
-                        left: 113,
-                        top: 75,
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(40),
-                              border: Border.all(
-                                  width: 1, color: Color(0xff9c9c9c))),
-                          child: IconButton(
-                            padding: EdgeInsets.all(3),
-                            constraints: BoxConstraints(), //아이콘위젯 패딩아예없애는법
-                            icon: Icon(Icons.photo_camera),
-                            color: Color(0xff9C9C9C),
-                            onPressed: () {
-                              showModalBottomSheet(
-                                  //밑에서 열리는 메뉴
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return Container(
-                                        height: 200,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: Center(
-                                            child: Column(
-                                                mainAxisSize:
-                                                    MainAxisSize.min, //크기만큼만 차지
-                                                children: [
-                                              SizedBox(
-                                                //카드형식 높이주기위해 감쌈
-                                                height: 52,
-                                                child: Card(
-                                                  //카드형식
-                                                  elevation: 0,
-                                                  child: ListTile(
-                                                    leading: Icon(
-                                                        Icons.photo_camera),
-                                                    iconColor:
-                                                        Color(0xff9c9c9c),
-                                                    title: Text('카메라',
-                                                        style: TextStyle(
-                                                          color:
-                                                              Color(0xff9c9c9c),
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        )),
-                                                    subtitle:
-                                                        Divider(thickness: 1),
-                                                    onTap: () {},
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              SizedBox(
-                                                height: 52,
-                                                child: Card(
-                                                  elevation: 0,
-                                                  child: ListTile(
-                                                    leading: Icon(Icons.photo),
-                                                    iconColor:
-                                                        Color(0xff9c9c9c),
-                                                    title: Text('라이브러리',
-                                                        style: TextStyle(
-                                                          color:
-                                                              Color(0xff9c9c9c),
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        )),
-                                                    subtitle:
-                                                        Divider(thickness: 1),
-                                                    onTap: () {},
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 20,
-                                              ),
-                                            ])));
-                                  });
-                            },
-                          ),
-                        ),
-                      ),
+                    : Container(),
+                // : Positioned(
+                //     left: 113,
+                //     top: 75,
+                //     child: Container(
+                //       decoration: BoxDecoration(
+                //           color: Colors.white,
+                //           borderRadius: BorderRadius.circular(40),
+                //           border: Border.all(
+                //               width: 1, color: Color(0xff9c9c9c))),
+                //       child: IconButton(
+                //         padding: EdgeInsets.all(3),
+                //         constraints: BoxConstraints(), //아이콘위젯 패딩아예없애는법
+                //         icon: Icon(Icons.photo_camera),
+                //         color: Color(0xff9C9C9C),
+                //         onPressed: () {
+                //           showModalBottomSheet(
+                //               //밑에서 열리는 메뉴
+                //               context: context,
+                //               builder: (BuildContext context) {
+                //                 return Container(
+                //                     height: 200,
+                //                     decoration: BoxDecoration(
+                //                       color: Colors.white,
+                //                       borderRadius:
+                //                           BorderRadius.circular(10),
+                //                     ),
+                //                     child: Center(
+                //                         child: Column(
+                //                             mainAxisSize:
+                //                                 MainAxisSize.min, //크기만큼만 차지
+                //                             children: [
+                //                           SizedBox(
+                //                             //카드형식 높이주기위해 감쌈
+                //                             height: 52,
+                //                             child: Card(
+                //                               //카드형식
+                //                               elevation: 0,
+                //                               child: ListTile(
+                //                                 leading: Icon(
+                //                                     Icons.photo_camera),
+                //                                 iconColor:
+                //                                     Color(0xff9c9c9c),
+                //                                 title: Text('카메라',
+                //                                     style: TextStyle(
+                //                                       color:
+                //                                           Color(0xff9c9c9c),
+                //                                       fontWeight:
+                //                                           FontWeight.bold,
+                //                                     )),
+                //                                 subtitle:
+                //                                     Divider(thickness: 1),
+                //                                 onTap: () {},
+                //                               ),
+                //                             ),
+                //                           ),
+                //                           SizedBox(
+                //                             height: 10,
+                //                           ),
+                //                           SizedBox(
+                //                             height: 52,
+                //                             child: Card(
+                //                               elevation: 0,
+                //                               child: ListTile(
+                //                                 leading: Icon(Icons.photo),
+                //                                 iconColor:
+                //                                     Color(0xff9c9c9c),
+                //                                 title: Text('라이브러리',
+                //                                     style: TextStyle(
+                //                                       color:
+                //                                           Color(0xff9c9c9c),
+                //                                       fontWeight:
+                //                                           FontWeight.bold,
+                //                                     )),
+                //                                 subtitle:
+                //                                     Divider(thickness: 1),
+                //                                 onTap: () {},
+                //                               ),
+                //                             ),
+                //                           ),
+                //                           SizedBox(
+                //                             height: 20,
+                //                           ),
+                //                         ])));
+                //               });
+                //         },
+                //       ),
+                //     ),
+                //   ),
               ]),
               SizedBox(
                 height: 30.0,
@@ -423,7 +442,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           subtitle: Divider(thickness: 1),
                           onTap: () {
                             Navigator.pop(context);
-                            Navigator.pushNamed(context, '/qr');
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, "/qr", (route) => false);
                           },
                         ),
                       ),
@@ -448,7 +468,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           subtitle: Divider(thickness: 1),
                           onTap: () {
                             Navigator.pop(context);
-                            Navigator.pushNamed(context, '/class');
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, "/class", (route) => false);
                           },
                         ),
                       ),
@@ -521,7 +542,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           subtitle: Divider(thickness: 1),
                           onTap: () {
                             Navigator.pop(context);
-                            Navigator.pushNamed(context, '/suggestion');
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, "/suggestion", (route) => false);
                           },
                         ),
                       ),
@@ -563,7 +585,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
           borderRadius: BorderRadius.circular(500),
           border: Border.all(width: 2, color: Color(0xff9c9c9c))),
       child: CircleAvatar(
-        backgroundImage: AssetImage('assets/img/profilebasic.png'),
+        backgroundImage: profileImg.isNotEmpty
+            ? Image.network(baseUrl + profileImg).image
+            : Image.asset('assets/img/profilebasic.png').image,
         radius: 55.0,
       ),
     );
@@ -838,8 +862,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
                         hintStyle: TextStyle(color: Color(0xff9c9c9c))),
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly, //숫자만
-                      NumberFormatter(),
-                      LengthLimitingTextInputFormatter(13) //최대 13글자
+                      // NumberFormatter(),
+                      LengthLimitingTextInputFormatter(11) //최대 13글자
                     ],
                   )),
               SizedBox(
@@ -859,7 +883,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: TextField(
-                    controller: addController,
+                    controller: addressController,
                     maxLines: 5,
                     style: TextStyle(
                         overflow: TextOverflow.ellipsis,
@@ -951,7 +975,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   Container(
                     margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
                     child: Text(
-                      "010-7894-4949",
+                      emergency,
                       style: TextStyle(
                           color: Color(0xff9C9C9C),
                           fontWeight: FontWeight.w600),
