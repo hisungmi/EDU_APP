@@ -31,7 +31,8 @@ class _QrCheckState extends State<QrCheck> {
         isCount = true;
       });
   //초 세기 시작
-  void startTimer() {
+  //mounted : State 객체가 여전히 화면에 나타나 있는지 확인한 후, 그 후에 setState() 메소드를 호출하고 상태를 업데이트
+  void startTimer(mounted) {
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         seconds--; //1초에 하나씨 줄어듬
@@ -58,7 +59,7 @@ class _QrCheckState extends State<QrCheck> {
   @override
   void initState() {
     super.initState();
-    startTimer();
+    startTimer(mounted);
     loadData();
   }
 

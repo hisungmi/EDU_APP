@@ -84,7 +84,8 @@ class _EnterSuggestionState extends State<EnterSuggestion> {
               ),
               onPressed: () {
                 createSuggestList(studentKey, name);
-                Navigator.of(context).pop();
+                // Navigator.of(context).pop();
+                Navigator.pushReplacementNamed(context, '/suggestion');
               },
               child: Text("건의",
                   style: TextStyle(

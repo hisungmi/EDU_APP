@@ -112,7 +112,8 @@ class _ClassState extends State<Class> {
         appBar: AppBar(
           title: InkWell(
             onTap: () {
-              Navigator.pushNamed(context, '/home');
+              Navigator.pushNamedAndRemoveUntil(
+                  context, "/home", (route) => false);
             },
             child: Image.asset(
               "assets/img/whitelogo.png",

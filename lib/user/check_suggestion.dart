@@ -31,6 +31,7 @@ class CheckSuggestion extends StatelessWidget {
             icon: FaIcon(FontAwesomeIcons.angleLeft),
             color: Colors.white,
             onPressed: () {
+              //현재 페이지를 스택에서 제거하고 이전 페이지로 돌아감
               Navigator.pop(context);
             },
           ),
