@@ -59,7 +59,7 @@ class _ScheduleState extends State<Schedule> {
                     },
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),
