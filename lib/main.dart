@@ -6,7 +6,6 @@ import 'package:edu_application_pre/user/myprofile_page.dart';
 import 'package:edu_application_pre/user/qr.dart';
 import 'package:edu_application_pre/user/schedule.dart';
 import 'package:edu_application_pre/user/suggestions.dart';
-import 'package:edu_application_pre/user/task.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -33,9 +32,10 @@ class MyApp extends StatelessWidget {
         '/qr': (context) => QrCheck(),
         '/suggestion': (context) => Suggestions(),
         '/enter-suggestion': (context) => EnterSuggestion(),
-        '/class': (context) => Class(),
+        // '/class': (context) => Class(),
         '/schedule': (context) => Schedule(),
-        '/task': (context) => Task(),
+        // '/task': (context) => Task(),
+        // '/exam': (context) => Exam(),
       },
       debugShowCheckedModeBanner: false,
       title: 'first app',
@@ -103,21 +103,36 @@ class MyHomePage extends StatelessWidget {
                 children: [
                   IconButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/class');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                Class(pageIndex: 'attendance')),
+                      );
                     },
                     icon: FaIcon(FontAwesomeIcons.clipboardCheck),
                     color: Color(0xff9c9c9c),
                     iconSize: 55,
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Class(pageIndex: 'exam')),
+                      );
+                    },
                     icon: FaIcon(FontAwesomeIcons.userPen),
                     color: Color(0xff9c9c9c),
                     iconSize: 55,
                   ),
                   IconButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/task');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Class(pageIndex: 'task')),
+                      );
                     },
                     icon: FaIcon(FontAwesomeIcons.book),
                     color: Color(0xff9c9c9c),
