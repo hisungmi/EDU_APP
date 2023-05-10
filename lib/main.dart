@@ -8,9 +8,12 @@ import 'package:edu_application_pre/user/schedule.dart';
 import 'package:edu_application_pre/user/suggestions.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => QrProvider()),
+  ], child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
