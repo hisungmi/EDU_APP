@@ -2,26 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Task extends StatefulWidget {
-  const Task({Key? key}) : super(key: key);
+  const Task(
+      {Key? key,
+      required this.morning,
+      required this.afternoon,
+      required this.isAfternoon})
+      : super(key: key);
 
+  final Map<String, dynamic> morning;
+  final Map<String, dynamic> afternoon;
+  final bool isAfternoon;
   @override
   State<Task> createState() => _TaskState();
 }
 
 class _TaskState extends State<Task> {
-  List<Map<String, String>> data = [
-    {
-      'title': '연습문제 1',
-      'date': '마감 5월 16일',
-    },
-    {
-      'title': '연습문제 2',
-      'date': '마감 5월 18일',
-    }
-  ];
+  @override
+  void initState() {
+    super.initState();
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
+    Map<String, dynamic> morningList = widget.morning;
+    Map<String, dynamic> afterList = widget.afternoon;
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Color(0xff0099FF),
@@ -59,17 +64,19 @@ class _TaskState extends State<Task> {
                 height: 35,
                 color: Color(0xff9c9c9c),
                 child: Center(
-                  child: Text('수능수학',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white)),
-                ),
+                    child: Text(
+                        widget.isAfternoon
+                            ? afterList['lectureName']
+                            : morningList['lectureName'],
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white))),
               ),
               SizedBox(
                 height: 15,
               ),
               Expanded(
                   child: ListView.builder(
-                      itemCount: 5,
+                      itemCount: 10,
                       itemBuilder: (context, index) {
                         return GestureDetector(
                           onTap: () {},

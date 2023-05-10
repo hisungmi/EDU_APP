@@ -1,39 +1,19 @@
 import 'dart:convert';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:edu_application_pre/user/attendance_status.dart';
+import 'package:edu_application_pre/user/exam.dart';
+import 'package:edu_application_pre/user/task.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../http_setup.dart';
 
 class Class extends StatefulWidget {
-  const Class({Key? key}) : super(key: key);
+  final String pageIndex;
+
+  const Class({Key? key, required this.pageIndex}) : super(key: key);
   @override
   State<Class> createState() => _ClassState();
 }
-
-// class MyData {
-//   final String lectureKey;
-//   final String person;
-//   final String place;
-//   final String time;
-//   final String color;
-//
-//   MyData(
-//     this.lectureKey,
-//     this.person,
-//     this.place,
-//     this.time,
-//     this.color,
-//   );
-//   //mydata변수에 각 샘플데이터 정의
-//   //List<Map<String,String>>형식으로 받아와서 List<MyData>로 변환->fromMap() 생성자를 구현하여 Map 데이터를 MyData 객체로 변환
-//   MyData.fromMap(Map<String, dynamic> map)
-//       : lectureKey = map['lectureKey'],
-//         place = map['place'],
-//         time = map['time'],
-//         color = map['color'],
-//         person = map['person'];
-// }
 
 class _ClassState extends State<Class> {
   bool isAfternoon = true;
@@ -48,6 +28,7 @@ class _ClassState extends State<Class> {
     6: '토요일',
     7: '일요일',
   };
+
   String getDay(int dayNumber) {
     return day[dayNumber];
   }
@@ -97,6 +78,9 @@ class _ClassState extends State<Class> {
     super.initState();
     loadData();
     getLectureList();
+    setState(() {
+      print('page: ${widget.pageIndex}');
+    });
   }
 
   //강의 데이터 변수
@@ -250,11 +234,27 @@ class _ClassState extends State<Class> {
                               setState(() {
                                 isAfternoon = true;
                               });
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => AttendanceStatus(
-                                      isAfternoon: isAfternoon,
-                                      morning: morningDataList[index],
-                                      afternoon: afternoonDataList[index])));
+                              //흑흑 중요한점!!! 배열의 길이가 다른경우 길이가 작은쪽에 맞추어 반복문을 실행한다.... 하 시방몰랐자나...
+                              //true 값을 보내니까 morning 데이터도 lectureList로 보내자.
+                              if (widget.pageIndex == 'attendance') {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => AttendanceStatus(
+                                        isAfternoon: isAfternoon,
+                                        morning: lectureList,
+                                        afternoon: lectureList)));
+                              } else if (widget.pageIndex == 'exam') {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => Exam(
+                                        isAfternoon: isAfternoon,
+                                        morning: lectureList,
+                                        afternoon: lectureList)));
+                              } else if (widget.pageIndex == 'task') {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => Task(
+                                        isAfternoon: isAfternoon,
+                                        morning: lectureList,
+                                        afternoon: lectureList)));
+                              }
                             },
                             child: Container(
                               width: 358,
@@ -370,12 +370,25 @@ class _ClassState extends State<Class> {
                               setState(() {
                                 isAfternoon = false;
                               });
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => AttendanceStatus(
-                                        morning: morningDataList[index],
-                                        afternoon: afternoonDataList[index],
+                              if (widget.pageIndex == 'attendance') {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => AttendanceStatus(
                                         isAfternoon: isAfternoon,
-                                      )));
+                                        morning: lectureList,
+                                        afternoon: lectureList)));
+                              } else if (widget.pageIndex == 'exam') {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => Exam(
+                                        isAfternoon: isAfternoon,
+                                        morning: lectureList,
+                                        afternoon: lectureList)));
+                              } else if (widget.pageIndex == 'task') {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => Task(
+                                        isAfternoon: isAfternoon,
+                                        morning: lectureList,
+                                        afternoon: lectureList)));
+                              }
                             },
                             child: Container(
                               width: 358,
