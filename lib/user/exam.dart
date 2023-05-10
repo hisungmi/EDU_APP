@@ -4,11 +4,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 class Exam extends StatefulWidget {
   const Exam(
       {Key? key,
-      required morning,
-      required afternoon,
-      required bool isAfternoon})
+      required this.morning,
+      required this.afternoon,
+      required this.isAfternoon})
       : super(key: key);
 
+  final Map<String, dynamic> morning;
+  final Map<String, dynamic> afternoon;
+  final bool isAfternoon;
   @override
   State<Exam> createState() => _ExamState();
 }
@@ -55,9 +58,10 @@ class _ExamState extends State<Exam> {
                 height: 35,
                 color: Color(0xff9c9c9c),
                 child: Center(
-                  child: Text(widget.isAfternoon
-                      ? afterList['lectureName']
-                      : morningList['lectureName'],,
+                  child: Text(
+                      widget.isAfternoon
+                          ? afterList['lectureName']
+                          : morningList['lectureName'],
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.white)),
                 ),
