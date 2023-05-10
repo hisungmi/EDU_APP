@@ -133,7 +133,7 @@ class _ClassState extends State<Class> {
           ],
         ),
         body: Padding(
-          padding: EdgeInsets.fromLTRB(16.0, 50.0, 16.0, 30.0),
+          padding: EdgeInsets.fromLTRB(16.0, 30.0, 16.0, 30.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

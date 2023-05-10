@@ -4,7 +4,9 @@ import 'package:edu_application_pre/user/class.dart';
 import 'package:edu_application_pre/user/enter_suggestion.dart';
 import 'package:edu_application_pre/user/myprofile_page.dart';
 import 'package:edu_application_pre/user/qr.dart';
+import 'package:edu_application_pre/user/schedule.dart';
 import 'package:edu_application_pre/user/suggestions.dart';
+import 'package:edu_application_pre/user/task.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -32,6 +34,8 @@ class MyApp extends StatelessWidget {
         '/suggestion': (context) => Suggestions(),
         '/enter-suggestion': (context) => EnterSuggestion(),
         '/class': (context) => Class(),
+        '/schedule': (context) => Schedule(),
+        '/task': (context) => Task(),
       },
       debugShowCheckedModeBanner: false,
       title: 'first app',
@@ -88,6 +92,11 @@ class MyHomePage extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/schedule');
+                  },
+                  child: Text('스케줄')),
               Row(
                 mainAxisAlignment: MainAxisAlignment
                     .spaceEvenly, //정렬, spaceAround: 간격의 절반 양끝 여백, spaceBetween: 여백x, spaceEvenly: 간격 만큼 여백
@@ -107,7 +116,9 @@ class MyHomePage extends StatelessWidget {
                     iconSize: 55,
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/task');
+                    },
                     icon: FaIcon(FontAwesomeIcons.book),
                     color: Color(0xff9c9c9c),
                     iconSize: 55,

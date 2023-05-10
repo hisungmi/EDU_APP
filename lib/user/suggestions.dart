@@ -101,7 +101,6 @@ class _SuggestionsState extends State<Suggestions> {
           if (suggest['state'] == 'N') {
             nSuggestList.add(suggest);
           }
-          print(nSuggestList);
         }
       });
 
