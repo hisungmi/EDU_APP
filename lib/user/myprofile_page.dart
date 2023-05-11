@@ -90,17 +90,18 @@ class _MyProfilePageState extends State<MyProfilePage> {
     return Scaffold(
       appBar: isEdit
           ? AppBar(
-              title: InkWell(
+              title: Text('마이페이지',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+              centerTitle: true, // 텍스트 중앙 정렬
+              leading: InkWell(
                 onTap: () {
                   Navigator.pushNamedAndRemoveUntil(
                       context, "/home", (route) => false);
                 },
                 child: Image.asset(
-                  "assets/img/whitelogo.png",
-                  height: 80,
+                  'assets/img/whitelogo.png',
                 ),
               ),
-              automaticallyImplyLeading: false, //기본 왼ㅉ고 토굴 안생기게
               backgroundColor: Color(0xff0099FF),
               toolbarHeight: 80,
               elevation: 0.0, //앱바 입체감 없애기
