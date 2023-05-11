@@ -67,14 +67,185 @@ class _ExamState extends State<Exam> {
                 ),
               ),
               SizedBox(
-                height: 15,
+                height: 20,
+              ),
+              Table(
+                columnWidths: const {
+                  0: FlexColumnWidth(3),
+                  1: FlexColumnWidth(3),
+                  2: FlexColumnWidth(2),
+                  3: FlexColumnWidth(2),
+                },
+                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                children: <TableRow>[
+                  // tableData,
+                  TableRow(children: [
+                    TableCell(
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(
+                                    width: 2, color: Color(0xff9c9c9c)))),
+                        height: 40,
+                        child: Center(
+                          child: Text(
+                            "시험 일자",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Color(0xff565656)),
+                          ),
+                        ),
+                      ),
+                    ),
+                    TableCell(
+                      child: Container(
+                        height: 40,
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(
+                                    width: 2, color: Color(0xff9c9c9c)))),
+                        child: Center(
+                          child: Text(
+                            "시험 유형",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color(0xff565656),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    TableCell(
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(
+                                    width: 2, color: Color(0xff9c9c9c)))),
+                        height: 40,
+                        child: Center(
+                          child: Text(
+                            "",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Color(0xff565656)),
+                          ),
+                        ),
+                      ),
+                    ),
+                    TableCell(
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(
+                                    width: 2, color: Color(0xff9c9c9c)))),
+                        height: 40,
+                        child: Center(
+                          child: Text(
+                            "상태",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Color(0xff565656)),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ]),
+                ],
               ),
               Expanded(
                   child: ListView.builder(
-                      itemCount: 5,
-                      itemBuilder: (context, index) {
-                        return Container();
-                      }))
+                shrinkWrap: true,
+                itemCount: 4,
+                itemBuilder: (context, index) {
+                  return Container(
+                    child: Table(
+                      columnWidths: const {
+                        0: FlexColumnWidth(3),
+                        1: FlexColumnWidth(3),
+                        2: FlexColumnWidth(2),
+                        3: FlexColumnWidth(2),
+                      },
+                      defaultVerticalAlignment:
+                          TableCellVerticalAlignment.middle,
+                      children: <TableRow>[
+                        // tableData,
+                        TableRow(children: [
+                          TableCell(
+                              child: Container(
+                            decoration: BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(
+                                        width: 1, color: Color(0xff9c9c9c)))),
+                            height: 55,
+                            child: Center(
+                              child: Text(
+                                "12월09일 14시",
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          )),
+                          TableCell(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                      bottom: BorderSide(
+                                          width: 1, color: Color(0xff9c9c9c)))),
+                              height: 55,
+                              child: Center(
+                                child: Text(
+                                  '대면 TEST1쏼라쏼라쏼라',
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          TableCell(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                      bottom: BorderSide(
+                                          width: 1, color: Color(0xff9c9c9c)))),
+                              height: 55,
+                              child: Center(
+                                child: Text(
+                                  "100",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          TableCell(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                      bottom: BorderSide(
+                                          width: 1, color: Color(0xff9c9c9c)))),
+                              height: 55,
+                              child: Center(
+                                child: Text(
+                                  "완료",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ]),
+                      ],
+                    ),
+                  );
+                },
+              ))
             ],
           ),
         ));
