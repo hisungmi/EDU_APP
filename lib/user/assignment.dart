@@ -1,8 +1,12 @@
+import 'dart:convert';
+import 'package:edu_application_pre/http_setup.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 
-class Task extends StatefulWidget {
-  const Task(
+class Assignment extends StatefulWidget {
+  const Assignment(
       {Key? key,
       required this.morning,
       required this.afternoon,
@@ -13,20 +17,45 @@ class Task extends StatefulWidget {
   final Map<String, dynamic> afternoon;
   final bool isAfternoon;
   @override
-  State<Task> createState() => _TaskState();
+  State<Assignment> createState() => _TaskState();
 }
 
-class _TaskState extends State<Task> {
+class _TaskState extends State<Assignment> {
+  bool isSubmission = false;
+  static List<dynamic> assignmentList = [];
+
+  Future<void> getAssignList() async {
+    Map<String, dynamic> data = {
+      'lectureKey': widget.isAfternoon
+          ? widget.afternoon['lectureKey']
+          : widget.morning['lectureKey'],
+    };
+
+    assignmentList = [];
+    var res = await post('/lectures/getAssignList/', jsonEncode(data));
+    if (res.statusCode == 200) {
+      setState(() {
+        for (Map<String, dynamic> assignment in res.data['resultData']) {
+          assignmentList.add(assignment);
+        }
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    setState(() {});
+    initializeDateFormatting('ko_KR'); //한글 로케일 데이터를 초기화 ( 오전,오후로 사용하려고
+    setState(() {
+      getAssignList();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     Map<String, dynamic> morningList = widget.morning;
     Map<String, dynamic> afterList = widget.afternoon;
+    bool isAfternoon = widget.isAfternoon;
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Color(0xff0099FF),
@@ -44,7 +73,7 @@ class _TaskState extends State<Task> {
               color: Colors.white,
               onPressed: () {
                 //현재 페이지를 스택에서 제거하고 이전 페이지로 돌아감
-                Navigator.pop(context);
+                Navigator.of(context).pop(null);
               },
             ),
           ),
@@ -65,7 +94,7 @@ class _TaskState extends State<Task> {
                 color: Color(0xff9c9c9c),
                 child: Center(
                     child: Text(
-                        widget.isAfternoon
+                        isAfternoon
                             ? afterList['lectureName']
                             : morningList['lectureName'],
                         textAlign: TextAlign.center,
@@ -76,8 +105,13 @@ class _TaskState extends State<Task> {
               ),
               Expanded(
                   child: ListView.builder(
-                      itemCount: 10,
+                      shrinkWrap: true,
+                      itemCount: assignmentList.length,
                       itemBuilder: (context, index) {
+                        Map<String, dynamic> assignList = assignmentList[index];
+                        String formattedDate =
+                            DateFormat('MM월 dd일 a h:mm', 'ko_KR')
+                                .format(DateTime.parse(assignList['deadLine']));
                         return GestureDetector(
                           onTap: () {},
                           child: Container(
@@ -89,11 +123,11 @@ class _TaskState extends State<Task> {
                                         width: 1, color: Color(0xff9c9c9c)))),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: const [
+                              children: [
                                 Row(
                                   children: [
                                     SizedBox(
-                                      width: 10,
+                                      width: 15,
                                     ),
                                     Center(
                                       child: Icon(
@@ -114,14 +148,14 @@ class _TaskState extends State<Task> {
                                         Center(
                                           child: Text.rich(TextSpan(children: [
                                             TextSpan(
-                                              text: '연습문제 2 \n',
+                                              text: ('${assignList['type']}\n'),
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w500,
                                                 fontSize: 14,
                                               ),
                                             ),
                                             TextSpan(
-                                                text: '마감 5월 16일 11:59',
+                                                text: formattedDate,
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.w500,
                                                   fontSize: 12,
@@ -132,10 +166,36 @@ class _TaskState extends State<Task> {
                                     ),
                                   ],
                                 ),
-                                Icon(
-                                  FontAwesomeIcons.angleRight,
-                                  size: 28.0,
-                                  color: Color(0xffA9A9A9),
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 57,
+                                      height: 19,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(7),
+                                        color: Color(0xff9c9c9c),
+                                      ),
+                                      child: Text(
+                                        isSubmission ? '제출됨' : '미제출',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.white),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    Icon(
+                                      FontAwesomeIcons.angleRight,
+                                      size: 28.0,
+                                      color: Color(0xffA9A9A9),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),

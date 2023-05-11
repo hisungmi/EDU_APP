@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:edu_application_pre/user/attendance_status.dart';
 import 'package:edu_application_pre/user/exam.dart';
-import 'package:edu_application_pre/user/task.dart';
+import 'package:edu_application_pre/user/assignment.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../http_setup.dart';
@@ -91,7 +91,7 @@ class _ClassState extends State<Class> {
       title = '출결현황';
     } else if (widget.pageIndex == 'exam') {
       title = '시험';
-    } else if (widget.pageIndex == 'task') {
+    } else if (widget.pageIndex == 'assignment') {
       title = '과제';
     }
     return Scaffold(
@@ -251,9 +251,9 @@ class _ClassState extends State<Class> {
                                         isAfternoon: isAfternoon,
                                         morning: lectureList,
                                         afternoon: lectureList)));
-                              } else if (widget.pageIndex == 'task') {
+                              } else if (widget.pageIndex == 'assignment') {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => Task(
+                                    builder: (context) => Assignment(
                                         isAfternoon: isAfternoon,
                                         morning: lectureList,
                                         afternoon: lectureList)));
@@ -385,9 +385,9 @@ class _ClassState extends State<Class> {
                                         isAfternoon: isAfternoon,
                                         morning: lectureList,
                                         afternoon: lectureList)));
-                              } else if (widget.pageIndex == 'task') {
+                              } else if (widget.pageIndex == 'assignment') {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => Task(
+                                    builder: (context) => Assignment(
                                         isAfternoon: isAfternoon,
                                         morning: lectureList,
                                         afternoon: lectureList)));

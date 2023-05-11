@@ -8,9 +8,12 @@ import 'package:edu_application_pre/user/schedule.dart';
 import 'package:edu_application_pre/user/suggestions.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+Future<void> main() async {
+  //MyHomePage 위젯에서 DateFormat 클래스를 사용하여 날짜와 시간을 표시할 때 한국어 로케일을 사용
+  await initializeDateFormatting('ko_KR');
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => QrProvider()),
   ], child: MyApp()));
@@ -146,7 +149,8 @@ class MyHomePage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Class(pageIndex: 'task')),
+                                builder: (context) =>
+                                    Class(pageIndex: 'assignment')),
                           );
                         },
                         icon: FaIcon(FontAwesomeIcons.book),
