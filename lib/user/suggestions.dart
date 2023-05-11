@@ -118,18 +118,18 @@ class _SuggestionsState extends State<Suggestions> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: InkWell(
+          title: Text('건의사항',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+          centerTitle: true, // 텍스트 중앙 정렬
+          leading: InkWell(
             onTap: () {
-              //현재 스택에서 모든 페이지를 제거하고 새 페이지를 스택에 추가
               Navigator.pushNamedAndRemoveUntil(
                   context, "/home", (route) => false);
             },
             child: Image.asset(
-              "assets/img/whitelogo.png",
-              height: 80,
+              'assets/img/whitelogo.png',
             ),
           ),
-          automaticallyImplyLeading: false, //기본 왼ㅉ고 토굴 안생기게
           backgroundColor: Color(0xff0099FF),
           toolbarHeight: 80,
           elevation: 0.0, //앱바 입체감 없애기

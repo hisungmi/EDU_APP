@@ -86,25 +86,28 @@ class _ClassState extends State<Class> {
   //강의 데이터 변수
   @override
   Widget build(BuildContext context) {
-    //list를 MyData클래스의 list로 변환, fromMap으로 Map을 MyData객체로 변환, toList로 map()에서 반환된 Iterable을 리스트로 변환
-    // List<MyData> myeveninglist =
-    //     eveningdatalist.map((data) => MyData.fromMap(data)).toList();
-    // List<MyData> mymorninglist =
-    //     morningdatalist.map((data) => MyData.fromMap(data)).toList();
-
+    String title = '';
+    if (widget.pageIndex == 'attendance') {
+      title = '출결현황';
+    } else if (widget.pageIndex == 'exam') {
+      title = '시험';
+    } else if (widget.pageIndex == 'task') {
+      title = '과제';
+    }
     return Scaffold(
         appBar: AppBar(
-          title: InkWell(
+          title: Text(title,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+          centerTitle: true, // 텍스트 중앙 정렬
+          leading: InkWell(
             onTap: () {
               Navigator.pushNamedAndRemoveUntil(
                   context, "/home", (route) => false);
             },
             child: Image.asset(
-              "assets/img/whitelogo.png",
-              height: 80,
+              'assets/img/whitelogo.png',
             ),
           ),
-          automaticallyImplyLeading: false, //기본 왼ㅉ고 토굴 안생기게
           backgroundColor: Color(0xff0099FF),
           toolbarHeight: 80,
           elevation: 0.0, //앱바 입체감 없애기

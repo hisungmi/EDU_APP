@@ -104,17 +104,18 @@ class _ScheduleState extends State<Schedule> {
 
     return Scaffold(
         appBar: AppBar(
-          title: InkWell(
+          title: Text('시간표',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+          centerTitle: true, // 텍스트 중앙 정렬
+          leading: InkWell(
             onTap: () {
               Navigator.pushNamedAndRemoveUntil(
                   context, "/home", (route) => false);
             },
             child: Image.asset(
-              "assets/img/whitelogo.png",
-              height: 80,
+              'assets/img/whitelogo.png',
             ),
           ),
-          automaticallyImplyLeading: false, //기본 왼ㅉ고 토굴 안생기게
           backgroundColor: Color(0xff0099FF),
           toolbarHeight: 80,
           elevation: 0.0, //앱바 입체감 없애기
