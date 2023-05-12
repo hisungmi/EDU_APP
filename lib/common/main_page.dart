@@ -34,7 +34,10 @@ class MainPageState extends State<MainPage> {
       final sharedPreferences = await SharedPreferences.getInstance();
       sharedPreferences.setString('kioskData', 'kiosk');
 
+      if (!mounted) return;
       await Navigator.pushNamed(context, '/kiosk');
+    } else if (id == 'test') {
+      await Navigator.pushNamed(context, '/test');
     } else {
       if (id == '') {
         showDialog(
@@ -120,6 +123,7 @@ class MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: GestureDetector(
         onTap: () {
           setState(() {
