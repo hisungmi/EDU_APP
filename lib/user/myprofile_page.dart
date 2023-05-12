@@ -90,17 +90,18 @@ class _MyProfilePageState extends State<MyProfilePage> {
     return Scaffold(
       appBar: isEdit
           ? AppBar(
-              title: InkWell(
+              title: Text('마이페이지',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+              centerTitle: true, // 텍스트 중앙 정렬
+              leading: InkWell(
                 onTap: () {
                   Navigator.pushNamedAndRemoveUntil(
                       context, "/home", (route) => false);
                 },
                 child: Image.asset(
-                  "assets/img/whitelogo.png",
-                  height: 80,
+                  'assets/img/whitelogo.png',
                 ),
               ),
-              automaticallyImplyLeading: false, //기본 왼ㅉ고 토굴 안생기게
               backgroundColor: Color(0xff0099FF),
               toolbarHeight: 80,
               elevation: 0.0, //앱바 입체감 없애기
@@ -160,7 +161,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
         padding: EdgeInsets.fromLTRB(0.0, 40.0, 0.0, 0.0),
         child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start, //글자들이 왼쪽에 붙게
+            crossAxisAlignment: CrossAxisAlignment.center, //글자들이 왼쪽에 붙게
             children: [
               Stack(//Positioned 를 쓸수있음
                   children: [
@@ -169,7 +170,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   left: 0,
                   top: 40,
                   child: Container(
-                    width: 450,
+                    width: 1920,
                     height: 2,
                     color: Color(0xff9C9C9C),
                   ),
@@ -313,10 +314,12 @@ class _MyProfilePageState extends State<MyProfilePage> {
               SizedBox(
                 height: 30.0,
               ),
-              Container(
-                height: 280,
-                margin: EdgeInsets.fromLTRB(40.0, 0.0, 0.0, 0.0),
-                child: isEdit ? profileForm() : editProfileForm(),
+              Center(
+                child: Container(
+                  height: 280,
+                  margin: EdgeInsets.fromLTRB(40.0, 0.0, 0.0, 0.0),
+                  child: isEdit ? profileForm() : editProfileForm(),
+                ),
               ), //프로필 정보
               SizedBox(
                 height: 25.0,
@@ -873,7 +876,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
               Flexible(
                 child: Container(
                   width: 230, //너비를 지정해주면
-                  height: 65,
+                  height: 75,
                   padding: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
                   decoration: BoxDecoration(
                     border: Border.all(
@@ -909,7 +912,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
         Positioned(
           top: 13,
           child: Container(
-            width: 450,
+            width: 1920,
             height: 2,
             color: Color(0xff9C9C9C),
           ),
@@ -920,7 +923,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
           height: 30.0,
           color: Colors.white,
           child: Text(
-            "보호자 프로필",
+            "보호자 연락처",
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Color(0xff5A5A5A),
@@ -930,21 +933,13 @@ class _MyProfilePageState extends State<MyProfilePage> {
           ),
         ), //보호자프로필
         Container(
-          height: 200,
-          margin: EdgeInsets.fromLTRB(65.0, 30.0, 0.0, 0.0),
+          height: 100,
+          margin: EdgeInsets.fromLTRB(75.0, 30.0, 0.0, 0.0),
           child: Row(
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: const [
-                  SizedBox(
-                    height: 25.0,
-                  ),
-                  Text(
-                    "성함",
-                    style: TextStyle(
-                        color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
-                  ),
                   SizedBox(
                     height: 25.0,
                   ),
@@ -961,14 +956,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    height: 25.0,
-                  ),
-                  Text(
-                    "박신비",
-                    style: TextStyle(
-                        color: Color(0xff9C9C9C), fontWeight: FontWeight.w600),
-                  ),
                   SizedBox(
                     height: 25.0,
                   ),
@@ -1007,7 +994,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
           height: 30.0,
           color: Colors.white,
           child: Text(
-            "보호자 프로필",
+            "보호자 연락처",
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Color(0xffCFCFCF),
@@ -1017,7 +1004,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
           ),
         ), //보호자프로필
         Container(
-          margin: EdgeInsets.fromLTRB(0.0, 30.0, 0.0, 0.0),
+          margin: EdgeInsets.fromLTRB(0.0, 30.0, 0.0, 50.0),
           child: Row(
             children: [
               SizedBox(
@@ -1026,14 +1013,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: const [
-                  SizedBox(
-                    height: 25.0,
-                  ),
-                  Text(
-                    "성함",
-                    style: TextStyle(
-                        color: Color(0xffCFCFCF), fontWeight: FontWeight.w600),
-                  ),
                   SizedBox(
                     height: 25.0,
                   ),
@@ -1052,28 +1031,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 children: [
                   SizedBox(
                     height: 25.0,
-                  ),
-                  Container(
-                    width: 230,
-                    height: 32,
-                    padding: EdgeInsets.fromLTRB(10.0, 3.0, 0.0, 0.0),
-                    decoration: BoxDecoration(
-                      color: Color(0xffd9d9d9).withOpacity(0.3),
-                      border: Border.all(
-                        width: 2,
-                        color: Color(0xffCFCFCF),
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      "박신비",
-                      style: TextStyle(
-                          color: Color(0xffCFCFCF),
-                          fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 15.0,
                   ),
                   Container(
                     width: 230,
@@ -1101,8 +1058,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
           ),
         ),
         SizedBox(
-          height: 30.0,
-        ), //보호자 프로필
+          height: 30,
+        )
+        //보호자 프로필
       ]),
     );
   }

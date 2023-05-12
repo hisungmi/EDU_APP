@@ -76,35 +76,22 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              widget.isAfternoon == false
-                  ? Container(
-                      padding: EdgeInsets.fromLTRB(30.0, 5.0, 30.0, 5.0),
-                      height: 35,
-                      decoration: BoxDecoration(
-                          color: morningtitlecolor,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Text(
-                        widget.morning['lectureName'],
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                    )
-                  : Container(
-                      padding: EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
-                      height: 35,
-                      decoration: BoxDecoration(
-                          color: afternoontitlecolor,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Text(
-                        widget.afternoon['lectureName'],
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
+              Container(
+                padding: EdgeInsets.fromLTRB(30.0, 5.0, 30.0, 5.0),
+                height: 35,
+                decoration: BoxDecoration(
+                    color: morningtitlecolor,
+                    borderRadius: BorderRadius.circular(10)),
+                child: Text(
+                  widget.isAfternoon == true
+                      ? widget.afternoon['lectureName']
+                      : widget.morning['lectureName'],
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
               SizedBox(
                 height: 30,
               ),
