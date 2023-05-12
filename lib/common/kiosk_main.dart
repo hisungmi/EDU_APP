@@ -37,6 +37,8 @@ class KioskMain extends StatefulWidget {
 }
 
 class KioskMainState extends State<KioskMain> {
+  Map<String, dynamic> qrData = {'qrKey': 'kiosk'};
+
   void refresh() {
     setState(() {});
   }
@@ -112,7 +114,7 @@ class KioskMainState extends State<KioskMain> {
       return Scaffold(
           body: GestureDetector(
         onTap: () {
-          Provider.of<QrProvider>(context, listen: false).setTrueQr();
+          Provider.of<QrProvider>(context, listen: false).toggleQr();
         },
         child: Container(
             decoration: BoxDecoration(
@@ -122,6 +124,7 @@ class KioskMainState extends State<KioskMain> {
                         random.nextInt(backgroundImages.length)]))),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if (!qrProvider.isQr)
                   Column(children: [
@@ -448,7 +451,8 @@ class KioskMainState extends State<KioskMain> {
                                   Padding(
                                     padding: const EdgeInsets.only(top: 130.0),
                                     child: QrImage(
-                                      data: 'qr이지롱',
+                                      data:
+                                          'https://banbbom.com/data/froala/210318/619072b81882e82473c9fc84436edf7f4ae65ef9.jpg',
                                       foregroundColor: Color(0xff000000),
                                       size: 450,
                                     ),
@@ -456,7 +460,13 @@ class KioskMainState extends State<KioskMain> {
                                   Padding(
                                     padding: const EdgeInsets.only(top: 72.0),
                                     child: MyTimer(),
-                                  )
+                                  ),
+                                  Text('메인으로 돌아가려면 화면을 터치해 주세요.',
+                                      style: TextStyle(
+                                        color: Color(0xff565656),
+                                        fontSize: 28.0,
+                                        fontWeight: FontWeight.normal,
+                                      ))
                                 ],
                               ),
                             ),
@@ -486,7 +496,7 @@ class MyTimer extends StatefulWidget {
 }
 
 class MyTimerState extends State<MyTimer> {
-  static const int _maxSeconds = 60;
+  static const int _maxSeconds = 20;
   int _secondsLeft = _maxSeconds;
 
   late Timer _timer;
