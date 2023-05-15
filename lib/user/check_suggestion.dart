@@ -37,7 +37,7 @@ class CheckSuggestion extends StatelessWidget {
           ),
         ),
         body: Padding(
-          padding: EdgeInsets.fromLTRB(30.0, 50.0, 30.0, 30.0),
+          padding: EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 30.0),
           child: SingleChildScrollView(
               child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,8 +115,10 @@ class CheckSuggestion extends StatelessWidget {
                 ),
               ),
               Container(
-                alignment: Alignment(0.6, 0.0),
+                margin: EdgeInsets.fromLTRB(0.0, 3.0, 0, 0.0),
+                width: 336,
                 child: Text(createDate,
+                    textAlign: TextAlign.end,
                     style: TextStyle(color: Color(0xffCFCFCF))),
               ),
               SizedBox(
@@ -147,8 +149,10 @@ class CheckSuggestion extends StatelessWidget {
                               style: TextStyle(fontWeight: FontWeight.w500)),
                         )),
               Container(
-                alignment: Alignment(0.6, 0.0),
+                margin: EdgeInsets.fromLTRB(0.0, 3.0, 0, 0.0),
+                width: 336,
                 child: Text(answerDate,
+                    textAlign: TextAlign.end,
                     style: TextStyle(color: Color(0xffCFCFCF))),
               ),
             ],
