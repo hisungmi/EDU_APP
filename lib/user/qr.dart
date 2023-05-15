@@ -136,7 +136,7 @@ class _QrCheckState extends State<QrCheck> {
                                 ),
                               ),
                               Positioned(
-                                  right: 5,
+                                  right: 10,
                                   child: Opacity(
                                     opacity: 0.89,
                                     child: Container(

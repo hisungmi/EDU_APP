@@ -34,24 +34,6 @@ class _EnterSuggestionState extends State<EnterSuggestion> {
   }
 
   Future<void> createSuggestList(String studentKey, String name) async {
-    if (contentController.text.trim() == '') {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('건의 내용'),
-              content: Text('내용을 입력해주세요.'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text("확인"),
-                ),
-              ],
-            );
-          });
-
-      return;
-    }
     Map<String, dynamic> data = {
       'writerKey': studentKey,
       'writerName': name,
@@ -109,7 +91,7 @@ class _EnterSuggestionState extends State<EnterSuggestion> {
         ],
       ),
       body: Padding(
-          padding: EdgeInsets.fromLTRB(30.0, 30.0, 0.0, 30.0),
+          padding: EdgeInsets.fromLTRB(30.0, 50.0, 0.0, 30.0),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

@@ -37,7 +37,7 @@ class CheckSuggestion extends StatelessWidget {
           ),
         ),
         body: Padding(
-          padding: EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 30.0),
+          padding: EdgeInsets.fromLTRB(30.0, 50.0, 30.0, 30.0),
           child: SingleChildScrollView(
               child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
