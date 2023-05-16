@@ -175,13 +175,15 @@ class _TaskState extends State<Assignment> {
                                         borderRadius: BorderRadius.circular(7),
                                         color: Color(0xff9c9c9c),
                                       ),
-                                      child: Text(
-                                        isSubmission ? '제출됨' : '미제출',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.white),
+                                      child: Center(
+                                        child: Text(
+                                          isSubmission ? '제출됨' : '미제출',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.white),
+                                        ),
                                       ),
                                     ),
                                     SizedBox(

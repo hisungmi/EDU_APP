@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         '/qr': (context) => QrCheck(),
         '/suggestion': (context) => Suggestions(),
         '/enter-suggestion': (context) => EnterSuggestion(),
-        '/test': (context) => QrScanner(),
+        // '/test': (context) => QrScanner(),
         '/schedule': (context) => Schedule(),
       },
       debugShowCheckedModeBanner: false,
