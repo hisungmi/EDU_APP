@@ -253,13 +253,15 @@ class _ExamState extends State<Exam> {
                                                 BorderRadius.circular(7),
                                             color: Color(0xff9c9c9c),
                                           ),
-                                          child: Text(
-                                            '성적확인',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.white),
+                                          child: Center(
+                                            child: Text(
+                                              '성적확인',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.white),
+                                            ),
                                           ),
                                         ),
                                       ),
