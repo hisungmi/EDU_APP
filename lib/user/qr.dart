@@ -118,22 +118,18 @@ class _QrCheckState extends State<QrCheck> {
                       height: 30,
                     ),
                     isCount
-                        ? Container(
-                            child: QrImage(
-                              data: studentKey,
-                              foregroundColor: Color(0xff0099ff),
-                              size: 220,
-                            ),
+                        ? QrImageView(
+                            data: studentKey,
+                            foregroundColor: Color(0xff0099ff),
+                            size: 220,
                           )
                         : Stack(
                             alignment: Alignment.center,
                             children: [
-                              Container(
-                                child: QrImage(
-                                  data: studentKey,
-                                  foregroundColor: Color(0xff0099ff),
-                                  size: 220,
-                                ),
+                              QrImageView(
+                                data: studentKey,
+                                foregroundColor: Color(0xff0099ff),
+                                size: 220,
                               ),
                               Positioned(
                                   right: 5,
