@@ -78,9 +78,7 @@ class _ClassState extends State<Class> {
     super.initState();
     loadData();
     getLectureList();
-    setState(() {
-      print('page: ${widget.pageIndex}');
-    });
+    setState(() {});
   }
 
   //강의 데이터 변수
