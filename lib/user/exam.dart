@@ -1,5 +1,10 @@
+import 'dart:convert';
+
+import 'package:edu_application_pre/http_setup.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 
 class Exam extends StatefulWidget {
   const Exam(
@@ -20,11 +25,60 @@ class Exam extends StatefulWidget {
 class _ExamState extends State<Exam> {
   bool isScore = false;
   bool isComplete = false;
+  static List<dynamic> testList = [];
+  static List<dynamic> testStatusList = [];
+  String testKey = '';
+
+  Future<void> getTestList() async {
+    Map<String, dynamic> data = {
+      'lectureKey': widget.isAfternoon
+          ? widget.afternoon['lectureKey']
+          : widget.morning['lectureKey'],
+      'type': '',
+      'testDate': '',
+    };
+
+    testList = [];
+    var res = await post('/lectures/getTestList/', jsonEncode(data));
+    if (res.statusCode == 200) {
+      setState(() {
+        for (Map<String, dynamic> test in res.data['resultData']) {
+          testList.add(test);
+          testKey = test['testKey'] ?? '';
+        }
+        getTestStatusList(testKey);
+      });
+    }
+  }
+
+//시험 현황
+  Future<void> getTestStatusList(String testKey) async {
+    Map<String, dynamic> data = {'testKey': testKey};
+
+    var res = await post('/lectures/getTestStatusList/', jsonEncode(data));
+    if (res.statusCode == 200) {
+      setState(() {
+        for (Map<String, dynamic> testStatus in res.data['resultData']) {
+          testStatusList.add(testStatus);
+        }
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initializeDateFormatting('ko_KR'); //한글 로케일 데이터를 초기화 ( 오전,오후로 사용하려고
+    setState(() {
+      getTestList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     Map<String, dynamic> morningList = widget.morning;
     Map<String, dynamic> afterList = widget.afternoon;
+    Map<int, bool> itemStates = {};
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Color(0xff0099FF),
@@ -156,8 +210,11 @@ class _ExamState extends State<Exam> {
               Expanded(
                   child: ListView.builder(
                 shrinkWrap: true,
-                itemCount: 4,
+                itemCount: testList.length,
                 itemBuilder: (context, index) {
+                  Map<dynamic, dynamic> testdataList = testList[index];
+                  String formattedDate = DateFormat('MM월 dd일 HH시', 'ko_KR')
+                      .format(DateTime.parse(testdataList['testDate']));
                   return Container(
                     child: Table(
                       columnWidths: const {
@@ -179,7 +236,7 @@ class _ExamState extends State<Exam> {
                             height: 55,
                             child: Center(
                               child: Text(
-                                "12월09일 14시",
+                                formattedDate,
                                 textAlign: TextAlign.center,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -198,7 +255,7 @@ class _ExamState extends State<Exam> {
                               height: 55,
                               child: Center(
                                 child: Text(
-                                  '대면 TEST1쏼라쏼라쏼라',
+                                  testdataList['testType'],
                                   textAlign: TextAlign.center,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
