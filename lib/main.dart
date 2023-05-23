@@ -206,11 +206,11 @@ class MyHomePage extends StatelessWidget {
                     children: [
                       IconButton(
                         onPressed: () {},
-                        icon: FaIcon(FontAwesomeIcons.gear),
+                        icon: FaIcon(FontAwesomeIcons.bullhorn),
                         color: Color(0xff9c9c9c),
                         iconSize: 55,
                       ),
-                      Text('설정',
+                      Text('공지사항',
                           style: TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w600))
                     ],

@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+
+import '../http_setup.dart';
 
 class Schedule extends StatefulWidget {
   const Schedule({Key? key}) : super(key: key);
@@ -10,12 +14,90 @@ class Schedule extends StatefulWidget {
 class _ScheduleState extends State<Schedule> {
   bool isAfternoon = true;
   double kFirstColumnHeight = 20;
-  double kBoxSize = 52;
+  double kBoxSize = 60.0;
+  double left = 22.6;
+  double width = 52.0;
   List week = ['월', '화', '수', '목', '금', '토', '일'];
+  static List<dynamic> morningDataList = [];
+  static List<dynamic> afternoonDataList = [];
+  Map<int, dynamic> lectureStart = {
+    13: 20,
+    14: 20 + 60,
+    15: 20 + 60 * 2,
+    16: 20 + 60 * 3,
+    17: 20 + 60 * 4,
+    18: 20 + 60 * 5,
+    19: 20 + 60 * 6,
+    20: 20 + 60 * 7,
+    21: 20 + 60 * 8,
+    22: 20 + 60 * 9,
+    23: 20 + 60 * 10,
+  };
+  Map<int, dynamic> dayStart = {
+    1: 22.6,
+    2: 22.6 + 52.5,
+    3: 22.6 + 52.5 * 2,
+    4: 22.6 + 52.5 * 3,
+    5: 22.6 + 52.5 * 4,
+    6: 22.6 + 52.5 * 5,
+    7: 22.6 + 52.5 * 6,
+  };
+
+  double? getDay(int dayNumber) {
+    return dayStart[dayNumber];
+  }
+
+  int getTime(int item) {
+    return lectureStart[item];
+  }
+
+  Future<void> getLectureList() async {
+    Map<String, dynamic> data = {
+      'userKey': '',
+      'roomKey': '',
+      'roomName': '',
+      'lectureName': '',
+      'target': '',
+    };
+    afternoonDataList = [];
+    morningDataList = [];
+    var res = await post('/lectures/getLectureList/', jsonEncode(data));
+    if (res.statusCode == 200) {
+      setState(() {
+        for (Map<String, dynamic> lecture in res.data['resultData']) {
+          int startTime = int.parse(lecture['startTime'].substring(0, 2));
+          int day = lecture['day'];
+          if (lecture['progress'] == "등록" && startTime >= 13) {
+            int gettime = getTime(startTime);
+            double? getday = getDay(day);
+            lecture['startTime'] =
+                gettime; //gettime 으로 startTime에 시작 높이를 지정해서 넣음
+            lecture['day'] = getday;
+            afternoonDataList.add(lecture);
+          } else if (lecture['progress'] == "등록" && startTime < 13) {
+            int gettime = getTime(startTime + 8);
+            double? getday = getDay(day);
+            lecture['startTime'] =
+                gettime; //gettime 으로 startTime에 시작 높이를 지정해서 넣음
+            lecture['day'] = getday;
+            morningDataList.add(lecture);
+          }
+        }
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getLectureList();
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     int kColumnLength = isAfternoon ? 24 : 16;
+
     List<Widget> builDayColumn(int index) {
       return [
         //높이가 부모와 동일한 회색 수직 선
@@ -226,6 +308,7 @@ class _ScheduleState extends State<Schedule> {
                     height: 5,
                   ),
                   Container(
+                      width: 400,
                       height: isAfternoon
                           ? kColumnLength / 2 * kBoxSize + kColumnLength
                           : kColumnLength / 2 * kBoxSize + kColumnLength + 6,
@@ -233,51 +316,71 @@ class _ScheduleState extends State<Schedule> {
                         border: Border.all(color: Colors.grey),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Row(
+                      child: Stack(
                         children: [
-                          // Column(
-                          //   children: [
-                          //     SizedBox(
-                          //       height: 20,
-                          //     ),
-                          //     Expanded(
-                          //       child: Container(
-                          //         width: 20,
-                          //         height: kColumnLength / 2 * kBoxSize +
-                          //             kColumnLength,
-                          //         child: ListView.builder(
-                          //           shrinkWrap: true,
-                          //           itemCount: 24,
-                          //           itemBuilder: (context, index) {
-                          //             //isEven : index가 짝수인 경우 true를 반환
-                          //             if (index.isEven) {
-                          //               return Divider(
-                          //                 color: Colors.grey,
-                          //                 height: 0,
-                          //               );
-                          //             }
-                          //             return SizedBox(
-                          //               height: kBoxSize,
-                          //               child: Center(
-                          //                 child: Text('${index ~/ 2 + 13}',
-                          //                     style: TextStyle(fontSize: 14)),
-                          //               ),
-                          //             );
-                          //           },
-                          //         ),
-                          //       ),
-                          //     ),
-                          //   ],
-                          // ),
-                          ...buildTimeColumn(0),
-                          //spread operator(...)를 사용
-                          ...builDayColumn(0),
-                          ...builDayColumn(1),
-                          ...builDayColumn(2),
-                          ...builDayColumn(3),
-                          ...builDayColumn(4),
-                          ...builDayColumn(5),
-                          ...builDayColumn(6),
+                          Row(
+                            children: [
+                              ...buildTimeColumn(0),
+                              //spread operator(...)를 사용
+                              ...builDayColumn(0),
+                              ...builDayColumn(1),
+                              ...builDayColumn(2),
+                              ...builDayColumn(3),
+                              ...builDayColumn(4),
+                              ...builDayColumn(5),
+                              ...builDayColumn(6),
+                            ],
+                          ),
+                          if (isAfternoon)
+                            ...List.generate(afternoonDataList.length, (index) {
+                              Color color = Color(int.parse(
+                                  '0xFF${afternoonDataList[index]['color'].substring(1)}'));
+                              return Positioned(
+                                  left: afternoonDataList[index]['day'],
+                                  top: afternoonDataList[index]['startTime']
+                                      .toDouble(), //int 타입을 double? 타입으로 변환하는거 ,소수점땜시
+                                  height: afternoonDataList[index]['duration']
+                                      .toDouble(),
+                                  width: width,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: color,
+                                    ),
+                                    child: Center(
+                                        child: Text(
+                                            afternoonDataList[index]
+                                                ['lectureName'],
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 10))),
+                                  ));
+                            })
+                          else
+                            ...List.generate(morningDataList.length, (index) {
+                              Color color = Color(int.parse(
+                                  '0xFF${morningDataList[index]['color'].substring(1)}'));
+                              return Positioned(
+                                  left: morningDataList[index]['day'],
+                                  top: morningDataList[index]['startTime']
+                                      .toDouble(), //int 타입을 double? 타입으로 변환하는거 ,소수점땜시
+                                  height: morningDataList[index]['duration']
+                                      .toDouble(),
+                                  width: width,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: color,
+                                    ),
+                                    child: Center(
+                                        child: Text(
+                                            morningDataList[index]
+                                                ['lectureName'],
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 10))),
+                                  ));
+                            }),
                         ],
                       )),
                 ],

@@ -421,6 +421,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           subtitle: Divider(thickness: 1),
                           onTap: () {
                             Navigator.pop(context);
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, "/schedule", (route) => false);
                           },
                         ),
                       ),
@@ -497,6 +499,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           subtitle: Divider(thickness: 1),
                           onTap: () {
                             Navigator.pop(context);
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, "/exam", (route) => false);
                           },
                         ),
                       ),
@@ -521,6 +525,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           subtitle: Divider(thickness: 1),
                           onTap: () {
                             Navigator.pop(context);
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, "/assigment", (route) => false);
                           },
                         ),
                       ),
@@ -561,9 +567,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                         //카드형식
                         elevation: 0,
                         child: ListTile(
-                          leading: FaIcon(FontAwesomeIcons.gear),
+                          leading: FaIcon(FontAwesomeIcons.bullhorn),
                           iconColor: Color(0xff9c9c9c),
-                          title: Text('설정',
+                          title: Text('공지사항',
                               style: TextStyle(
                                 color: Color(0xff9c9c9c),
                                 fontWeight: FontWeight.bold,
