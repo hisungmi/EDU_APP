@@ -5,7 +5,7 @@ import 'package:edu_application_pre/user/class.dart';
 import 'package:edu_application_pre/user/enter_suggestion.dart';
 import 'package:edu_application_pre/user/myprofile_page.dart';
 import 'package:edu_application_pre/user/qr.dart';
-import 'package:edu_application_pre/user/schedule.dart';
+import 'package:edu_application_pre/schedule.dart';
 import 'package:edu_application_pre/user/suggestions.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -92,15 +92,36 @@ class MyHomePage extends StatelessWidget {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
+        padding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 0.0),
         child: SingleChildScrollView(
           child: Column(
             children: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/schedule');
-                  },
-                  child: Text('시간표')),
+              // TextButton(
+              //     onPressed: () {
+              //       Navigator.pushNamed(context, '/schedule');
+              //     },
+              //     child: Text('시간표')),
+              InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, '/schedule');
+                },
+                child: Container(
+                    height: 350,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                      color: Color(0xff9c9c9c),
+                      width: 1,
+                    )),
+                    child: SingleChildScrollView(
+                      child: TimeTable(
+                        isAfternoon: true,
+                        toggleAfternoon: () {},
+                      ),
+                    )),
+              ),
+              SizedBox(
+                height: 30,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment
                     .spaceEvenly, //정렬, spaceAround: 간격의 절반 양끝 여백, spaceBetween: 여백x, spaceEvenly: 간격 만큼 여백
