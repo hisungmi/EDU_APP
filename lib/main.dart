@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:edu_application_pre/common/kiosk_main.dart';
 import 'package:edu_application_pre/layout/splash_screen.dart';
 import 'package:edu_application_pre/qr_scanner.dart';
@@ -10,7 +12,9 @@ import 'package:edu_application_pre/user/suggestions.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   //MyHomePage 위젯에서 DateFormat 클래스를 사용하여 날짜와 시간을 표시할 때 한국어 로케일을 사용
@@ -58,11 +62,38 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
 
   @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  String name = '';
+  void loadData() async {
+    // 로컬 스토리지에서 데이터 불러오기
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userData = prefs.getString('userData');
+    if (userData != null) {
+      Map<dynamic, dynamic> dataMap = jsonDecode(userData);
+
+      setState(() {
+        name = dataMap['name'] ?? '';
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy.MM.dd.EEE', 'ko_KR').format(now);
     return Scaffold(
       appBar: AppBar(
         title: InkWell(
@@ -92,20 +123,34 @@ class MyHomePage extends StatelessWidget {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 0.0),
+        padding: EdgeInsets.fromLTRB(0.0, 23.0, 0.0, 0.0),
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // TextButton(
-              //     onPressed: () {
-              //       Navigator.pushNamed(context, '/schedule');
-              //     },
-              //     child: Text('시간표')),
+              Container(
+                width: 385,
+                child: Text(formattedDate,
+                    textAlign: TextAlign.start,
+                    style:
+                        TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+              ),
+              Container(
+                  width: 390,
+                  child: Text('$name 님의 시간표',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                          color: Color(0xff595959),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500))),
+              SizedBox(
+                height: 13,
+              ),
               InkWell(
                 onTap: () {
                   Navigator.pushNamed(context, '/schedule');
                 },
                 child: Container(
+                    width: 394,
                     height: 350,
                     decoration: BoxDecoration(
                         border: Border.all(
@@ -120,7 +165,7 @@ class MyHomePage extends StatelessWidget {
                     )),
               ),
               SizedBox(
-                height: 30,
+                height: 20,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment
