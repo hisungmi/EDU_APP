@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:edu_application_pre/common/kiosk_main.dart';
 import 'package:edu_application_pre/layout/splash_screen.dart';
+import 'package:edu_application_pre/notice.dart';
 import 'package:edu_application_pre/qr_scanner.dart';
 import 'package:edu_application_pre/user/class.dart';
 import 'package:edu_application_pre/user/enter_suggestion.dart';
@@ -42,6 +43,7 @@ class MyApp extends StatelessWidget {
         '/enter-suggestion': (context) => EnterSuggestion(),
         // '/test': (context) => QrScanner(),
         '/schedule': (context) => Schedule(),
+        '/notice': (context) => Notice(),
       },
       debugShowCheckedModeBanner: false,
       title: 'first app',
@@ -115,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [
           IconButton(
             icon: Icon(Icons.perm_identity),
-            iconSize: 30,
+            iconSize: 40,
             onPressed: () {
               Navigator.pushNamed(context, '/profile');
             },
@@ -151,7 +153,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
                 child: Container(
                     width: 394,
-                    height: 350,
+                    height: 330,
                     decoration: BoxDecoration(
                         border: Border.all(
                       color: Color(0xff9c9c9c),
@@ -271,7 +273,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   Column(
                     children: [
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/notice');
+                        },
                         icon: FaIcon(FontAwesomeIcons.bullhorn),
                         color: Color(0xff9c9c9c),
                         iconSize: 55,

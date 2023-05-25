@@ -83,7 +83,7 @@ class _SuggestionsState extends State<Suggestions> {
     //data 맵 객체 생성시 매개변수로 전달
     Map<String, dynamic> data = {
       'userKey': studentKey,
-      'userType': 'STU',
+      'userType': 'STU', //PAR - 부모
       'search': '',
       'writerType': '',
     };
