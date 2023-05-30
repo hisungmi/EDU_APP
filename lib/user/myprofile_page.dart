@@ -324,37 +324,37 @@ class _MyProfilePageState extends State<MyProfilePage> {
               SizedBox(
                 height: 25.0,
               ),
-              Center(
-                child: isEdit
-                    ? Container(
-                        padding: EdgeInsets.zero,
-                        margin: EdgeInsets.zero,
-                        width: 130,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            width: 2,
-                            color: Color(0xff9C9C9C),
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: TextButton(
-                          style: TextButton.styleFrom(
-                            padding: EdgeInsets.all(0),
-                          ),
-                          child: Text(
-                            "학적부 열람",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Color(0xff0099FF),
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          onPressed: () {},
-                        ),
-                      )
-                    : Container(),
-              ), //학적부 열람
+              // Center(
+              //   child: isEdit
+              //       ? Container(
+              //           padding: EdgeInsets.zero,
+              //           margin: EdgeInsets.zero,
+              //           width: 130,
+              //           height: 30,
+              //           decoration: BoxDecoration(
+              //             border: Border.all(
+              //               width: 2,
+              //               color: Color(0xff9C9C9C),
+              //             ),
+              //             borderRadius: BorderRadius.circular(20),
+              //           ),
+              //           child: TextButton(
+              //             style: TextButton.styleFrom(
+              //               padding: EdgeInsets.all(0),
+              //             ),
+              //             child: Text(
+              //               "학적부 열람",
+              //               textAlign: TextAlign.center,
+              //               style: TextStyle(
+              //                 color: Color(0xff0099FF),
+              //                 fontWeight: FontWeight.w700,
+              //               ),
+              //             ),
+              //             onPressed: () {},
+              //           ),
+              //         )
+              //       : Container(),
+              // ), //학적부 열람
               SizedBox(
                 height: 40.0,
               ),
