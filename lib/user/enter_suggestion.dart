@@ -54,9 +54,9 @@ class _EnterSuggestionState extends State<EnterSuggestion> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xff0099FF),
+        backgroundColor: Colors.white,
         toolbarHeight: 70,
-        elevation: 0.0, //앱바 입체감 없애기
+        elevation: 4.0, //앱바 입체감 없애기
         leading: TextButton(
             style: TextButton.styleFrom(
               padding: EdgeInsets.all(0),
@@ -69,7 +69,7 @@ class _EnterSuggestionState extends State<EnterSuggestion> {
             child: Text(
               "취소",
               style: TextStyle(
-                color: Colors.white,
+                color: Color(0xff0099ff),
                 fontWeight: FontWeight.bold,
               ),
             )),
@@ -85,7 +85,7 @@ class _EnterSuggestionState extends State<EnterSuggestion> {
               },
               child: Text("건의",
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Color(0xff0099ff),
                     fontWeight: FontWeight.bold,
                   )))
         ],

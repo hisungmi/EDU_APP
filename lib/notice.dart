@@ -41,7 +41,7 @@ class _NoticeState extends State<Notice> {
       setState(() {
         studentKey = dataMap['studentKey'] ?? '';
       });
-      getNoticeList(studentKey);
+      // getNoticeList(studentKey);
     }
   }
 
@@ -54,13 +54,13 @@ class _NoticeState extends State<Notice> {
     };
     getnoticeList = [];
     var res = await post('/info/getNoticeList/', jsonEncode(data));
-    if (res.statusCode == 200) {
-      setState(() {
+    setState(() {
+      if (res.statusCode == 200) {
         for (Map<String, dynamic> notice in res.data['resultData']) {
           getnoticeList.add(notice);
         }
-      });
-    }
+      }
+    });
   }
 
   List<Item> getnotice = List<Item>.generate(getnoticeList.length, (index) {
@@ -86,54 +86,51 @@ class _NoticeState extends State<Notice> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('공지사항',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-        centerTitle: true, // 텍스트 중앙 정렬
-        leading: InkWell(
-          onTap: () {
-            Navigator.pushNamedAndRemoveUntil(
-                context, "/home", (route) => false);
-          },
-          child: Image.asset(
-            'assets/img/whitelogo.png',
-          ),
-        ),
-        backgroundColor: Color(0xff0099FF),
-        toolbarHeight: 80,
-        elevation: 0.0, //앱바 입체감 없애기
-        actions: [
-          IconButton(
-            icon: Icon(Icons.menu),
-            iconSize: 30,
-            onPressed: () {},
-          )
-        ],
-      ),
+      // appBar: AppBar(
+      //   title: Text('공지사항',
+      //       style: TextStyle(
+      //           fontSize: 18,
+      //           fontWeight: FontWeight.w600,
+      //           color: Color(0xff0099ff))),
+      //   centerTitle: true, // 텍스트 중앙 정렬
+      //   leading: IconButton(
+      //     icon: FaIcon(FontAwesomeIcons.home),
+      //     color: Color(0xff0099ff),
+      //     iconSize: 30,
+      //     onPressed: () {
+      //       Navigator.pushNamedAndRemoveUntil(
+      //           context, "/home", (route) => false);
+      //     },
+      //   ),
+      //   backgroundColor: Colors.white,
+      //   bottom: PreferredSize(
+      //     preferredSize: Size.fromHeight(4.0),
+      //     child: Container(
+      //       decoration: BoxDecoration(
+      //         border: Border(
+      //           bottom: BorderSide(
+      //             color: Color(0xFFE8E8E8).withOpacity(0.8),
+      //             width: 1.0,
+      //           ),
+      //         ),
+      //       ),
+      //     ),
+      //   ),
+      //   toolbarHeight: 80,
+      //   elevation: 4.0, //앱바 입체감 없애기
+      //   actions: [
+      //     IconButton(
+      //       icon: Icon(Icons.menu),
+      //       color: Color(0xff0099ff),
+      //       iconSize: 35,
+      //       onPressed: () {},
+      //     )
+      //   ],
+      // ),
       body: Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 30.0, 0.0, 10.0),
+        padding: EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 10.0),
         child: Column(
           children: [
-            Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 15.0),
-              decoration: BoxDecoration(
-                  border: Border(
-                bottom: BorderSide(width: 2, color: Color(0xff9c9c9c)),
-              )),
-              child: Text.rich(TextSpan(children: const [
-                TextSpan(
-                    text: ('공지사항'), style: TextStyle(color: Color(0xff5a5a5a))),
-                WidgetSpan(
-                    child: SizedBox(
-                  width: 2,
-                )),
-                WidgetSpan(
-                  child: FaIcon(FontAwesomeIcons.bullhorn,
-                      size: 20, color: Color(0xff5a5a5a)),
-                )
-              ])),
-            ),
             Expanded(
               child: ListView.builder(
                   shrinkWrap: true,

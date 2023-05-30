@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'http_setup.dart';
 
@@ -20,219 +22,252 @@ class _ScheduleState extends State<Schedule> {
     });
   }
 
+  String name = '';
+  void loadData() async {
+    // 로컬 스토리지에서 데이터 불러오기
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userData = prefs.getString('userData');
+    if (userData != null) {
+      Map<dynamic, dynamic> dataMap = jsonDecode(userData);
+
+      setState(() {
+        name = dataMap['name'] ?? '';
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    setState(() {});
+    setState(() {
+      loadData();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy.MM.dd.EEE', 'ko_KR').format(now);
     return Scaffold(
-        appBar: AppBar(
-          title: Text('시간표',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-          centerTitle: true, // 텍스트 중앙 정렬
-          leading: InkWell(
-            onTap: () {
-              Navigator.pushNamedAndRemoveUntil(
-                  context, "/home", (route) => false);
-            },
-            child: Image.asset(
-              'assets/img/whitelogo.png',
-            ),
-          ),
-          backgroundColor: Color(0xff0099FF),
-          toolbarHeight: 80,
-          elevation: 0.0, //앱바 입체감 없애기
-          actions: [
-            IconButton(
-              icon: Icon(Icons.menu),
-              iconSize: 30,
-              onPressed: () {},
-            )
-          ],
-        ),
+        // appBar: AppBar(
+        //   title: Text('시간표',
+        //       style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+        //   centerTitle: true, // 텍스트 중앙 정렬
+        //   leading: InkWell(
+        //     onTap: () {
+        //       Navigator.pushNamedAndRemoveUntil(
+        //           context, "/home", (route) => false);
+        //     },
+        //     child: Image.asset(
+        //       'assets/img/whitelogo.png',
+        //     ),
+        //   ),
+        //   backgroundColor: Color(0xff0099FF),
+        //   toolbarHeight: 80,
+        //   elevation: 0.0, //앱바 입체감 없애기
+        //   actions: [
+        //     IconButton(
+        //       icon: Icon(Icons.menu),
+        //       iconSize: 30,
+        //       onPressed: () {},
+        //     )
+        //   ],
+        // ),
         body: Padding(
-            padding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 20.0),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      isAfternoon
-                          ? InkWell(
-                              onTap: () {
-                                setState(() {
-                                  toggleAfternoon();
-                                });
-                              },
-                              child: Container(
-                                width: 65.57,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.horizontal(
-                                      left: Radius.circular(12),
-                                    ),
-                                    border: Border.all(
-                                      color: Color(0xff9c9c9c),
-                                    )),
-                                child: Center(
-                                    child: Text(
-                                  "오전",
-                                  textAlign: TextAlign.center,
-                                )),
+      padding: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 20.0),
+      child: Column(
+        children: [
+          Container(
+            width: 385,
+            child: Text(formattedDate,
+                textAlign: TextAlign.start,
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                  child: Text('$name 님의 시간표',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                          color: Color(0xff595959),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500))),
+              Row(children: [
+                isAfternoon
+                    ? InkWell(
+                        onTap: () {
+                          setState(() {
+                            toggleAfternoon();
+                          });
+                        },
+                        child: Container(
+                          width: 65.57,
+                          height: 25,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.horizontal(
+                                left: Radius.circular(12),
                               ),
-                            )
-                          : Container(
-                              width: 65.57,
-                              height: 30,
-                              decoration: BoxDecoration(
-                                  color: Color(0xff0099ee),
-                                  borderRadius: BorderRadius.horizontal(
-                                    left: Radius.circular(12),
-                                  ),
-                                  border: Border.all(
-                                    color: Color(0xff0099ee),
-                                  )),
-                              child: Center(
-                                child: Text(
-                                  "오전",
-                                  style: TextStyle(color: Colors.white),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
+                              border: Border.all(
+                                color: Color(0xff9c9c9c),
+                              )),
+                          child: Center(
+                              child: Text(
+                            "오전",
+                            style: TextStyle(fontSize: 14),
+                            textAlign: TextAlign.center,
+                          )),
+                        ),
+                      )
+                    : Container(
+                        width: 65.57,
+                        height: 25,
+                        decoration: BoxDecoration(
+                            color: Color(0xff0099ee),
+                            borderRadius: BorderRadius.horizontal(
+                              left: Radius.circular(12),
                             ),
-                      isAfternoon
-                          ? Container(
-                              width: 65.57,
-                              height: 30,
-                              decoration: BoxDecoration(
-                                  color: Color(0xff0099ee),
-                                  borderRadius: BorderRadius.horizontal(
-                                    right: Radius.circular(12),
-                                  ),
-                                  border: Border.all(
-                                    color: Color(0xff0099ee),
-                                  )),
-                              child: Center(
-                                child: Text(
-                                  "오후",
-                                  style: TextStyle(color: Colors.white),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            )
-                          : InkWell(
-                              onTap: () {
-                                setState(() {
-                                  toggleAfternoon();
-                                });
-                              },
-                              child: Container(
-                                width: 65.57,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.horizontal(
-                                      right: Radius.circular(12),
-                                    ),
-                                    border: Border.all(
-                                      color: Color(0xff9c9c9c),
-                                    )),
-                                child: Center(
-                                    child: Text(
-                                  "오후",
-                                  textAlign: TextAlign.center,
-                                )),
-                              ),
+                            border: Border.all(
+                              color: Color(0xff0099ee),
+                            )),
+                        child: Center(
+                          child: Text(
+                            "오전",
+                            style: TextStyle(color: Colors.white, fontSize: 14),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                isAfternoon
+                    ? Container(
+                        width: 65.57,
+                        height: 25,
+                        decoration: BoxDecoration(
+                            color: Color(0xff0099ee),
+                            borderRadius: BorderRadius.horizontal(
+                              right: Radius.circular(12),
                             ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  // Container(
-                  //     width: 400,
-                  //     height: isAfternoon
-                  //         ? kColumnLength / 2 * kBoxSize + kColumnLength
-                  //         : kColumnLength / 2 * kBoxSize + kColumnLength + 6,
-                  //     decoration: BoxDecoration(
-                  //       border: Border.all(color: Colors.grey),
-                  //       borderRadius: BorderRadius.circular(12),
-                  //     ),
-                  //     child: Stack(
-                  //       children: [
-                  //         Row(
-                  //           children: [
-                  //             ...buildTimeColumn(0),
-                  //             //spread operator(...)를 사용
-                  //             ...builDayColumn(0),
-                  //             ...builDayColumn(1),
-                  //             ...builDayColumn(2),
-                  //             ...builDayColumn(3),
-                  //             ...builDayColumn(4),
-                  //             ...builDayColumn(5),
-                  //             ...builDayColumn(6),
-                  //           ],
-                  //         ),
-                  //         if (isAfternoon)
-                  //           ...List.generate(afternoonDataList.length, (index) {
-                  //             Color color = Color(int.parse(
-                  //                 '0xFF${afternoonDataList[index]['color'].substring(1)}'));
-                  //             return Positioned(
-                  //                 left: afternoonDataList[index]['day'],
-                  //                 top: afternoonDataList[index]['startTime']
-                  //                     .toDouble(), //int 타입을 double? 타입으로 변환하는거 ,소수점땜시
-                  //                 height: afternoonDataList[index]['duration']
-                  //                     .toDouble(),
-                  //                 width: width,
-                  //                 child: Container(
-                  //                   decoration: BoxDecoration(
-                  //                     color: color,
-                  //                   ),
-                  //                   child: Center(
-                  //                       child: Text(
-                  //                           afternoonDataList[index]
-                  //                               ['lectureName'],
-                  //                           textAlign: TextAlign.center,
-                  //                           style: TextStyle(
-                  //                               color: Colors.white,
-                  //                               fontSize: 10))),
-                  //                 ));
-                  //           })
-                  //         else
-                  //           ...List.generate(morningDataList.length, (index) {
-                  //             Color color = Color(int.parse(
-                  //                 '0xFF${morningDataList[index]['color'].substring(1)}'));
-                  //             return Positioned(
-                  //                 left: morningDataList[index]['day'],
-                  //                 top: morningDataList[index]['startTime']
-                  //                     .toDouble(), //int 타입을 double? 타입으로 변환하는거 ,소수점땜시
-                  //                 height: morningDataList[index]['duration']
-                  //                     .toDouble(),
-                  //                 width: width,
-                  //                 child: Container(
-                  //                   decoration: BoxDecoration(
-                  //                     color: color,
-                  //                   ),
-                  //                   child: Center(
-                  //                       child: Text(
-                  //                           morningDataList[index]
-                  //                               ['lectureName'],
-                  //                           textAlign: TextAlign.center,
-                  //                           style: TextStyle(
-                  //                               color: Colors.white,
-                  //                               fontSize: 10))),
-                  //                 ));
-                  //           }),
-                  //       ],
-                  //     )),
-                  TimeTable(
-                      isAfternoon: isAfternoon,
-                      toggleAfternoon: toggleAfternoon),
-                ],
-              ),
-            )));
+                            border: Border.all(
+                              color: Color(0xff0099ee),
+                            )),
+                        child: Center(
+                          child: Text(
+                            "오후",
+                            style: TextStyle(color: Colors.white, fontSize: 14),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      )
+                    : InkWell(
+                        onTap: () {
+                          setState(() {
+                            toggleAfternoon();
+                          });
+                        },
+                        child: Container(
+                          width: 65.57,
+                          height: 25,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.horizontal(
+                                right: Radius.circular(12),
+                              ),
+                              border: Border.all(
+                                color: Color(0xff9c9c9c),
+                              )),
+                          child: Center(
+                              child: Text(
+                            "오후",
+                            style: TextStyle(fontSize: 14),
+                            textAlign: TextAlign.center,
+                          )),
+                        ),
+                      ),
+              ])
+            ],
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          // Container(
+          //     width: 400,
+          //     height: isAfternoon
+          //         ? kColumnLength / 2 * kBoxSize + kColumnLength
+          //         : kColumnLength / 2 * kBoxSize + kColumnLength + 6,
+          //     decoration: BoxDecoration(
+          //       border: Border.all(color: Colors.grey),
+          //       borderRadius: BorderRadius.circular(12),
+          //     ),
+          //     child: Stack(
+          //       children: [
+          //         Row(
+          //           children: [
+          //             ...buildTimeColumn(0),
+          //             //spread operator(...)를 사용
+          //             ...builDayColumn(0),
+          //             ...builDayColumn(1),
+          //             ...builDayColumn(2),
+          //             ...builDayColumn(3),
+          //             ...builDayColumn(4),
+          //             ...builDayColumn(5),
+          //             ...builDayColumn(6),
+          //           ],
+          //         ),
+          //         if (isAfternoon)
+          //           ...List.generate(afternoonDataList.length, (index) {
+          //             Color color = Color(int.parse(
+          //                 '0xFF${afternoonDataList[index]['color'].substring(1)}'));
+          //             return Positioned(
+          //                 left: afternoonDataList[index]['day'],
+          //                 top: afternoonDataList[index]['startTime']
+          //                     .toDouble(), //int 타입을 double? 타입으로 변환하는거 ,소수점땜시
+          //                 height: afternoonDataList[index]['duration']
+          //                     .toDouble(),
+          //                 width: width,
+          //                 child: Container(
+          //                   decoration: BoxDecoration(
+          //                     color: color,
+          //                   ),
+          //                   child: Center(
+          //                       child: Text(
+          //                           afternoonDataList[index]
+          //                               ['lectureName'],
+          //                           textAlign: TextAlign.center,
+          //                           style: TextStyle(
+          //                               color: Colors.white,
+          //                               fontSize: 10))),
+          //                 ));
+          //           })
+          //         else
+          //           ...List.generate(morningDataList.length, (index) {
+          //             Color color = Color(int.parse(
+          //                 '0xFF${morningDataList[index]['color'].substring(1)}'));
+          //             return Positioned(
+          //                 left: morningDataList[index]['day'],
+          //                 top: morningDataList[index]['startTime']
+          //                     .toDouble(), //int 타입을 double? 타입으로 변환하는거 ,소수점땜시
+          //                 height: morningDataList[index]['duration']
+          //                     .toDouble(),
+          //                 width: width,
+          //                 child: Container(
+          //                   decoration: BoxDecoration(
+          //                     color: color,
+          //                   ),
+          //                   child: Center(
+          //                       child: Text(
+          //                           morningDataList[index]
+          //                               ['lectureName'],
+          //                           textAlign: TextAlign.center,
+          //                           style: TextStyle(
+          //                               color: Colors.white,
+          //                               fontSize: 10))),
+          //                 ));
+          //           }),
+          //       ],
+          //     )),
+          TimeTable(isAfternoon: isAfternoon, toggleAfternoon: toggleAfternoon),
+        ],
+      ),
+    ));
   }
 }
 
@@ -423,73 +458,86 @@ class _TimeTableState extends State<TimeTable> {
   Widget build(BuildContext context) {
     int kColumnLength = getkColumnLength();
 
-    return Container(
-        width: 400,
-        height: widget.isAfternoon
-            ? kColumnLength / 2 * kBoxSize + kColumnLength
-            : kColumnLength / 2 * kBoxSize + kColumnLength + 6,
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
-          // borderRadius: BorderRadius.circular(12),
-        ),
-        child: Stack(
-          children: [
-            Row(
-              children: [
-                ...buildTimeColumn(0, kColumnLength),
-                //spread operator(...)를 사용
-                ...builDayColumn(0, kColumnLength),
-                ...builDayColumn(1, kColumnLength),
-                ...builDayColumn(2, kColumnLength),
-                ...builDayColumn(3, kColumnLength),
-                ...builDayColumn(4, kColumnLength),
-                ...builDayColumn(5, kColumnLength),
-                ...builDayColumn(6, kColumnLength),
-              ],
+    return Expanded(
+      child: SingleChildScrollView(
+        child: Container(
+            width: 400,
+            height: widget.isAfternoon
+                ? kColumnLength / 2 * kBoxSize + kColumnLength
+                : kColumnLength / 2 * kBoxSize + kColumnLength + 6,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              // borderRadius: BorderRadius.circular(12),
             ),
-            if (widget.isAfternoon)
-              ...List.generate(afternoonDataList.length, (index) {
-                Color color = Color(int.parse(
-                    '0xFF${afternoonDataList[index]['color'].substring(1)}'));
-                return Positioned(
-                    left: afternoonDataList[index]['day'],
-                    top: afternoonDataList[index]['startTime']
-                        .toDouble(), //int 타입을 double? 타입으로 변환하는거 ,소수점땜시
-                    height: afternoonDataList[index]['duration'].toDouble(),
-                    width: width,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: color,
-                      ),
-                      child: Center(
-                          child: Text(afternoonDataList[index]['lectureName'],
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 10))),
-                    ));
-              })
-            else
-              ...List.generate(morningDataList.length, (index) {
-                Color color = Color(int.parse(
-                    '0xFF${morningDataList[index]['color'].substring(1)}'));
-                return Positioned(
-                    left: morningDataList[index]['day'],
-                    top: morningDataList[index]['startTime']
-                        .toDouble(), //int 타입을 double? 타입으로 변환하는거 ,소수점땜시
-                    height: morningDataList[index]['duration'].toDouble(),
-                    width: width,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: color,
-                      ),
-                      child: Center(
-                          child: Text(morningDataList[index]['lectureName'],
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 10))),
-                    ));
-              }),
-          ],
-        ));
+            child: Stack(
+              children: [
+                Row(
+                  children: [
+                    ...buildTimeColumn(0, kColumnLength),
+                    //spread operator(...)를 사용
+                    ...builDayColumn(0, kColumnLength),
+                    ...builDayColumn(1, kColumnLength),
+                    ...builDayColumn(2, kColumnLength),
+                    ...builDayColumn(3, kColumnLength),
+                    ...builDayColumn(4, kColumnLength),
+                    ...builDayColumn(5, kColumnLength),
+                    ...builDayColumn(6, kColumnLength),
+                  ],
+                ),
+                if (widget.isAfternoon)
+                  ...List.generate(afternoonDataList.length, (index) {
+                    Color color = Colors.black;
+                    String? colorValue = afternoonDataList[index]['color'];
+                    if (colorValue != null && colorValue.isNotEmpty) {
+                      color = Color(int.parse(
+                          '0xFF${afternoonDataList[index]['color'].substring(1)}'));
+                    }
+                    return Positioned(
+                        left: afternoonDataList[index]['day'],
+                        top: afternoonDataList[index]['startTime']
+                            .toDouble(), //int 타입을 double? 타입으로 변환하는거 ,소수점땜시
+                        height: afternoonDataList[index]['duration'].toDouble(),
+                        width: width,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: color,
+                          ),
+                          child: Center(
+                              child: Text(
+                                  afternoonDataList[index]['lectureName'],
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 10))),
+                        ));
+                  })
+                else
+                  ...List.generate(morningDataList.length, (index) {
+                    Color color = Colors.black;
+                    String? colorValue = morningDataList[index]['color'];
+                    if (colorValue != null && colorValue.isNotEmpty) {
+                      color = Color(int.parse(
+                          '0xFF${morningDataList[index]['color'].substring(1)}'));
+                    }
+                    return Positioned(
+                        left: morningDataList[index]['day'],
+                        top: morningDataList[index]['startTime']
+                            .toDouble(), //int 타입을 double? 타입으로 변환하는거 ,소수점땜시
+                        height: morningDataList[index]['duration'].toDouble(),
+                        width: width,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: color,
+                          ),
+                          child: Center(
+                              child: Text(morningDataList[index]['lectureName'],
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 10))),
+                        ));
+                  }),
+              ],
+            )),
+      ),
+    );
   }
 }
