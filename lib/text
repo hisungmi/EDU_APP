@@ -50,3 +50,57 @@ ListView.builder(
                           );
                         },
                       ),
+
+                      bottomNavigationBar: BottomNavigationBar(
+                                currentIndex: _currentIndex,
+                                unselectedItemColor: Color(0xff9c9c9c),
+                                unselectedLabelStyle: TextStyle(
+                                  color: Color(0xff9c9c9c),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                                onTap: (index) {
+                                  setState(() {
+                                    _currentIndex = index;
+                                  });
+                                },
+                                items: const [
+                                  BottomNavigationBarItem(
+                                    icon: FaIcon(
+                                      FontAwesomeIcons.clipboardCheck,
+                                      color: Color(0xffc1c1c1),
+                                    ),
+                                    label: '출결현황',
+                                  ),
+                                  BottomNavigationBarItem(
+                                    icon: FaIcon(
+                                      FontAwesomeIcons.userPen,
+                                      color: Color(0xffc1c1c1),
+                                    ),
+                                    label: '시험',
+                                  ),
+                                  BottomNavigationBarItem(
+                                    icon: FaIcon(FontAwesomeIcons.book),
+                                    label: '과제',
+                                  ),
+                                  BottomNavigationBarItem(
+                                    icon: FaIcon(FontAwesomeIcons.envelopeOpen),
+                                    label: '건의사항',
+                                  ),
+                                  BottomNavigationBarItem(
+                                    icon: FaIcon(FontAwesomeIcons.bullhorn),
+                                    label: '공지사항',
+                                  ),
+                                ],
+                              )
+                              endDrawer: Drawer(
+                                          child: ListView(
+                                        padding: EdgeInsets.zero,
+                                        children: [
+                                          DrawerHeader(child: Text('menu')),
+                                          ListTile(
+                                            title: Text('item'),
+                                            onTap: () {},
+                                          )
+                                        ],
+                                      )),

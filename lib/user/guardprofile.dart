@@ -70,46 +70,13 @@ class _MyProfilePageState extends State<MyProfilePage> {
       'address': addressController.text,
     };
     var res = await post('/members/editStudent/', jsonEncode(data));
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
+    setState(() async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
       //JSON문자열로 인코딩
       String updateData = jsonEncode(res.data['resultData']);
       //수정된 userData 다시 저장
       prefs.setString('userData', updateData);
     });
-  }
-
-  Future<bool?> confirmation(BuildContext context) {
-    return showDialog<bool>(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-              title: Text('로그아웃'),
-              content: Text('로그아웃 하시겠습니까?'),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(true);
-                    },
-                    child: Text('확인')),
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(false);
-                    },
-                    child: Text('취소')),
-              ]);
-        });
-  }
-
-  Future<void> logOut(BuildContext context) async {
-    bool? confirmed = await confirmation(context);
-    if (confirmed == true) {
-      //로컬 스토리지 지우기
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.remove('userData');
-
-      Navigator.pushNamedAndRemoveUntil(context, "/mainpage", (route) => false);
-    }
   }
 
   @override
@@ -121,92 +88,34 @@ class _MyProfilePageState extends State<MyProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: isEdit
-          ? AppBar(
-              title: Text('마이프로필',
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xff0099ff))),
-              centerTitle: true, // 텍스트 중앙 정렬
-              leading: IconButton(
-                icon: FaIcon(FontAwesomeIcons.home),
-                color: Color(0xff0099ff),
-                iconSize: 30,
-                onPressed: () {
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, "/home", (route) => false);
-                },
-              ),
-              backgroundColor: Colors.white,
-              bottom: PreferredSize(
-                preferredSize: Size.fromHeight(4.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: Color(0xFFE8E8E8).withOpacity(0.8),
-                        width: 1.0,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              toolbarHeight: 80,
-              elevation: 4.0, //앱바 입체감 없애기
-              actions: [
-                IconButton(
-                  icon: Icon(Icons.menu),
-                  color: Color(0xff0099ff),
-                  iconSize: 35,
-                  onPressed: () {},
-                )
-              ],
-            )
-          : AppBar(
-              backgroundColor: Colors.white,
-              toolbarHeight: 70,
-              elevation: 4.0, //앱바 입체감 없애기
-              leading: TextButton(
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.all(0),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      numController.text = phone;
-                      addressController.text = address;
-                      isEdit = !isEdit;
-                    });
-                  },
-                  child: Text(
-                    "취소",
-                    style: TextStyle(
-                      color: Color(0xff0099ff),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )),
-              actions: [
-                TextButton(
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.all(0),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        isEdit = !isEdit;
-                        phone = numController.text;
-                        address = addressController.text;
-                        getSuggestList(studentKey, grade, remark, school);
-                      });
-                    },
-                    child: Text("완료",
-                        style: TextStyle(
-                          color: Color(0xff0099ff),
-                          fontWeight: FontWeight.bold,
-                        )))
-              ],
-            ),
+      appBar: AppBar(
+        title: Text('자녀프로필',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+        centerTitle: true, // 텍스트 중앙 정렬
+        leading: InkWell(
+          onTap: () {
+            Navigator.pushNamedAndRemoveUntil(
+                context, "/home", (route) => false);
+          },
+          child: Image.asset(
+            'assets/img/whitelogo.png',
+          ),
+        ),
+        backgroundColor: Color(0xff0099FF),
+        toolbarHeight: 80,
+        elevation: 0.0, //앱바 입체감 없애기
+        actions: [
+          IconButton(
+            icon: Icon(Icons.menu),
+            iconSize: 30,
+            onPressed: () {
+              fullMenu();
+            },
+          )
+        ],
+      ),
       body: Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 30.0),
+        padding: EdgeInsets.fromLTRB(0.0, 40.0, 0.0, 0.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center, //글자들이 왼쪽에 붙게
@@ -216,16 +125,15 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 Positioned(
                   //Stack 안에서만 사용가능
                   left: 0,
-                  top: 70,
+                  top: 40,
                   child: Container(
                     width: 1920,
                     height: 2,
                     color: Color(0xff9C9C9C),
                   ),
                 ),
-
                 Container(
-                  margin: EdgeInsets.fromLTRB(30.0, 30.0, 0.0, 0.0),
+                  margin: EdgeInsets.fromLTRB(30.0, 0.0, 0.0, 0.0),
                   child: Row(
                     children: [
                       profileImage(),
@@ -254,137 +162,30 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ],
                   ),
                 ), //프로필 이름 소개
-                isEdit
-                    ? Positioned(
-                        right: 0,
-                        top: 80,
-                        child: IconButton(
-                          icon: Icon(Icons.create),
-                          color: Color(0xff9C9C9C),
-                          onPressed: () {
-                            setState(() {
-                              numController.text = phone;
-                              addressController.text = address;
-                              isEdit = !isEdit;
-                            });
-                          },
-                        ),
-                      )
-                    : Container(),
-                // : Positioned(
-                //     left: 113,
-                //     top: 75,
-                //     child: Container(
-                //       decoration: BoxDecoration(
-                //           color: Colors.white,
-                //           borderRadius: BorderRadius.circular(40),
-                //           border: Border.all(
-                //               width: 1, color: Color(0xff9c9c9c))),
-                //       child: IconButton(
-                //         padding: EdgeInsets.all(3),
-                //         constraints: BoxConstraints(), //아이콘위젯 패딩아예없애는법
-                //         icon: Icon(Icons.photo_camera),
-                //         color: Color(0xff9C9C9C),
-                //         onPressed: () {
-                //           showModalBottomSheet(
-                //               //밑에서 열리는 메뉴
-                //               context: context,
-                //               builder: (BuildContext context) {
-                //                 return Container(
-                //                     height: 200,
-                //                     decoration: BoxDecoration(
-                //                       color: Colors.white,
-                //                       borderRadius:
-                //                           BorderRadius.circular(10),
-                //                     ),
-                //                     child: Center(
-                //                         child: Column(
-                //                             mainAxisSize:
-                //                                 MainAxisSize.min, //크기만큼만 차지
-                //                             children: [
-                //                           SizedBox(
-                //                             //카드형식 높이주기위해 감쌈
-                //                             height: 52,
-                //                             child: Card(
-                //                               //카드형식
-                //                               elevation: 0,
-                //                               child: ListTile(
-                //                                 leading: Icon(
-                //                                     Icons.photo_camera),
-                //                                 iconColor:
-                //                                     Color(0xff9c9c9c),
-                //                                 title: Text('카메라',
-                //                                     style: TextStyle(
-                //                                       color:
-                //                                           Color(0xff9c9c9c),
-                //                                       fontWeight:
-                //                                           FontWeight.bold,
-                //                                     )),
-                //                                 subtitle:
-                //                                     Divider(thickness: 1),
-                //                                 onTap: () {},
-                //                               ),
-                //                             ),
-                //                           ),
-                //                           SizedBox(
-                //                             height: 10,
-                //                           ),
-                //                           SizedBox(
-                //                             height: 52,
-                //                             child: Card(
-                //                               elevation: 0,
-                //                               child: ListTile(
-                //                                 leading: Icon(Icons.photo),
-                //                                 iconColor:
-                //                                     Color(0xff9c9c9c),
-                //                                 title: Text('라이브러리',
-                //                                     style: TextStyle(
-                //                                       color:
-                //                                           Color(0xff9c9c9c),
-                //                                       fontWeight:
-                //                                           FontWeight.bold,
-                //                                     )),
-                //                                 subtitle:
-                //                                     Divider(thickness: 1),
-                //                                 onTap: () {},
-                //                               ),
-                //                             ),
-                //                           ),
-                //                           SizedBox(
-                //                             height: 20,
-                //                           ),
-                //                         ])));
-                //               });
-                //         },
-                //       ),
-                //     ),
-                //   ),
               ]),
               SizedBox(
                 height: 30.0,
               ),
               Center(
                 child: Container(
-                  height: 280,
-                  margin: EdgeInsets.fromLTRB(40.0, 0.0, 0.0, 0.0),
-                  child: isEdit ? profileForm() : editProfileForm(),
-                ),
+                    height: 280,
+                    margin: EdgeInsets.fromLTRB(40.0, 0.0, 0.0, 0.0),
+                    child: profileForm()),
               ), //프로필 정보
               SizedBox(
-                height: 65.0,
+                height: 25.0,
               ),
-              isEdit ? guardProfile() : editGuardProfile(),
               Center(
                 child: isEdit
                     ? Container(
                         padding: EdgeInsets.zero,
-                        margin: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
+                        margin: EdgeInsets.zero,
                         width: 130,
                         height: 30,
                         decoration: BoxDecoration(
                           border: Border.all(
                             width: 2,
-                            color: Color(0xff9c9c9c),
+                            color: Color(0xff9C9C9C),
                           ),
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -393,23 +194,22 @@ class _MyProfilePageState extends State<MyProfilePage> {
                             padding: EdgeInsets.all(0),
                           ),
                           child: Text(
-                            "로그아웃",
+                            "학적부 열람",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: Color(0xffFA2A2A),
+                              color: Color(0xff0099FF),
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          onPressed: () {
-                            logOut(context);
-                          },
+                          onPressed: () {},
                         ),
                       )
                     : Container(),
               ), //학적부 열람
               SizedBox(
-                height: 40,
+                height: 40.0,
               ),
+              guardProfile()
             ],
           ),
         ),
@@ -633,37 +433,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                       ),
                     ),
                     SizedBox(
-                      height: 5,
-                    ),
-                    SizedBox(
-                      //카드형식 높이주기위해 감쌈
-                      height: 52,
-                      child: Card(
-                        //카드형식
-                        elevation: 0,
-                        child: ListTile(
-                          leading: FaIcon(FontAwesomeIcons.signOut),
-                          iconColor: Color(0xff9c9c9c),
-                          title: Text('로그아웃',
-                              style: TextStyle(
-                                color: Color(0xff9c9c9c),
-                                fontWeight: FontWeight.bold,
-                              )),
-                          subtitle: Divider(thickness: 1),
-                          onTap: () {
-                            logOut(context);
-
-                            Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              "/mainpage",
-                              (route) => false,
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 5,
+                      height: 15,
                     ),
                   ])));
         });
@@ -1028,7 +798,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: const [
                   SizedBox(
-                    height: 40.0,
+                    height: 25.0,
                   ),
                   Text(
                     "번호",
@@ -1044,7 +814,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: 40.0,
+                    height: 25.0,
                   ),
                   Container(
                     margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),

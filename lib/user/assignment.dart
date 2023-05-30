@@ -58,22 +58,24 @@ class _TaskState extends State<Assignment> {
     bool isAfternoon = widget.isAfternoon;
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color(0xff0099FF),
+          backgroundColor: Colors.white,
           toolbarHeight: 70,
-          elevation: 0.0, //앱바 입체감 없애기
+          elevation: 4.0, //앱바 입체감 없애기
           title: Center(
             child: Text(
               '과제',
+              style: TextStyle(
+                  color: Color(0xff0099ff), fontWeight: FontWeight.w600),
               textAlign: TextAlign.center,
             ),
           ),
           leading: Container(
             child: IconButton(
               icon: FaIcon(FontAwesomeIcons.angleLeft),
-              color: Colors.white,
+              color: Color(0xff0099ff),
               onPressed: () {
                 //현재 페이지를 스택에서 제거하고 이전 페이지로 돌아감
-                Navigator.of(context).pop(null);
+                Navigator.pop(context);
               },
             ),
           ),
@@ -91,7 +93,7 @@ class _TaskState extends State<Assignment> {
               Container(
                 width: double.infinity,
                 height: 35,
-                color: Color(0xff9c9c9c),
+                color: Color(0xffbbbbbb),
                 child: Center(
                     child: Text(
                         isAfternoon
@@ -191,7 +193,7 @@ class _TaskState extends State<Assignment> {
                                     ),
                                     Icon(
                                       FontAwesomeIcons.angleRight,
-                                      size: 28.0,
+                                      size: 25.0,
                                       color: Color(0xffA9A9A9),
                                     ),
                                     SizedBox(

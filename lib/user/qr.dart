@@ -31,11 +31,13 @@ class _QrCheckState extends State<QrCheck> {
       });
   //초 세기 시작
   //mounted : State 객체가 여전히 화면에 나타나 있는지 확인한 후, 그 후에 setState() 메소드를 호출하고 상태를 업데이트
-  void startTimer(mounted) {
+  void startTimer() {
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      setState(() {
-        seconds--; //1초에 하나씨 줄어듬
-      });
+      if (mounted) {
+        setState(() {
+          seconds--; //1초에 하나씨 줄어듬
+        });
+      }
       if (seconds == 0) {
         isCount = false; //0이되면 인증시간 만료
       }
@@ -56,9 +58,14 @@ class _QrCheckState extends State<QrCheck> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
-    startTimer(mounted);
+    startTimer();
     loadData();
   }
 
@@ -66,25 +73,42 @@ class _QrCheckState extends State<QrCheck> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('QR체크',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+          title: Text('QR',
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xff0099ff))),
           centerTitle: true, // 텍스트 중앙 정렬
-          leading: InkWell(
-            onTap: () {
+          leading: IconButton(
+            icon: FaIcon(FontAwesomeIcons.home),
+            color: Color(0xff0099ff),
+            iconSize: 30,
+            onPressed: () {
               Navigator.pushNamedAndRemoveUntil(
                   context, "/home", (route) => false);
             },
-            child: Image.asset(
-              'assets/img/whitelogo.png',
+          ),
+          backgroundColor: Colors.white,
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(4.0),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: Color(0xFFE8E8E8).withOpacity(0.8),
+                    width: 1.0,
+                  ),
+                ),
+              ),
             ),
           ),
-          backgroundColor: Color(0xff0099FF),
           toolbarHeight: 80,
-          elevation: 0.0, //앱바 입체감 없애기
+          elevation: 4.0, //앱바 입체감 없애기
           actions: [
             IconButton(
               icon: Icon(Icons.menu),
-              iconSize: 30,
+              color: Color(0xff0099ff),
+              iconSize: 35,
               onPressed: () {},
             )
           ],
