@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:edu_application_pre/common/kiosk_main.dart';
+import 'package:edu_application_pre/common/main_page.dart';
 import 'package:edu_application_pre/layout/splash_screen.dart';
 import 'package:edu_application_pre/notice.dart';
 import 'package:edu_application_pre/qr_scanner.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => SplashScreen(),
         '/kiosk': (context) => KioskMain(),
+        '/mainpage': (context) => MainPage(),
         '/home': (context) => MyHomePage(),
         '/profile': (context) => MyProfilePage(),
         '/qr': (context) => QrCheck(),
@@ -72,225 +74,437 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String name = '';
-  void loadData() async {
-    // 로컬 스토리지에서 데이터 불러오기
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userData = prefs.getString('userData');
-    if (userData != null) {
-      Map<dynamic, dynamic> dataMap = jsonDecode(userData);
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-      setState(() {
-        name = dataMap['name'] ?? '';
-      });
+  Future<bool?> confirmation(BuildContext context) {
+    return showDialog<bool>(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              title: Text('로그아웃'),
+              content: Text('로그아웃 하시겠습니까?'),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                    child: Text('확인')),
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    },
+                    child: Text('취소')),
+              ]);
+        });
+  }
+
+  Future<void> logOut(BuildContext context) async {
+    bool? confirmed = await confirmation(context);
+    if (confirmed == true) {
+      //로컬 스토리지 지우기
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.remove('userData');
+
+      Navigator.pushNamedAndRemoveUntil(context, "/mainpage", (route) => false);
     }
   }
 
   @override
   void initState() {
     super.initState();
-    loadData();
   }
 
+  int _currentIndex = 0;
   @override
   Widget build(BuildContext context) {
-    DateTime now = DateTime.now();
-    String formattedDate = DateFormat('yyyy.MM.dd.EEE', 'ko_KR').format(now);
-    return Scaffold(
-      appBar: AppBar(
-        title: InkWell(
-          //기본적인 클릭이벤트들이 내장되어있음, 애니메이션도 기본 없애려면 Colors.transparent 정의,
-          onTap: () {
-            Navigator.pushNamedAndRemoveUntil(
-                context, "/home", (route) => false);
-          },
-          child: Image.asset(
-            "assets/img/whitelogo.png",
-            height: 80,
-          ),
-        ),
-        automaticallyImplyLeading: false, //기본 왼ㅉ고 토굴 안생기게
-        backgroundColor: Color(0xff0099FF),
-        toolbarHeight: 80,
-        elevation: 0.0, //앱바 입체감 없애기
-
-        actions: [
-          IconButton(
-            icon: Icon(Icons.perm_identity),
-            iconSize: 40,
-            onPressed: () {
-              Navigator.pushNamed(context, '/profile');
-            },
-          )
-        ],
+    PageController pagecontroller = PageController(initialPage: _currentIndex);
+    final List<Widget> pages = [
+      Schedule(),
+      Class(
+        pageIndex: 'attendance',
       ),
-      body: Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 23.0, 0.0, 0.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                width: 385,
-                child: Text(formattedDate,
-                    textAlign: TextAlign.start,
-                    style:
-                        TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-              ),
-              Container(
-                  width: 390,
-                  child: Text('$name 님의 시간표',
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                          color: Color(0xff595959),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500))),
-              SizedBox(
-                height: 13,
-              ),
-              InkWell(
-                onTap: () {
-                  Navigator.pushNamed(context, '/schedule');
-                },
-                child: Container(
-                    width: 394,
-                    height: 330,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                      color: Color(0xff9c9c9c),
-                      width: 1,
-                    )),
-                    child: SingleChildScrollView(
-                      child: TimeTable(
-                        isAfternoon: true,
-                        toggleAfternoon: () {},
-                      ),
-                    )),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment
-                    .spaceEvenly, //정렬, spaceAround: 간격의 절반 양끝 여백, spaceBetween: 여백x, spaceEvenly: 간격 만큼 여백
-                children: [
-                  Column(
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    Class(pageIndex: 'attendance')),
-                          );
-                        },
-                        icon: FaIcon(FontAwesomeIcons.clipboardCheck),
-                        color: Color(0xff9c9c9c),
-                        iconSize: 55,
-                      ),
-                      Text('출결현황',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600))
-                    ],
+      Class(
+        pageIndex: 'exam',
+      ),
+      Class(
+        pageIndex: 'assignment',
+      ),
+      Notice()
+    ];
+
+    return Scaffold(
+        appBar: AppBar(
+          title: Image.asset(
+            'assets/img/logo.png',
+            height: 50,
+          ),
+          centerTitle: true, // 텍스트 중앙 정렬
+          leading: IconButton(
+            icon: FaIcon(FontAwesomeIcons.qrcode),
+            color: Color(0xff0099ff),
+            iconSize: 35,
+            onPressed: () {
+              Navigator.pushNamed(context, '/qr');
+            },
+          ),
+          backgroundColor: Colors.white,
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(4.0),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: Color(0xFFE8E8E8).withOpacity(0.8),
+                    width: 1.0,
                   ),
-                  Column(
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Class(pageIndex: 'exam')),
-                          );
-                        },
-                        icon: FaIcon(FontAwesomeIcons.userPen),
-                        color: Color(0xff9c9c9c),
-                        iconSize: 55,
-                      ),
-                      Text('시험',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600))
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    Class(pageIndex: 'assignment')),
-                          );
-                        },
-                        icon: FaIcon(FontAwesomeIcons.book),
-                        color: Color(0xff9c9c9c),
-                        iconSize: 55,
-                      ),
-                      Text('과제',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600))
-                    ],
-                  ),
-                ],
+                ),
               ),
-              SizedBox(
-                height: 20,
+            ),
+          ),
+          toolbarHeight: 80,
+          elevation: 4.0, //앱바 입체감 없애기
+          actions: [
+            IconButton(
+              icon: Icon(Icons.menu),
+              color: Color(0xff0099ff),
+              iconSize: 35,
+              onPressed: () {
+                fullMenu();
+              },
+            )
+          ],
+        ),
+        endDrawer: Drawer(
+            child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(child: Text('menu')),
+            ListTile(
+              title: Text('item'),
+              onTap: () {},
+            )
+          ],
+        )),
+        body: PageView(
+          controller: pagecontroller,
+          onPageChanged: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          children: pages,
+        ),
+        bottomNavigationBar: Container(
+          height: 80,
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                color: Color(0xffA9A9A9), // 원하는 색상 설정
+                width: 1.0, // 경계선의 두께 설정
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Column(
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/qr');
-                        },
-                        icon: FaIcon(FontAwesomeIcons.qrcode),
-                        color: Color(0xff9c9c9c),
-                        iconSize: 55,
-                      ),
-                      Text('QR',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600))
-                    ],
+            ),
+          ),
+          child: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            currentIndex: _currentIndex,
+            selectedItemColor: Color(0xff0099ff),
+            unselectedItemColor: Color(0xff9c9c9c),
+            selectedLabelStyle: TextStyle(
+              color: Color(0xff0099ff),
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+            unselectedLabelStyle: TextStyle(
+              color: Color(0xff9c9c9c),
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+            onTap: (index) {
+              setState(() {
+                _currentIndex = index;
+                pagecontroller.jumpToPage(index);
+              });
+            },
+            items: const [
+              BottomNavigationBarItem(
+                  icon: FaIcon(
+                    FontAwesomeIcons.chartPie,
                   ),
-                  Column(
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/suggestion');
-                        },
-                        icon: FaIcon(FontAwesomeIcons.envelopeOpen),
-                        color: Color(0xff9c9c9c),
-                        iconSize: 55,
-                      ),
-                      Text('건의사항',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600))
-                    ],
+                  label: '시간표'),
+              BottomNavigationBarItem(
+                  icon: FaIcon(
+                    FontAwesomeIcons.clipboardCheck,
                   ),
-                  Column(
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/notice');
-                        },
-                        icon: FaIcon(FontAwesomeIcons.bullhorn),
-                        color: Color(0xff9c9c9c),
-                        iconSize: 55,
-                      ),
-                      Text('공지사항',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600))
-                    ],
-                  )
-                ],
-              ),
+                  label: '출결현황'),
+              BottomNavigationBarItem(
+                  icon: FaIcon(
+                    FontAwesomeIcons.userPen,
+                  ),
+                  label: '시험'),
+              BottomNavigationBarItem(
+                  icon: FaIcon(
+                    FontAwesomeIcons.book,
+                  ),
+                  label: '과제'),
+              BottomNavigationBarItem(
+                  icon: FaIcon(
+                    FontAwesomeIcons.bullhorn,
+                  ),
+                  label: '공지사항')
             ],
           ),
+        ));
+  }
+
+  Future fullMenu() {
+    return showModalBottomSheet(
+        //밑에서 열리는 메뉴
+        context: context,
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(20),
+            topLeft: Radius.circular(20),
+          ),
         ),
-      ),
-    );
+        builder: (BuildContext context) {
+          return Container(
+              height: MediaQuery.of(context).size.height * 0.4,
+              color: Colors.white,
+              child: Center(
+                  child: Column(
+                      mainAxisSize: MainAxisSize.min, //크기만큼만 차지
+                      children: [
+                    SizedBox(
+                      //카드형식 높이주기위해 감쌈
+                      height: 52,
+                      child: Card(
+                        //카드형식
+                        elevation: 0,
+                        child: ListTile(
+                          leading: FaIcon(FontAwesomeIcons.circleUser),
+                          iconColor: Color(0xff9c9c9c),
+                          title: Text('프로필',
+                              style: TextStyle(
+                                color: Color(0xff9c9c9c),
+                                fontWeight: FontWeight.bold,
+                              )),
+                          subtitle: Divider(thickness: 1),
+                          onTap: () {
+                            Navigator.pop(context);
+
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, "/profile", (route) => false);
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    // SizedBox(
+                    //   height: 52,
+                    //   child: Card(
+                    //     elevation: 0,
+                    //     child: ListTile(
+                    //       leading: FaIcon(FontAwesomeIcons.chartPie),
+                    //       iconColor: Color(0xff9c9c9c),
+                    //       title: Text('시간표',
+                    //           style: TextStyle(
+                    //             color: Color(0xff9c9c9c),
+                    //             fontWeight: FontWeight.bold,
+                    //           )),
+                    //       subtitle: Divider(thickness: 1),
+                    //       onTap: () {
+                    //         Navigator.pop(context);
+                    //         Navigator.pushNamedAndRemoveUntil(
+                    //             context, "/schedule", (route) => false);
+                    //       },
+                    //     ),
+                    //   ),
+                    // ),
+                    // SizedBox(
+                    //   height: 5,
+                    // ), //시간표
+                    SizedBox(
+                      //카드형식 높이주기위해 감쌈
+                      height: 52,
+                      child: Card(
+                        //카드형식
+                        elevation: 0,
+                        child: ListTile(
+                          leading: FaIcon(FontAwesomeIcons.qrcode),
+                          iconColor: Color(0xff9c9c9c),
+                          title: Text('출석 QR',
+                              style: TextStyle(
+                                color: Color(0xff9c9c9c),
+                                fontWeight: FontWeight.bold,
+                              )),
+                          subtitle: Divider(thickness: 1),
+                          onTap: () {
+                            Navigator.pop(context);
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, "/qr", (route) => false);
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    // SizedBox(
+                    //   //카드형식 높이주기위해 감쌈
+                    //   height: 52,
+                    //   child: Card(
+                    //     //카드형식
+                    //     elevation: 0,
+                    //     child: ListTile(
+                    //       leading: FaIcon(FontAwesomeIcons.clipboardCheck),
+                    //       iconColor: Color(0xff9c9c9c),
+                    //       title: Text('출석 현황',
+                    //           style: TextStyle(
+                    //             color: Color(0xff9c9c9c),
+                    //             fontWeight: FontWeight.bold,
+                    //           )),
+                    //       subtitle: Divider(thickness: 1),
+                    //       onTap: () {
+                    //         Navigator.pop(context);
+                    //         Navigator.pushNamedAndRemoveUntil(
+                    //             context, "/class", (route) => false);
+                    //       },
+                    //     ),
+                    //   ),
+                    // ),
+                    // SizedBox(
+                    //   height: 5,
+                    // ), //출석현황
+                    // SizedBox(
+                    //   //카드형식 높이주기위해 감쌈
+                    //   height: 52,
+                    //   child: Card(
+                    //     //카드형식
+                    //     elevation: 0,
+                    //     child: ListTile(
+                    //       leading: FaIcon(FontAwesomeIcons.userPen),
+                    //       iconColor: Color(0xff9c9c9c),
+                    //       title: Text('시험',
+                    //           style: TextStyle(
+                    //             color: Color(0xff9c9c9c),
+                    //             fontWeight: FontWeight.bold,
+                    //           )),
+                    //       subtitle: Divider(thickness: 1),
+                    //       onTap: () {
+                    //         Navigator.pop(context);
+                    //         Navigator.pushNamedAndRemoveUntil(
+                    //             context, "/exam", (route) => false);
+                    //       },
+                    //     ),
+                    //   ),
+                    // ),
+                    // SizedBox(
+                    //   height: 5,
+                    // ),//시험
+                    // SizedBox(
+                    //   //카드형식 높이주기위해 감쌈
+                    //   height: 52,
+                    //   child: Card(
+                    //     //카드형식
+                    //     elevation: 0,
+                    //     child: ListTile(
+                    //       leading: FaIcon(FontAwesomeIcons.book),
+                    //       iconColor: Color(0xff9c9c9c),
+                    //       title: Text('과제',
+                    //           style: TextStyle(
+                    //             color: Color(0xff9c9c9c),
+                    //             fontWeight: FontWeight.bold,
+                    //           )),
+                    //       subtitle: Divider(thickness: 1),
+                    //       onTap: () {
+                    //         Navigator.pop(context);
+                    //         Navigator.pushNamedAndRemoveUntil(
+                    //             context, "/assigment", (route) => false);
+                    //       },
+                    //     ),
+                    //   ),
+                    // ),
+                    // SizedBox(
+                    //   height: 5,
+                    // ),//과제
+                    SizedBox(
+                      //카드형식 높이주기위해 감쌈
+                      height: 52,
+                      child: Card(
+                        //카드형식
+                        elevation: 0,
+                        child: ListTile(
+                          leading: FaIcon(FontAwesomeIcons.envelopeOpen),
+                          iconColor: Color(0xff9c9c9c),
+                          title: Text('건의사항',
+                              style: TextStyle(
+                                color: Color(0xff9c9c9c),
+                                fontWeight: FontWeight.bold,
+                              )),
+                          subtitle: Divider(thickness: 1),
+                          onTap: () {
+                            Navigator.pop(context);
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, "/suggestion", (route) => false);
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    // SizedBox(
+                    //   //카드형식 높이주기위해 감쌈
+                    //   height: 52,
+                    //   child: Card(
+                    //     //카드형식
+                    //     elevation: 0,
+                    //     child: ListTile(
+                    //       leading: FaIcon(FontAwesomeIcons.bullhorn),
+                    //       iconColor: Color(0xff9c9c9c),
+                    //       title: Text('공지사항',
+                    //           style: TextStyle(
+                    //             color: Color(0xff9c9c9c),
+                    //             fontWeight: FontWeight.bold,
+                    //           )),
+                    //       subtitle: Divider(thickness: 1),
+                    //       onTap: () {
+                    //         Navigator.pop(context);
+                    //       },
+                    //     ),
+                    //   ),
+                    // ),
+                    // SizedBox(
+                    //   height: 5,
+                    // ), //공지사항
+                    SizedBox(
+                      //카드형식 높이주기위해 감쌈
+                      height: 52,
+                      child: Card(
+                        //카드형식
+                        elevation: 0,
+                        child: ListTile(
+                          leading: FaIcon(FontAwesomeIcons.signOut),
+                          iconColor: Color(0xff9c9c9c),
+                          title: Text('로그아웃',
+                              style: TextStyle(
+                                color: Color(0xff9c9c9c),
+                                fontWeight: FontWeight.bold,
+                              )),
+                          subtitle: Divider(thickness: 1),
+                          onTap: () {
+                            logOut(context);
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                  ])));
+        });
   }
 }

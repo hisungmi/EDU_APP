@@ -78,22 +78,24 @@ class _ExamState extends State<Exam> {
   Widget build(BuildContext context) {
     Map<String, dynamic> morningList = widget.morning;
     Map<String, dynamic> afterList = widget.afternoon;
-    Map<int, bool> itemStates = {};
+
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color(0xff0099FF),
+          backgroundColor: Colors.white,
           toolbarHeight: 70,
-          elevation: 0.0, //앱바 입체감 없애기
+          elevation: 4.0, //앱바 입체감 없애기
           title: Center(
             child: Text(
               '시험',
+              style: TextStyle(
+                  color: Color(0xff0099ff), fontWeight: FontWeight.w600),
               textAlign: TextAlign.center,
             ),
           ),
           leading: Container(
             child: IconButton(
               icon: FaIcon(FontAwesomeIcons.angleLeft),
-              color: Colors.white,
+              color: Color(0xff0099ff),
               onPressed: () {
                 //현재 페이지를 스택에서 제거하고 이전 페이지로 돌아감
                 Navigator.pop(context);
@@ -114,7 +116,7 @@ class _ExamState extends State<Exam> {
               Container(
                 width: double.infinity,
                 height: 35,
-                color: Color(0xff9c9c9c),
+                color: Color(0xffbbbbbb),
                 child: Center(
                   child: Text(
                       widget.isAfternoon
@@ -143,13 +145,13 @@ class _ExamState extends State<Exam> {
                         decoration: BoxDecoration(
                             border: Border(
                                 bottom: BorderSide(
-                                    width: 2, color: Color(0xff9c9c9c)))),
+                                    width: 2, color: Color(0xff8a8a8a)))),
                         height: 40,
                         child: Center(
                           child: Text(
                             "시험 일자",
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Color(0xff565656)),
+                            style: TextStyle(color: Color(0xff8a8a8a)),
                           ),
                         ),
                       ),
@@ -160,13 +162,13 @@ class _ExamState extends State<Exam> {
                         decoration: BoxDecoration(
                             border: Border(
                                 bottom: BorderSide(
-                                    width: 2, color: Color(0xff9c9c9c)))),
+                                    width: 2, color: Color(0xff8a8a8a)))),
                         child: Center(
                           child: Text(
                             "시험 유형",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: Color(0xff565656),
+                              color: Color(0xff8a8a8a),
                             ),
                           ),
                         ),
@@ -177,13 +179,13 @@ class _ExamState extends State<Exam> {
                         decoration: BoxDecoration(
                             border: Border(
                                 bottom: BorderSide(
-                                    width: 2, color: Color(0xff9c9c9c)))),
+                                    width: 2, color: Color(0xff8a8a8a)))),
                         height: 40,
                         child: Center(
                           child: Text(
                             "",
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Color(0xff565656)),
+                            style: TextStyle(color: Color(0xff8a8a8a)),
                           ),
                         ),
                       ),
@@ -193,13 +195,13 @@ class _ExamState extends State<Exam> {
                         decoration: BoxDecoration(
                             border: Border(
                                 bottom: BorderSide(
-                                    width: 2, color: Color(0xff9c9c9c)))),
+                                    width: 2, color: Color(0xff8a8a8a)))),
                         height: 40,
                         child: Center(
                           child: Text(
                             "상태",
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Color(0xff565656)),
+                            style: TextStyle(color: Color(0xff8a8a8a)),
                           ),
                         ),
                       ),
@@ -315,7 +317,7 @@ class _ExamState extends State<Exam> {
                                               '성적확인',
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
-                                                  fontSize: 12,
+                                                  fontSize: 11,
                                                   fontWeight: FontWeight.w500,
                                                   color: Colors.white),
                                             ),
