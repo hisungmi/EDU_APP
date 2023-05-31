@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import '../http_setup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:edu_application_pre/main.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -98,9 +99,14 @@ class MainPageState extends State<MainPage> {
 
           if (!mounted) return;
           //현재 스택에서 모든 페이지를 제거하고 새 페이지를 스택에 추가 , false 모든 경로를 제거
-          await Navigator.pushNamedAndRemoveUntil(
-              context, "/home", (route) => false);
-        } 
+          int desiredIndex = 0; // 2번째 인덱스로 이동하려면 1로 설정
+          await Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => MyHomePage(desiredIndex),
+            ),
+            (route) => false,
+          );
+        }
       } on DioError catch (e) {
         showDialog(
             context: context,

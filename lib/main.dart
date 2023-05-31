@@ -1,10 +1,8 @@
-import 'dart:convert';
-
 import 'package:edu_application_pre/common/kiosk_main.dart';
 import 'package:edu_application_pre/common/main_page.dart';
+// import 'package:edu_application_pre/layout/shared.dart';
 import 'package:edu_application_pre/layout/splash_screen.dart';
 import 'package:edu_application_pre/notice.dart';
-import 'package:edu_application_pre/qr_scanner.dart';
 import 'package:edu_application_pre/user/class.dart';
 import 'package:edu_application_pre/user/enter_suggestion.dart';
 import 'package:edu_application_pre/user/myprofile_page.dart';
@@ -14,7 +12,6 @@ import 'package:edu_application_pre/user/suggestions.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -38,7 +35,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => SplashScreen(),
         '/kiosk': (context) => KioskMain(),
         '/mainpage': (context) => MainPage(),
-        '/home': (context) => MyHomePage(),
+        // '/home': (context) => MyHomePage,
         '/profile': (context) => MyProfilePage(),
         '/qr': (context) => QrCheck(),
         '/suggestion': (context) => Suggestions(),
@@ -67,14 +64,16 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+  const MyHomePage(this.desiredIndex, {Key? key}) : super(key: key);
+  final int desiredIndex;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  int _currentIndex = 0;
+  late PageController pagecontroller;
 
   Future<bool?> confirmation(BuildContext context) {
     return showDialog<bool>(
@@ -112,12 +111,12 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    pagecontroller = PageController(initialPage: widget.desiredIndex);
+    _currentIndex = widget.desiredIndex;
   }
 
-  int _currentIndex = 0;
   @override
   Widget build(BuildContext context) {
-    PageController pagecontroller = PageController(initialPage: _currentIndex);
     final List<Widget> pages = [
       Schedule(),
       Class(
@@ -262,14 +261,11 @@ class _MyHomePageState extends State<MyHomePage> {
         context: context,
         isScrollControlled: true,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(20),
-            topLeft: Radius.circular(20),
-          ),
+          borderRadius: BorderRadius.circular(20),
         ),
         builder: (BuildContext context) {
           return Container(
-              height: MediaQuery.of(context).size.height * 0.4,
+              height: MediaQuery.of(context).size.height * 0.7,
               color: Colors.white,
               child: Center(
                   child: Column(
@@ -291,10 +287,13 @@ class _MyHomePageState extends State<MyHomePage> {
                               )),
                           subtitle: Divider(thickness: 1),
                           onTap: () {
-                            Navigator.pop(context);
-
-                            Navigator.pushNamedAndRemoveUntil(
-                                context, "/profile", (route) => false);
+                            Navigator.pushNamed(context, "/profile").then((_) {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MyHomePage(0),
+                                  ));
+                            });
                           },
                         ),
                       ),
@@ -302,30 +301,34 @@ class _MyHomePageState extends State<MyHomePage> {
                     SizedBox(
                       height: 5,
                     ),
-                    // SizedBox(
-                    //   height: 52,
-                    //   child: Card(
-                    //     elevation: 0,
-                    //     child: ListTile(
-                    //       leading: FaIcon(FontAwesomeIcons.chartPie),
-                    //       iconColor: Color(0xff9c9c9c),
-                    //       title: Text('시간표',
-                    //           style: TextStyle(
-                    //             color: Color(0xff9c9c9c),
-                    //             fontWeight: FontWeight.bold,
-                    //           )),
-                    //       subtitle: Divider(thickness: 1),
-                    //       onTap: () {
-                    //         Navigator.pop(context);
-                    //         Navigator.pushNamedAndRemoveUntil(
-                    //             context, "/schedule", (route) => false);
-                    //       },
-                    //     ),
-                    //   ),
-                    // ),
-                    // SizedBox(
-                    //   height: 5,
-                    // ), //시간표
+                    SizedBox(
+                      height: 52,
+                      child: Card(
+                        elevation: 0,
+                        child: ListTile(
+                          leading: FaIcon(FontAwesomeIcons.chartPie),
+                          iconColor: Color(0xff9c9c9c),
+                          title: Text('시간표',
+                              style: TextStyle(
+                                color: Color(0xff9c9c9c),
+                                fontWeight: FontWeight.bold,
+                              )),
+                          subtitle: Divider(thickness: 1),
+                          onTap: () {
+                            int desiredIndex = 0; // 2번째 인덱스로 이동하려면 1로 설정
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (context) => MyHomePage(desiredIndex),
+                              ),
+                              (route) => false,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
                     SizedBox(
                       //카드형식 높이주기위해 감쌈
                       height: 52,
@@ -342,9 +345,13 @@ class _MyHomePageState extends State<MyHomePage> {
                               )),
                           subtitle: Divider(thickness: 1),
                           onTap: () {
-                            Navigator.pop(context);
-                            Navigator.pushNamedAndRemoveUntil(
-                                context, "/qr", (route) => false);
+                            Navigator.pushNamed(context, "/qr").then((_) {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MyHomePage(0),
+                                  ));
+                            });
                           },
                         ),
                       ),
@@ -352,84 +359,97 @@ class _MyHomePageState extends State<MyHomePage> {
                     SizedBox(
                       height: 5,
                     ),
-                    // SizedBox(
-                    //   //카드형식 높이주기위해 감쌈
-                    //   height: 52,
-                    //   child: Card(
-                    //     //카드형식
-                    //     elevation: 0,
-                    //     child: ListTile(
-                    //       leading: FaIcon(FontAwesomeIcons.clipboardCheck),
-                    //       iconColor: Color(0xff9c9c9c),
-                    //       title: Text('출석 현황',
-                    //           style: TextStyle(
-                    //             color: Color(0xff9c9c9c),
-                    //             fontWeight: FontWeight.bold,
-                    //           )),
-                    //       subtitle: Divider(thickness: 1),
-                    //       onTap: () {
-                    //         Navigator.pop(context);
-                    //         Navigator.pushNamedAndRemoveUntil(
-                    //             context, "/class", (route) => false);
-                    //       },
-                    //     ),
-                    //   ),
-                    // ),
-                    // SizedBox(
-                    //   height: 5,
-                    // ), //출석현황
-                    // SizedBox(
-                    //   //카드형식 높이주기위해 감쌈
-                    //   height: 52,
-                    //   child: Card(
-                    //     //카드형식
-                    //     elevation: 0,
-                    //     child: ListTile(
-                    //       leading: FaIcon(FontAwesomeIcons.userPen),
-                    //       iconColor: Color(0xff9c9c9c),
-                    //       title: Text('시험',
-                    //           style: TextStyle(
-                    //             color: Color(0xff9c9c9c),
-                    //             fontWeight: FontWeight.bold,
-                    //           )),
-                    //       subtitle: Divider(thickness: 1),
-                    //       onTap: () {
-                    //         Navigator.pop(context);
-                    //         Navigator.pushNamedAndRemoveUntil(
-                    //             context, "/exam", (route) => false);
-                    //       },
-                    //     ),
-                    //   ),
-                    // ),
-                    // SizedBox(
-                    //   height: 5,
-                    // ),//시험
-                    // SizedBox(
-                    //   //카드형식 높이주기위해 감쌈
-                    //   height: 52,
-                    //   child: Card(
-                    //     //카드형식
-                    //     elevation: 0,
-                    //     child: ListTile(
-                    //       leading: FaIcon(FontAwesomeIcons.book),
-                    //       iconColor: Color(0xff9c9c9c),
-                    //       title: Text('과제',
-                    //           style: TextStyle(
-                    //             color: Color(0xff9c9c9c),
-                    //             fontWeight: FontWeight.bold,
-                    //           )),
-                    //       subtitle: Divider(thickness: 1),
-                    //       onTap: () {
-                    //         Navigator.pop(context);
-                    //         Navigator.pushNamedAndRemoveUntil(
-                    //             context, "/assigment", (route) => false);
-                    //       },
-                    //     ),
-                    //   ),
-                    // ),
-                    // SizedBox(
-                    //   height: 5,
-                    // ),//과제
+                    SizedBox(
+                      //카드형식 높이주기위해 감쌈
+                      height: 52,
+                      child: Card(
+                        //카드형식
+                        elevation: 0,
+                        child: ListTile(
+                          leading: FaIcon(FontAwesomeIcons.clipboardCheck),
+                          iconColor: Color(0xff9c9c9c),
+                          title: Text('출석 현황',
+                              style: TextStyle(
+                                color: Color(0xff9c9c9c),
+                                fontWeight: FontWeight.bold,
+                              )),
+                          subtitle: Divider(thickness: 1),
+                          onTap: () {
+                            int desiredIndex = 1; // 2번째 인덱스로 이동하려면 1로 설정
+                            //MatrialpageRoute 를 사용하여 스택지우고 이동할 경우 pushAndRemoveUntil / 미리 정의된 라우트이름을 사용하는거면 pushNameAndRemoveUntil
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (context) => MyHomePage(desiredIndex),
+                              ),
+                              (route) => false,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    SizedBox(
+                      //카드형식 높이주기위해 감쌈
+                      height: 52,
+                      child: Card(
+                        //카드형식
+                        elevation: 0,
+                        child: ListTile(
+                          leading: FaIcon(FontAwesomeIcons.userPen),
+                          iconColor: Color(0xff9c9c9c),
+                          title: Text('시험',
+                              style: TextStyle(
+                                color: Color(0xff9c9c9c),
+                                fontWeight: FontWeight.bold,
+                              )),
+                          subtitle: Divider(thickness: 1),
+                          onTap: () {
+                            int desiredIndex = 2;
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (context) => MyHomePage(desiredIndex),
+                              ),
+                              (route) => false,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    SizedBox(
+                      //카드형식 높이주기위해 감쌈
+                      height: 52,
+                      child: Card(
+                        //카드형식
+                        elevation: 0,
+                        child: ListTile(
+                          leading: FaIcon(FontAwesomeIcons.book),
+                          iconColor: Color(0xff9c9c9c),
+                          title: Text('과제',
+                              style: TextStyle(
+                                color: Color(0xff9c9c9c),
+                                fontWeight: FontWeight.bold,
+                              )),
+                          subtitle: Divider(thickness: 1),
+                          onTap: () {
+                            int desiredIndex = 3;
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (context) => MyHomePage(desiredIndex),
+                              ),
+                              (route) => false,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
                     SizedBox(
                       //카드형식 높이주기위해 감쌈
                       height: 52,
@@ -446,9 +466,14 @@ class _MyHomePageState extends State<MyHomePage> {
                               )),
                           subtitle: Divider(thickness: 1),
                           onTap: () {
-                            Navigator.pop(context);
-                            Navigator.pushNamedAndRemoveUntil(
-                                context, "/suggestion", (route) => false);
+                            Navigator.pushNamed(context, "/suggestion")
+                                .then((_) {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MyHomePage(0),
+                                  ));
+                            });
                           },
                         ),
                       ),
@@ -456,30 +481,36 @@ class _MyHomePageState extends State<MyHomePage> {
                     SizedBox(
                       height: 5,
                     ),
-                    // SizedBox(
-                    //   //카드형식 높이주기위해 감쌈
-                    //   height: 52,
-                    //   child: Card(
-                    //     //카드형식
-                    //     elevation: 0,
-                    //     child: ListTile(
-                    //       leading: FaIcon(FontAwesomeIcons.bullhorn),
-                    //       iconColor: Color(0xff9c9c9c),
-                    //       title: Text('공지사항',
-                    //           style: TextStyle(
-                    //             color: Color(0xff9c9c9c),
-                    //             fontWeight: FontWeight.bold,
-                    //           )),
-                    //       subtitle: Divider(thickness: 1),
-                    //       onTap: () {
-                    //         Navigator.pop(context);
-                    //       },
-                    //     ),
-                    //   ),
-                    // ),
-                    // SizedBox(
-                    //   height: 5,
-                    // ), //공지사항
+                    SizedBox(
+                      //카드형식 높이주기위해 감쌈
+                      height: 52,
+                      child: Card(
+                        //카드형식
+                        elevation: 0,
+                        child: ListTile(
+                          leading: FaIcon(FontAwesomeIcons.bullhorn),
+                          iconColor: Color(0xff9c9c9c),
+                          title: Text('공지사항',
+                              style: TextStyle(
+                                color: Color(0xff9c9c9c),
+                                fontWeight: FontWeight.bold,
+                              )),
+                          subtitle: Divider(thickness: 1),
+                          onTap: () {
+                            int desiredIndex = 4;
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (context) => MyHomePage(desiredIndex),
+                              ),
+                              (route) => false,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
                     SizedBox(
                       //카드형식 높이주기위해 감쌈
                       height: 52,
@@ -497,6 +528,12 @@ class _MyHomePageState extends State<MyHomePage> {
                           subtitle: Divider(thickness: 1),
                           onTap: () {
                             logOut(context);
+
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              "/mainpage",
+                              (route) => false,
+                            );
                           },
                         ),
                       ),

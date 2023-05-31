@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:edu_application_pre/http_setup.dart';
+import 'package:edu_application_pre/main.dart';
 import 'package:edu_application_pre/user/check_suggestion.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -130,8 +131,13 @@ class _SuggestionsState extends State<Suggestions> {
             color: Color(0xff0099ff),
             iconSize: 30,
             onPressed: () {
-              Navigator.pushNamedAndRemoveUntil(
-                  context, "/home", (route) => false);
+              int desiredIndex = 0; // 2번째 인덱스로 이동하려면 1로 설정
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => MyHomePage(desiredIndex),
+                ),
+                (route) => false,
+              );
             },
           ),
           backgroundColor: Colors.white,

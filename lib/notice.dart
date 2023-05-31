@@ -29,23 +29,9 @@ class Item {
 
 class _NoticeState extends State<Notice> {
   static List<dynamic> getnoticeList = [];
+  static List<Item> getnotice = [];
 
-  String studentKey = '';
-  void loadData() async {
-    // 로컬 스토리지에서 데이터 불러오기
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userData = prefs.getString('userData');
-    if (userData != null) {
-      Map<dynamic, dynamic> dataMap = jsonDecode(userData);
-
-      setState(() {
-        studentKey = dataMap['studentKey'] ?? '';
-      });
-      // getNoticeList(studentKey);
-    }
-  }
-
-  Future<void> getNoticeList(String studentKey) async {
+  Future<void> getNoticeList() async {
     Map<String, dynamic> data = {
       'userKey': '',
       'search': '',
@@ -54,81 +40,43 @@ class _NoticeState extends State<Notice> {
     };
     getnoticeList = [];
     var res = await post('/info/getNoticeList/', jsonEncode(data));
-    setState(() {
-      if (res.statusCode == 200) {
-        for (Map<String, dynamic> notice in res.data['resultData']) {
-          getnoticeList.add(notice);
+    if (mounted) {
+      setState(() {
+        if (res.statusCode == 200) {
+          for (Map<String, dynamic> notice in res.data['resultData']) {
+            getnoticeList.add(notice);
+          }
+          getnotice = List<Item>.generate(getnoticeList.length, (index) {
+            Map<String, dynamic> noticeList = getnoticeList[index];
+            String formattedDate = DateFormat('yyyy/MM/dd HH:mm')
+                .format(DateTime.parse(noticeList['createDate']));
+            return Item(
+              headerValue: noticeList['title'],
+              expandedValue: noticeList['content'],
+              date: formattedDate,
+            );
+          });
         }
-      }
-    });
+      });
+    }
   }
 
-  List<Item> getnotice = List<Item>.generate(getnoticeList.length, (index) {
-    Map<String, dynamic> noticeList = getnoticeList[index];
-    String formattedDate = DateFormat('yyyy/MM/dd HH:mm')
-        .format(DateTime.parse(noticeList['createDate']));
-    return Item(
-      headerValue: noticeList['title'],
-      expandedValue: noticeList['content'],
-      date: formattedDate,
-    );
-  });
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      loadData();
-      getNoticeList(studentKey);
-    });
+    getNoticeList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('공지사항',
-      //       style: TextStyle(
-      //           fontSize: 18,
-      //           fontWeight: FontWeight.w600,
-      //           color: Color(0xff0099ff))),
-      //   centerTitle: true, // 텍스트 중앙 정렬
-      //   leading: IconButton(
-      //     icon: FaIcon(FontAwesomeIcons.home),
-      //     color: Color(0xff0099ff),
-      //     iconSize: 30,
-      //     onPressed: () {
-      //       Navigator.pushNamedAndRemoveUntil(
-      //           context, "/home", (route) => false);
-      //     },
-      //   ),
-      //   backgroundColor: Colors.white,
-      //   bottom: PreferredSize(
-      //     preferredSize: Size.fromHeight(4.0),
-      //     child: Container(
-      //       decoration: BoxDecoration(
-      //         border: Border(
-      //           bottom: BorderSide(
-      //             color: Color(0xFFE8E8E8).withOpacity(0.8),
-      //             width: 1.0,
-      //           ),
-      //         ),
-      //       ),
-      //     ),
-      //   ),
-      //   toolbarHeight: 80,
-      //   elevation: 4.0, //앱바 입체감 없애기
-      //   actions: [
-      //     IconButton(
-      //       icon: Icon(Icons.menu),
-      //       color: Color(0xff0099ff),
-      //       iconSize: 35,
-      //       onPressed: () {},
-      //     )
-      //   ],
-      // ),
       body: Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 10.0),
+        padding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
         child: Column(
           children: [
             Expanded(
