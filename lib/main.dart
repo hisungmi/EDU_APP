@@ -6,6 +6,7 @@ import 'package:edu_application_pre/common/main_page.dart';
 // import 'package:edu_application_pre/layout/shared.dart';
 import 'package:edu_application_pre/layout/splash_screen.dart';
 import 'package:edu_application_pre/notice.dart';
+import 'package:edu_application_pre/user/assignment.dart';
 import 'package:edu_application_pre/user/class.dart';
 import 'package:edu_application_pre/user/enter_suggestion.dart';
 import 'package:edu_application_pre/user/myprofile_page.dart';
@@ -131,10 +132,17 @@ class _MyHomePageState extends State<MyHomePage> {
       //로컬 스토리지 지우기
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.remove('userData');
+      prefs.remove('PARData');
       prefs.remove('typeData');
 
       Navigator.pushNamedAndRemoveUntil(context, "/mainpage", (route) => false);
     }
+  }
+
+  Future<void> goBack() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('userData');
+    Navigator.pushNamedAndRemoveUntil(context, "/children", (route) => false);
   }
 
   @override
@@ -182,7 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: Color(0xff0099ff),
                   iconSize: 35,
                   onPressed: () {
-                    Navigator.pop(context);
+                    goBack();
                   },
                 ),
           backgroundColor: Colors.white,

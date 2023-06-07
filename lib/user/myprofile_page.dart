@@ -663,12 +663,19 @@ class _MyProfilePageState extends State<MyProfilePage> {
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(500),
           border: Border.all(width: 2, color: Color(0xff9c9c9c))),
-      child: CircleAvatar(
-        backgroundImage: profileImg.isNotEmpty
-            ? Image.network(baseUrl + profileImg).image
-            : Image.asset('assets/img/profilebasic.png').image,
-        radius: 55.0,
-      ),
+      child: isStudent
+          ? CircleAvatar(
+              backgroundImage: profileImg.isNotEmpty
+                  ? Image.network(baseUrl + profileImg).image
+                  : Image.asset('assets/img/profilebasic.png').image,
+              radius: 55.0,
+            )
+          : CircleAvatar(
+              backgroundImage: profileImg.isNotEmpty
+                  ? Image.network(baseUrl + "/media/" + profileImg).image
+                  : Image.asset('assets/img/profilebasic.png').image,
+              radius: 55.0,
+            ),
     );
   }
 
