@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:edu_application_pre/children.dart';
 import 'package:edu_application_pre/common/kiosk_main.dart';
 import 'package:edu_application_pre/common/main_page.dart';
 // import 'package:edu_application_pre/layout/shared.dart';
@@ -43,6 +46,7 @@ class MyApp extends StatelessWidget {
         // '/test': (context) => QrScanner(),
         '/schedule': (context) => Schedule(),
         '/notice': (context) => Notice(),
+        '/children': (context) => Children(),
       },
       debugShowCheckedModeBanner: false,
       title: 'first app',
@@ -74,6 +78,30 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
   late PageController pagecontroller;
+  bool isStudent = true;
+
+  String name = '';
+  String userType = '';
+  void loadData() async {
+    // 로컬 스토리지에서 데이터 불러오기
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userData = prefs.getString('userData');
+    String? typeData = prefs.getString('userType');
+
+    if (userData != null && typeData != null) {
+      Map<dynamic, dynamic> dataMap = jsonDecode(userData);
+      Map<dynamic, dynamic> typeMap = jsonDecode(typeData);
+
+      setState(() {
+        name = dataMap['name'] ?? '';
+        userType = typeMap['userType'] ?? '';
+
+        if (userType != 'STU') {
+          isStudent = false;
+        }
+      });
+    }
+  }
 
   Future<bool?> confirmation(BuildContext context) {
     return showDialog<bool>(
@@ -103,6 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
       //로컬 스토리지 지우기
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.remove('userData');
+      prefs.remove('typeData');
 
       Navigator.pushNamedAndRemoveUntil(context, "/mainpage", (route) => false);
     }
@@ -111,6 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    loadData();
     pagecontroller = PageController(initialPage: widget.desiredIndex);
     _currentIndex = widget.desiredIndex;
   }
@@ -138,14 +168,23 @@ class _MyHomePageState extends State<MyHomePage> {
             height: 50,
           ),
           centerTitle: true, // 텍스트 중앙 정렬
-          leading: IconButton(
-            icon: FaIcon(FontAwesomeIcons.qrcode),
-            color: Color(0xff0099ff),
-            iconSize: 35,
-            onPressed: () {
-              Navigator.pushNamed(context, '/qr');
-            },
-          ),
+          leading: isStudent
+              ? IconButton(
+                  icon: FaIcon(FontAwesomeIcons.qrcode),
+                  color: Color(0xff0099ff),
+                  iconSize: 35,
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/qr');
+                  },
+                )
+              : IconButton(
+                  icon: FaIcon(FontAwesomeIcons.angleLeft),
+                  color: Color(0xff0099ff),
+                  iconSize: 35,
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
           backgroundColor: Colors.white,
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(4.0),
@@ -528,12 +567,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           subtitle: Divider(thickness: 1),
                           onTap: () {
                             logOut(context);
-
-                            Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              "/mainpage",
-                              (route) => false,
-                            );
                           },
                         ),
                       ),

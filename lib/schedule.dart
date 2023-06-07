@@ -13,6 +13,7 @@ class Schedule extends StatefulWidget {
 
 class _ScheduleState extends State<Schedule> {
   bool isAfternoon = true;
+  bool isStudent = true;
 
   void toggleAfternoon() {
     setState(() {
@@ -21,15 +22,24 @@ class _ScheduleState extends State<Schedule> {
   }
 
   String name = '';
+  String userType = '';
   void loadData() async {
     // 로컬 스토리지에서 데이터 불러오기
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userData = prefs.getString('userData');
-    if (userData != null) {
+    String? typeData = prefs.getString('userType');
+
+    if (userData != null && typeData != null) {
       Map<dynamic, dynamic> dataMap = jsonDecode(userData);
+      Map<dynamic, dynamic> typeMap = jsonDecode(typeData);
 
       setState(() {
         name = dataMap['name'] ?? '';
+        userType = typeMap['userType'] ?? '';
+
+        if (userType != 'STU') {
+          isStudent = false;
+        }
       });
     }
   }
@@ -47,30 +57,6 @@ class _ScheduleState extends State<Schedule> {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy.MM.dd.EEE', 'ko_KR').format(now);
     return Scaffold(
-        // appBar: AppBar(
-        //   title: Text('시간표',
-        //       style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-        //   centerTitle: true, // 텍스트 중앙 정렬
-        //   leading: InkWell(
-        //     onTap: () {
-        //       Navigator.pushNamedAndRemoveUntil(
-        //           context, "/home", (route) => false);
-        //     },
-        //     child: Image.asset(
-        //       'assets/img/whitelogo.png',
-        //     ),
-        //   ),
-        //   backgroundColor: Color(0xff0099FF),
-        //   toolbarHeight: 80,
-        //   elevation: 0.0, //앱바 입체감 없애기
-        //   actions: [
-        //     IconButton(
-        //       icon: Icon(Icons.menu),
-        //       iconSize: 30,
-        //       onPressed: () {},
-        //     )
-        //   ],
-        // ),
         body: Padding(
       padding: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 20.0),
       child: Column(
@@ -85,12 +71,19 @@ class _ScheduleState extends State<Schedule> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                  child: Text('$name 님의 시간표',
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                          color: Color(0xff595959),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500))),
+                  child: isStudent
+                      ? Text('$name님의 시간표',
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                              color: Color(0xff595959),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500))
+                      : Text('$name자녀의 시간표',
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                              color: Color(0xff595959),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500))),
               Row(children: [
                 isAfternoon
                     ? InkWell(
