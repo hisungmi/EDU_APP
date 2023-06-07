@@ -14,6 +14,8 @@ class MyProfilePage extends StatefulWidget {
 
 class _MyProfilePageState extends State<MyProfilePage> {
   bool isEdit = true;
+  bool isStudent = true;
+
   TextEditingController numController =
       TextEditingController(); //텍스트컨트롤러를 생성하여 필드에 할당
   TextEditingController addressController = TextEditingController();
@@ -31,15 +33,19 @@ class _MyProfilePageState extends State<MyProfilePage> {
   String profileImg = '';
   String parentKey = '';
   String remark = '';
+  String userType = '';
 
   void loadData() async {
     // 로컬 스토리지에서 데이터 불러오기
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userData = prefs.getString('userData');
-    if (userData != null) {
-      Map<dynamic, dynamic> dataMap = jsonDecode(userData);
+    String? typeData = prefs.getString('userType');
 
+    if (userData != null && typeData != null) {
+      Map<dynamic, dynamic> dataMap = jsonDecode(userData);
+      Map<dynamic, dynamic> typeMap = jsonDecode(typeData);
       setState(() {
+        userType = typeMap['userType'] ?? '';
         studentKey = dataMap['studentKey'] ?? '';
         name = dataMap['name'] ?? '';
         id = dataMap['id'] ?? '';
@@ -53,6 +59,12 @@ class _MyProfilePageState extends State<MyProfilePage> {
         profileImg = dataMap['profileImg'] ?? '';
         parentKey = dataMap['parentKey'] ?? '';
         remark = dataMap['remark'] ?? '';
+
+        if (userType == 'STU') {
+          isStudent = true;
+        } else {
+          isStudent = false;
+        }
       });
     }
   }
@@ -106,6 +118,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
       //로컬 스토리지 지우기
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.remove('userData');
+      prefs.remove('typeData');
 
       Navigator.pushNamedAndRemoveUntil(context, "/mainpage", (route) => false);
     }
@@ -123,11 +136,17 @@ class _MyProfilePageState extends State<MyProfilePage> {
     return Scaffold(
       appBar: isEdit
           ? AppBar(
-              title: Text('마이프로필',
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xff0099ff))),
+              title: isStudent
+                  ? Text('마이프로필',
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xff0099ff)))
+                  : Text('자녀프로필',
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xff0099ff))),
               centerTitle: true, // 텍스트 중앙 정렬
               leading: IconButton(
                 icon: FaIcon(FontAwesomeIcons.home),
@@ -261,7 +280,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ],
                   ),
                 ), //프로필 이름 소개
-                isEdit
+                isEdit && isStudent
                     ? Positioned(
                         right: 0,
                         top: 80,
@@ -290,7 +309,41 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 ),
               ), //프로필 정보
               SizedBox(
-                height: 65.0,
+                height: 25.0,
+              ),
+              Center(
+                child: isStudent
+                    ? Container()
+                    : Container(
+                        padding: EdgeInsets.zero,
+                        margin: EdgeInsets.zero,
+                        width: 130,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            width: 2,
+                            color: Color(0xff9C9C9C),
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.all(0),
+                          ),
+                          child: Text(
+                            "학적부 열람",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color(0xff0099FF),
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          onPressed: () {},
+                        ),
+                      ),
+              ),
+              SizedBox(
+                height: 40.0,
               ),
               isEdit ? guardProfile() : editGuardProfile(),
               Center(
@@ -594,12 +647,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           subtitle: Divider(thickness: 1),
                           onTap: () {
                             logOut(context);
-
-                            Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              "/mainpage",
-                              (route) => false,
-                            );
                           },
                         ),
                       ),

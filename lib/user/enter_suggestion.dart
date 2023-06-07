@@ -19,25 +19,31 @@ class _EnterSuggestionState extends State<EnterSuggestion> {
 
   String name = '';
   String studentKey = '';
+  String userType = '';
   void loadData() async {
     // 로컬 스토리지에서 데이터 불러오기
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userData = prefs.getString('userData');
-    if (userData != null) {
+    String? typeData = prefs.getString('userType');
+    if (userData != null && typeData != null) {
       Map<String, dynamic> dataMap = jsonDecode(userData);
+      Map<String, dynamic> typeMap = jsonDecode(typeData);
+
       setState(() {
         name = dataMap['name'] ?? '';
         studentKey = dataMap['studentKey'] ?? '';
+        userType = typeMap['userType'] ?? '';
       });
       // await createSuggestList(studentKey, name); //studentKey 을 사용해서 함수 호출 키 전달
     }
   }
 
-  Future<void> createSuggestList(String studentKey, String name) async {
+  Future<void> createSuggestList(
+      String studentKey, String name, String userType) async {
     Map<String, dynamic> data = {
       'writerKey': studentKey,
       'writerName': name,
-      'writerType': 'STU',
+      'writerType': userType,
       'type': selectValue,
       'content': contentController.text,
     };
@@ -79,7 +85,7 @@ class _EnterSuggestionState extends State<EnterSuggestion> {
                 padding: EdgeInsets.all(0),
               ),
               onPressed: () {
-                createSuggestList(studentKey, name);
+                createSuggestList(studentKey, name, userType);
                 // Navigator.of(context).pop();
                 Navigator.pushReplacementNamed(context, '/suggestion');
               },
