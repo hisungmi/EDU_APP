@@ -95,16 +95,19 @@ class MainPageState extends State<MainPage> {
           // result.data를 로컬 스토리지에 저장하기
           SharedPreferences prefs = await SharedPreferences.getInstance();
           //JSON 형식의 문자열로 변환하여 저장
-          String userJsonData = jsonEncode(result.data);
           String typeJsonData = jsonEncode(data);
-          await prefs.setString('userData', userJsonData);
           await prefs.setString('userType', typeJsonData);
 
           if (!mounted) return;
           if (radioValue == 1) {
+            String userJsonData = jsonEncode(result.data);
+            await prefs.setString('PARData', userJsonData);
+
             Navigator.pushNamedAndRemoveUntil(
                 context, "/children", (route) => false);
           } else {
+            String userJsonData = jsonEncode(result.data);
+            await prefs.setString('userData', userJsonData);
             //현재 스택에서 모든 페이지를 제거하고 새 페이지를 스택에 추가 , false 모든 경로를 제거
             int desiredIndex = 0; //홈으로가기
             await Navigator.of(context).pushAndRemoveUntil(

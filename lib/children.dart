@@ -25,10 +25,10 @@ class _ChildrenState extends State<Children> {
   void loadData() async {
     // 로컬 스토리지에서 데이터 불러오기
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userData = prefs.getString('userData');
+    String? parData = prefs.getString('PARData');
     String? typeData = prefs.getString('userType');
-    if (userData != null && typeData != null) {
-      Map<dynamic, dynamic> dataMap = jsonDecode(userData);
+    if (parData != null && typeData != null) {
+      Map<dynamic, dynamic> dataMap = jsonDecode(parData);
       Map<dynamic, dynamic> typeMap = jsonDecode(typeData);
       setState(() {
         userType = typeMap['userType'] ?? '';
@@ -65,7 +65,6 @@ class _ChildrenState extends State<Children> {
 
   void goMain(Map<String, dynamic> getChildren) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('userData');
 
     await prefs.setString('userData', jsonEncode(getChildren));
 
@@ -113,31 +112,45 @@ class _ChildrenState extends State<Children> {
         child: Column(
           children: [
             Expanded(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: childrenList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  Map<String, dynamic> getChildren = childrenList[index];
-                  return Container(
-                    height: 40,
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.all(0),
-                      ),
-                      child: Text(
-                        getChildren['id'],
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
+              child: Container(
+                padding: EdgeInsets.fromLTRB(0.0, 30.0, 0.0, 10.0),
+                width: 140,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: childrenList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    Map<String, dynamic> getChildren = childrenList[index];
+                    return Container(
+                      height: 30,
+                      margin: EdgeInsets.fromLTRB(0.0, 30.0, 0.0, 0.0),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          width: 1,
                           color: Color(0xff9c9c9c),
-                          fontWeight: FontWeight.w700,
                         ),
+                        borderRadius: BorderRadius.circular(6),
                       ),
-                      onPressed: () {
-                        goMain(getChildren);
-                      },
-                    ),
-                  );
-                },
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.all(0),
+                        ),
+                        child: Center(
+                          child: Text(
+                            getChildren['id'],
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color(0xff9c9c9c),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        onPressed: () {
+                          goMain(getChildren);
+                        },
+                      ),
+                    );
+                  },
+                ),
               ),
             )
           ],
