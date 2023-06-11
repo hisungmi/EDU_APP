@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:edu_application_pre/class/class_main.dart';
 import 'package:edu_application_pre/children.dart';
 import 'package:edu_application_pre/common/kiosk_main.dart';
 import 'package:edu_application_pre/common/main_page.dart';
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
         // '/test': (context) => QrScanner(),
         '/schedule': (context) => Schedule(),
         '/notice': (context) => Notice(),
+        '/class': (context) => ClassMain(),
         '/children': (context) => Children(),
       },
       debugShowCheckedModeBanner: false,
