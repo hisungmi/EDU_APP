@@ -24,17 +24,33 @@ class CheckSuggestion extends StatelessWidget {
             .format(DateTime.parse(suggestList['answerDate']));
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color(0xff0099FF),
+          backgroundColor: Colors.white,
           toolbarHeight: 70,
-          elevation: 0.0, //앱바 입체감 없애기
-          leading: IconButton(
-            icon: FaIcon(FontAwesomeIcons.angleLeft),
-            color: Colors.white,
-            onPressed: () {
-              //현재 페이지를 스택에서 제거하고 이전 페이지로 돌아감
-              Navigator.pop(context);
-            },
+          elevation: 4.0, //앱바 입체감 없애기
+          title: Center(
+            child: Text(
+              '건의사항',
+              style: TextStyle(
+                  color: Color(0xff0099ff), fontWeight: FontWeight.w600),
+              textAlign: TextAlign.center,
+            ),
           ),
+          leading: Container(
+            child: IconButton(
+              icon: FaIcon(FontAwesomeIcons.angleLeft),
+              color: Color(0xff0099ff),
+              onPressed: () {
+                //현재 페이지를 스택에서 제거하고 이전 페이지로 돌아감
+                Navigator.pop(context);
+              },
+            ),
+          ),
+          actions: [
+            //title 센터 주려고 넣음
+            Container(
+              width: 60,
+            ),
+          ],
         ),
         body: Padding(
           padding: EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 30.0),

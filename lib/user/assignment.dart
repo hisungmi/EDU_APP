@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:edu_application_pre/http_setup.dart';
+import 'package:edu_application_pre/user/detail_assignment.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -115,7 +116,13 @@ class _TaskState extends State<Assignment> {
                             DateFormat('MM월 dd일 a h:mm', 'ko_KR')
                                 .format(DateTime.parse(assignList['deadLine']));
                         return GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => DetailAssignment(
+                                  isSubmission: isSubmission,
+                                  assignmentList: assignmentList[index]),
+                            ));
+                          },
                           child: Container(
                             height: 55,
                             // padding: EdgeInsets.fromLTRB(0.0, 7.0, 0.0, 0.0),
@@ -157,7 +164,7 @@ class _TaskState extends State<Assignment> {
                                               ),
                                             ),
                                             TextSpan(
-                                                text: formattedDate,
+                                                text: "마감 $formattedDate",
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.w500,
                                                   fontSize: 12,

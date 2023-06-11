@@ -1,10 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
+import 'package:edu_application_pre/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../http_setup.dart';
 
 class MyProfilePage extends StatefulWidget {
@@ -15,6 +14,8 @@ class MyProfilePage extends StatefulWidget {
 
 class _MyProfilePageState extends State<MyProfilePage> {
   bool isEdit = true;
+  bool isStudent = true;
+
   TextEditingController numController =
       TextEditingController(); //텍스트컨트롤러를 생성하여 필드에 할당
   TextEditingController addressController = TextEditingController();
@@ -32,15 +33,19 @@ class _MyProfilePageState extends State<MyProfilePage> {
   String profileImg = '';
   String parentKey = '';
   String remark = '';
+  String userType = '';
 
   void loadData() async {
     // 로컬 스토리지에서 데이터 불러오기
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userData = prefs.getString('userData');
-    if (userData != null) {
-      Map<dynamic, dynamic> dataMap = jsonDecode(userData);
+    String? typeData = prefs.getString('userType');
 
+    if (userData != null && typeData != null) {
+      Map<dynamic, dynamic> dataMap = jsonDecode(userData);
+      Map<dynamic, dynamic> typeMap = jsonDecode(typeData);
       setState(() {
+        userType = typeMap['userType'] ?? '';
         studentKey = dataMap['studentKey'] ?? '';
         name = dataMap['name'] ?? '';
         id = dataMap['id'] ?? '';
@@ -54,6 +59,12 @@ class _MyProfilePageState extends State<MyProfilePage> {
         profileImg = dataMap['profileImg'] ?? '';
         parentKey = dataMap['parentKey'] ?? '';
         remark = dataMap['remark'] ?? '';
+
+        if (userType == 'STU') {
+          isStudent = true;
+        } else {
+          isStudent = false;
+        }
       });
     }
   }
@@ -107,11 +118,13 @@ class _MyProfilePageState extends State<MyProfilePage> {
       //로컬 스토리지 지우기
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.remove('userData');
+      prefs.remove('typeData');
 
       Navigator.pushNamedAndRemoveUntil(context, "/mainpage", (route) => false);
     }
   }
 
+  PageController pagecontroller = PageController(initialPage: 0);
   @override
   void initState() {
     super.initState();
@@ -123,19 +136,30 @@ class _MyProfilePageState extends State<MyProfilePage> {
     return Scaffold(
       appBar: isEdit
           ? AppBar(
-              title: Text('마이프로필',
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xff0099ff))),
+              title: isStudent
+                  ? Text('마이프로필',
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xff0099ff)))
+                  : Text('자녀프로필',
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xff0099ff))),
               centerTitle: true, // 텍스트 중앙 정렬
               leading: IconButton(
                 icon: FaIcon(FontAwesomeIcons.home),
                 color: Color(0xff0099ff),
                 iconSize: 30,
                 onPressed: () {
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, "/home", (route) => false);
+                  int desiredIndex = 0; // 2번째 인덱스로 이동하려면 1로 설정
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (context) => MyHomePage(desiredIndex),
+                    ),
+                    (route) => false,
+                  );
                 },
               ),
               backgroundColor: Colors.white,
@@ -159,7 +183,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   icon: Icon(Icons.menu),
                   color: Color(0xff0099ff),
                   iconSize: 35,
-                  onPressed: () {},
+                  onPressed: () {
+                    fullMenu();
+                  },
                 )
               ],
             )
@@ -254,7 +280,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ],
                   ),
                 ), //프로필 이름 소개
-                isEdit
+                isEdit && isStudent
                     ? Positioned(
                         right: 0,
                         top: 80,
@@ -271,94 +297,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
                         ),
                       )
                     : Container(),
-                // : Positioned(
-                //     left: 113,
-                //     top: 75,
-                //     child: Container(
-                //       decoration: BoxDecoration(
-                //           color: Colors.white,
-                //           borderRadius: BorderRadius.circular(40),
-                //           border: Border.all(
-                //               width: 1, color: Color(0xff9c9c9c))),
-                //       child: IconButton(
-                //         padding: EdgeInsets.all(3),
-                //         constraints: BoxConstraints(), //아이콘위젯 패딩아예없애는법
-                //         icon: Icon(Icons.photo_camera),
-                //         color: Color(0xff9C9C9C),
-                //         onPressed: () {
-                //           showModalBottomSheet(
-                //               //밑에서 열리는 메뉴
-                //               context: context,
-                //               builder: (BuildContext context) {
-                //                 return Container(
-                //                     height: 200,
-                //                     decoration: BoxDecoration(
-                //                       color: Colors.white,
-                //                       borderRadius:
-                //                           BorderRadius.circular(10),
-                //                     ),
-                //                     child: Center(
-                //                         child: Column(
-                //                             mainAxisSize:
-                //                                 MainAxisSize.min, //크기만큼만 차지
-                //                             children: [
-                //                           SizedBox(
-                //                             //카드형식 높이주기위해 감쌈
-                //                             height: 52,
-                //                             child: Card(
-                //                               //카드형식
-                //                               elevation: 0,
-                //                               child: ListTile(
-                //                                 leading: Icon(
-                //                                     Icons.photo_camera),
-                //                                 iconColor:
-                //                                     Color(0xff9c9c9c),
-                //                                 title: Text('카메라',
-                //                                     style: TextStyle(
-                //                                       color:
-                //                                           Color(0xff9c9c9c),
-                //                                       fontWeight:
-                //                                           FontWeight.bold,
-                //                                     )),
-                //                                 subtitle:
-                //                                     Divider(thickness: 1),
-                //                                 onTap: () {},
-                //                               ),
-                //                             ),
-                //                           ),
-                //                           SizedBox(
-                //                             height: 10,
-                //                           ),
-                //                           SizedBox(
-                //                             height: 52,
-                //                             child: Card(
-                //                               elevation: 0,
-                //                               child: ListTile(
-                //                                 leading: Icon(Icons.photo),
-                //                                 iconColor:
-                //                                     Color(0xff9c9c9c),
-                //                                 title: Text('라이브러리',
-                //                                     style: TextStyle(
-                //                                       color:
-                //                                           Color(0xff9c9c9c),
-                //                                       fontWeight:
-                //                                           FontWeight.bold,
-                //                                     )),
-                //                                 subtitle:
-                //                                     Divider(thickness: 1),
-                //                                 onTap: () {},
-                //                               ),
-                //                             ),
-                //                           ),
-                //                           SizedBox(
-                //                             height: 20,
-                //                           ),
-                //                         ])));
-                //               });
-                //         },
-                //       ),
-                //     ),
-                //   ),
               ]),
               SizedBox(
                 height: 30.0,
@@ -371,7 +309,41 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 ),
               ), //프로필 정보
               SizedBox(
-                height: 65.0,
+                height: 25.0,
+              ),
+              Center(
+                child: isStudent
+                    ? Container()
+                    : Container(
+                        padding: EdgeInsets.zero,
+                        margin: EdgeInsets.zero,
+                        width: 130,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            width: 2,
+                            color: Color(0xff9C9C9C),
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.all(0),
+                          ),
+                          child: Text(
+                            "학적부 열람",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color(0xff0099FF),
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          onPressed: () {},
+                        ),
+                      ),
+              ),
+              SizedBox(
+                height: 40.0,
               ),
               isEdit ? guardProfile() : editGuardProfile(),
               Center(
@@ -471,9 +443,13 @@ class _MyProfilePageState extends State<MyProfilePage> {
                               )),
                           subtitle: Divider(thickness: 1),
                           onTap: () {
-                            Navigator.pop(context);
-                            Navigator.pushNamedAndRemoveUntil(
-                                context, "/schedule", (route) => false);
+                            int desiredIndex = 0; // 2번째 인덱스로 이동하려면 1로 설정
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (context) => MyHomePage(desiredIndex),
+                              ),
+                              (route) => false,
+                            );
                           },
                         ),
                       ),
@@ -523,9 +499,14 @@ class _MyProfilePageState extends State<MyProfilePage> {
                               )),
                           subtitle: Divider(thickness: 1),
                           onTap: () {
-                            Navigator.pop(context);
-                            Navigator.pushNamedAndRemoveUntil(
-                                context, "/class", (route) => false);
+                            int desiredIndex = 1; // 2번째 인덱스로 이동하려면 1로 설정
+                            //MatrialpageRoute 를 사용하여 스택지우고 이동할 경우 pushAndRemoveUntil / 미리 정의된 라우트이름을 사용하는거면 pushNameAndRemoveUntil
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (context) => MyHomePage(desiredIndex),
+                              ),
+                              (route) => false,
+                            );
                           },
                         ),
                       ),
@@ -549,9 +530,13 @@ class _MyProfilePageState extends State<MyProfilePage> {
                               )),
                           subtitle: Divider(thickness: 1),
                           onTap: () {
-                            Navigator.pop(context);
-                            Navigator.pushNamedAndRemoveUntil(
-                                context, "/exam", (route) => false);
+                            int desiredIndex = 2;
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (context) => MyHomePage(desiredIndex),
+                              ),
+                              (route) => false,
+                            );
                           },
                         ),
                       ),
@@ -575,9 +560,13 @@ class _MyProfilePageState extends State<MyProfilePage> {
                               )),
                           subtitle: Divider(thickness: 1),
                           onTap: () {
-                            Navigator.pop(context);
-                            Navigator.pushNamedAndRemoveUntil(
-                                context, "/assigment", (route) => false);
+                            int desiredIndex = 3;
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (context) => MyHomePage(desiredIndex),
+                              ),
+                              (route) => false,
+                            );
                           },
                         ),
                       ),
@@ -627,7 +616,13 @@ class _MyProfilePageState extends State<MyProfilePage> {
                               )),
                           subtitle: Divider(thickness: 1),
                           onTap: () {
-                            Navigator.pop(context);
+                            int desiredIndex = 4;
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (context) => MyHomePage(desiredIndex),
+                              ),
+                              (route) => false,
+                            );
                           },
                         ),
                       ),
@@ -652,12 +647,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           subtitle: Divider(thickness: 1),
                           onTap: () {
                             logOut(context);
-
-                            Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              "/mainpage",
-                              (route) => false,
-                            );
                           },
                         ),
                       ),
@@ -674,12 +663,19 @@ class _MyProfilePageState extends State<MyProfilePage> {
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(500),
           border: Border.all(width: 2, color: Color(0xff9c9c9c))),
-      child: CircleAvatar(
-        backgroundImage: profileImg.isNotEmpty
-            ? Image.network(baseUrl + profileImg).image
-            : Image.asset('assets/img/profilebasic.png').image,
-        radius: 55.0,
-      ),
+      child: isStudent
+          ? CircleAvatar(
+              backgroundImage: profileImg.isNotEmpty
+                  ? Image.network(baseUrl + profileImg).image
+                  : Image.asset('assets/img/profilebasic.png').image,
+              radius: 55.0,
+            )
+          : CircleAvatar(
+              backgroundImage: profileImg.isNotEmpty
+                  ? Image.network(baseUrl + "/media/" + profileImg).image
+                  : Image.asset('assets/img/profilebasic.png').image,
+              radius: 55.0,
+            ),
     );
   }
 
