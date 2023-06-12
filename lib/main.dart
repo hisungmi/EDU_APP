@@ -6,6 +6,7 @@ import 'package:edu_application_pre/common/main_page.dart';
 // import 'package:edu_application_pre/layout/shared.dart';
 import 'package:edu_application_pre/layout/splash_screen.dart';
 import 'package:edu_application_pre/notice.dart';
+import 'package:edu_application_pre/qr_code_scanner.dart';
 import 'package:edu_application_pre/user/assignment.dart';
 import 'package:edu_application_pre/user/class.dart';
 import 'package:edu_application_pre/user/enter_suggestion.dart';
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
         '/schedule': (context) => Schedule(),
         '/notice': (context) => Notice(),
         '/children': (context) => Children(),
+        '/qrscanner': (context) => QRScanner(),
       },
       debugShowCheckedModeBanner: false,
       title: 'first app',
@@ -182,7 +184,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: Color(0xff0099ff),
                   iconSize: 35,
                   onPressed: () {
-                    Navigator.pushNamed(context, '/qr');
+                    Navigator.pushNamed(context, '/qrscanner');
                   },
                 )
               : IconButton(

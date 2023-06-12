@@ -315,9 +315,32 @@ class _TimeTableState extends State<TimeTable> {
     return lectureStart[item];
   }
 
-  Future<void> getLectureList() async {
+  String name = '';
+  String userType = '';
+  String studentKey = '';
+  void loadData() async {
+    // 로컬 스토리지에서 데이터 불러오기
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userData = prefs.getString('userData');
+    String? typeData = prefs.getString('userType');
+
+    if (userData != null && typeData != null) {
+      Map<dynamic, dynamic> dataMap = jsonDecode(userData);
+      Map<dynamic, dynamic> typeMap = jsonDecode(typeData);
+
+      setState(() {
+        name = dataMap['name'] ?? '';
+        userType = typeMap['userType'] ?? '';
+        studentKey = dataMap['studentKey'] ?? '';
+
+        getLectureList(studentKey);
+      });
+    }
+  }
+
+  Future<void> getLectureList(String studentKey) async {
     Map<String, dynamic> data = {
-      'userKey': '',
+      'userKey': studentKey,
       'roomKey': '',
       'roomName': '',
       'lectureName': '',
@@ -354,8 +377,7 @@ class _TimeTableState extends State<TimeTable> {
   @override
   void initState() {
     super.initState();
-    getLectureList();
-    setState(() {});
+    loadData();
   }
 
   //매개변수로 int~~ 로 값 전달
