@@ -284,8 +284,9 @@ class _TimeTableState extends State<TimeTable> {
     afternoonDataList = [];
     morningDataList = [];
     var res = await post('/lectures/getLectureList/', jsonEncode(data));
-    if (res.statusCode == 200) {
-      setState(() {
+    // if(mounted){
+    setState(() {
+      if (res.statusCode == 200) {
         for (Map<String, dynamic> lecture in res.data['resultData']) {
           int startTime = int.parse(lecture['startTime'].substring(0, 2));
           int day = lecture['day'];
@@ -305,9 +306,14 @@ class _TimeTableState extends State<TimeTable> {
             morningDataList.add(lecture);
           }
         }
-      });
-    }
+      }
+    });
   }
+  //
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  // }
 
   @override
   void initState() {
