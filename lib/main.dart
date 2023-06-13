@@ -243,7 +243,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: pages,
         ),
         bottomNavigationBar: Container(
-          height: 80,
+          height: 100,
           decoration: BoxDecoration(
             border: Border(
               top: BorderSide(

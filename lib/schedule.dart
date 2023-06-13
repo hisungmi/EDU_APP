@@ -58,123 +58,132 @@ class _ScheduleState extends State<Schedule> {
     String formattedDate = DateFormat('yyyy.MM.dd.EEE', 'ko_KR').format(now);
     return Scaffold(
         body: Padding(
-      padding: EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 20.0),
+      padding: EdgeInsets.fromLTRB(12.0, 20.0, 12.0, 20.0),
       child: Column(
         children: [
-          Container(
-            width: 358,
-            child: Text(formattedDate,
-                textAlign: TextAlign.start,
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+          Center(
+            child: Container(
+              width: 348,
+              child: Text(formattedDate,
+                  textAlign: TextAlign.start,
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+            ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                  child: isStudent
-                      ? Text('$name님의 시간표',
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              color: Color(0xff595959),
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500))
-                      : Text('$name자녀의 시간표',
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              color: Color(0xff595959),
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500))),
-              Row(children: [
-                isAfternoon
-                    ? InkWell(
-                        onTap: () {
-                          setState(() {
-                            toggleAfternoon();
-                          });
-                        },
-                        child: Container(
-                          width: 65.57,
-                          height: 25,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.horizontal(
-                                left: Radius.circular(12),
-                              ),
-                              border: Border.all(
-                                color: Color(0xff9c9c9c),
+          Center(
+            child: Container(
+              width: 350,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                      child: isStudent
+                          ? Text('$name님의 시간표',
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                  color: Color(0xff595959),
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500))
+                          : Text('$name자녀의 시간표',
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                  color: Color(0xff595959),
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500))),
+                  Row(children: [
+                    isAfternoon
+                        ? InkWell(
+                            onTap: () {
+                              setState(() {
+                                toggleAfternoon();
+                              });
+                            },
+                            child: Container(
+                              width: 65.57,
+                              height: 25,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.horizontal(
+                                    left: Radius.circular(12),
+                                  ),
+                                  border: Border.all(
+                                    color: Color(0xff9c9c9c),
+                                  )),
+                              child: Center(
+                                  child: Text(
+                                "오전",
+                                style: TextStyle(fontSize: 14),
+                                textAlign: TextAlign.center,
                               )),
-                          child: Center(
+                            ),
+                          )
+                        : Container(
+                            width: 65.57,
+                            height: 25,
+                            decoration: BoxDecoration(
+                                color: Color(0xff0099ee),
+                                borderRadius: BorderRadius.horizontal(
+                                  left: Radius.circular(12),
+                                ),
+                                border: Border.all(
+                                  color: Color(0xff0099ee),
+                                )),
+                            child: Center(
                               child: Text(
-                            "오전",
-                            style: TextStyle(fontSize: 14),
-                            textAlign: TextAlign.center,
-                          )),
-                        ),
-                      )
-                    : Container(
-                        width: 65.57,
-                        height: 25,
-                        decoration: BoxDecoration(
-                            color: Color(0xff0099ee),
-                            borderRadius: BorderRadius.horizontal(
-                              left: Radius.circular(12),
-                            ),
-                            border: Border.all(
-                              color: Color(0xff0099ee),
-                            )),
-                        child: Center(
-                          child: Text(
-                            "오전",
-                            style: TextStyle(color: Colors.white, fontSize: 14),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                isAfternoon
-                    ? Container(
-                        width: 65.57,
-                        height: 25,
-                        decoration: BoxDecoration(
-                            color: Color(0xff0099ee),
-                            borderRadius: BorderRadius.horizontal(
-                              right: Radius.circular(12),
-                            ),
-                            border: Border.all(
-                              color: Color(0xff0099ee),
-                            )),
-                        child: Center(
-                          child: Text(
-                            "오후",
-                            style: TextStyle(color: Colors.white, fontSize: 14),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      )
-                    : InkWell(
-                        onTap: () {
-                          setState(() {
-                            toggleAfternoon();
-                          });
-                        },
-                        child: Container(
-                          width: 65.57,
-                          height: 25,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.horizontal(
-                                right: Radius.circular(12),
+                                "오전",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 14),
+                                textAlign: TextAlign.center,
                               ),
-                              border: Border.all(
-                                color: Color(0xff9c9c9c),
-                              )),
-                          child: Center(
+                            ),
+                          ),
+                    isAfternoon
+                        ? Container(
+                            width: 65.57,
+                            height: 25,
+                            decoration: BoxDecoration(
+                                color: Color(0xff0099ee),
+                                borderRadius: BorderRadius.horizontal(
+                                  right: Radius.circular(12),
+                                ),
+                                border: Border.all(
+                                  color: Color(0xff0099ee),
+                                )),
+                            child: Center(
                               child: Text(
-                            "오후",
-                            style: TextStyle(fontSize: 14),
-                            textAlign: TextAlign.center,
-                          )),
-                        ),
-                      ),
-              ])
-            ],
+                                "오후",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 14),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          )
+                        : InkWell(
+                            onTap: () {
+                              setState(() {
+                                toggleAfternoon();
+                              });
+                            },
+                            child: Container(
+                              width: 65.57,
+                              height: 25,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.horizontal(
+                                    right: Radius.circular(12),
+                                  ),
+                                  border: Border.all(
+                                    color: Color(0xff9c9c9c),
+                                  )),
+                              child: Center(
+                                  child: Text(
+                                "오후",
+                                style: TextStyle(fontSize: 14),
+                                textAlign: TextAlign.center,
+                              )),
+                            ),
+                          ),
+                  ])
+                ],
+              ),
+            ),
           ),
           SizedBox(
             height: 5,
@@ -402,7 +411,7 @@ class _TimeTableState extends State<TimeTable> {
     return Expanded(
       child: SingleChildScrollView(
         child: Container(
-            width: 360,
+            width: 351,
             height: widget.isAfternoon
                 ? kColumnLength / 2 * kBoxSize + kColumnLength
                 : kColumnLength / 2 * kBoxSize + kColumnLength + 6,
