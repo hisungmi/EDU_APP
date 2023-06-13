@@ -37,8 +37,6 @@ class MainPageState extends State<MainPage> {
 
       if (!mounted) return;
       await Navigator.pushNamed(context, '/kiosk');
-    } else if (id == 'test') {
-      await Navigator.pushNamed(context, '/test');
     } else if (id.substring(0, 5) == 'class') {
       Map<String, dynamic> data = {
         'search': '',
@@ -48,6 +46,7 @@ class MainPageState extends State<MainPage> {
 
       if (result.statusCode == 200) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('classData', 'class');
 
         for (var i = 0; i < result.data['resultData'].length; i++) {
           if (result.data['resultData'][i]['code'] == id) {
@@ -131,7 +130,6 @@ class MainPageState extends State<MainPage> {
         if (result.statusCode == 200) {
           // json 형태의 데이터를 다시 원래 형태로 변환, 즉 데이터 파싱은 jsonDecode(utf8.decode(result.bodyBytes))로 진행해주면 됩니다. 그럼 우리가 원하는 데이터 값을 얻을 수 있어요!
           print(result.data);
-          print(data);
           // result.data를 로컬 스토리지에 저장하기
           SharedPreferences prefs = await SharedPreferences.getInstance();
           //JSON 형식의 문자열로 변환하여 저장
@@ -140,9 +138,17 @@ class MainPageState extends State<MainPage> {
 
           if (!mounted) return;
           //현재 스택에서 모든 페이지를 제거하고 새 페이지를 스택에 추가 , false 모든 경로를 제거
-          await Navigator.pushNamedAndRemoveUntil(
-              context, "/home", (route) => false);
-          
+          String userJsonData = jsonEncode(result.data);
+          await prefs.setString('userData', userJsonData);
+          //현재 스택에서 모든 페이지를 제거하고 새 페이지를 스택에 추가 , false 모든 경로를 제거
+          int desiredIndex = 0; //홈으로가기
+          await Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => MyHomePage(desiredIndex),
+            ),
+            (route) => false,
+          );
+
           if (radioValue == 1) {
             String userJsonData = jsonEncode(result.data);
             await prefs.setString('PARData', userJsonData);

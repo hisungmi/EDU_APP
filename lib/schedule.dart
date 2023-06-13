@@ -58,7 +58,7 @@ class _ScheduleState extends State<Schedule> {
     String formattedDate = DateFormat('yyyy.MM.dd.EEE', 'ko_KR').format(now);
     return Scaffold(
         body: Padding(
-      padding: EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 20.0),
+      padding: EdgeInsets.fromLTRB(12.0, 20.0, 12.0, 20.0),
       child: Column(
         children: [
           Container(
