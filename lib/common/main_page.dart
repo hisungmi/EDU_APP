@@ -39,6 +39,46 @@ class MainPageState extends State<MainPage> {
       await Navigator.pushNamed(context, '/kiosk');
     } else if (id == 'test') {
       await Navigator.pushNamed(context, '/test');
+    } else if (id.substring(0, 5) == 'class') {
+      Map<String, dynamic> data = {
+        'search': '',
+      };
+
+      var result = await post('/lectures/getRoomList/', jsonEncode(data));
+
+      if (result.statusCode == 200) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+
+        for (var i = 0; i < result.data['resultData'].length; i++) {
+          if (result.data['resultData'][i]['code'] == id) {
+            String roomJsonData = jsonEncode(result.data['resultData'][i]);
+            await prefs.setString('roomData', roomJsonData);
+          }
+        }
+
+        if (prefs.getString('roomData') == null) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('로그인 실패'),
+                content: Text('일치하는 강의실 코드가 없습니다.\n다시 시도하세요.'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text("확인"),
+                  ),
+                ],
+              );
+            },
+          );
+          return;
+        } else {
+          if (!mounted) return;
+          await Navigator.pushNamedAndRemoveUntil(
+              context, "/class", (route) => false);
+        }
+      }
     } else {
       if (id == '') {
         showDialog(
