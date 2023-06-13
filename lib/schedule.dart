@@ -58,11 +58,11 @@ class _ScheduleState extends State<Schedule> {
     String formattedDate = DateFormat('yyyy.MM.dd.EEE', 'ko_KR').format(now);
     return Scaffold(
         body: Padding(
-      padding: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 20.0),
+      padding: EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 20.0),
       child: Column(
         children: [
           Container(
-            width: 385,
+            width: 358,
             child: Text(formattedDate,
                 textAlign: TextAlign.start,
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
@@ -179,83 +179,9 @@ class _ScheduleState extends State<Schedule> {
           SizedBox(
             height: 5,
           ),
-          // Container(
-          //     width: 400,
-          //     height: isAfternoon
-          //         ? kColumnLength / 2 * kBoxSize + kColumnLength
-          //         : kColumnLength / 2 * kBoxSize + kColumnLength + 6,
-          //     decoration: BoxDecoration(
-          //       border: Border.all(color: Colors.grey),
-          //       borderRadius: BorderRadius.circular(12),
-          //     ),
-          //     child: Stack(
-          //       children: [
-          //         Row(
-          //           children: [
-          //             ...buildTimeColumn(0),
-          //             //spread operator(...)를 사용
-          //             ...builDayColumn(0),
-          //             ...builDayColumn(1),
-          //             ...builDayColumn(2),
-          //             ...builDayColumn(3),
-          //             ...builDayColumn(4),
-          //             ...builDayColumn(5),
-          //             ...builDayColumn(6),
-          //           ],
-          //         ),
-          //         if (isAfternoon)
-          //           ...List.generate(afternoonDataList.length, (index) {
-          //             Color color = Color(int.parse(
-          //                 '0xFF${afternoonDataList[index]['color'].substring(1)}'));
-          //             return Positioned(
-          //                 left: afternoonDataList[index]['day'],
-          //                 top: afternoonDataList[index]['startTime']
-          //                     .toDouble(), //int 타입을 double? 타입으로 변환하는거 ,소수점땜시
-          //                 height: afternoonDataList[index]['duration']
-          //                     .toDouble(),
-          //                 width: width,
-          //                 child: Container(
-          //                   decoration: BoxDecoration(
-          //                     color: color,
-          //                   ),
-          //                   child: Center(
-          //                       child: Text(
-          //                           afternoonDataList[index]
-          //                               ['lectureName'],
-          //                           textAlign: TextAlign.center,
-          //                           style: TextStyle(
-          //                               color: Colors.white,
-          //                               fontSize: 10))),
-          //                 ));
-          //           })
-          //         else
-          //           ...List.generate(morningDataList.length, (index) {
-          //             Color color = Color(int.parse(
-          //                 '0xFF${morningDataList[index]['color'].substring(1)}'));
-          //             return Positioned(
-          //                 left: morningDataList[index]['day'],
-          //                 top: morningDataList[index]['startTime']
-          //                     .toDouble(), //int 타입을 double? 타입으로 변환하는거 ,소수점땜시
-          //                 height: morningDataList[index]['duration']
-          //                     .toDouble(),
-          //                 width: width,
-          //                 child: Container(
-          //                   decoration: BoxDecoration(
-          //                     color: color,
-          //                   ),
-          //                   child: Center(
-          //                       child: Text(
-          //                           morningDataList[index]
-          //                               ['lectureName'],
-          //                           textAlign: TextAlign.center,
-          //                           style: TextStyle(
-          //                               color: Colors.white,
-          //                               fontSize: 10))),
-          //                 ));
-          //           }),
-          //       ],
-          //     )),
-          TimeTable(isAfternoon: isAfternoon, toggleAfternoon: toggleAfternoon),
+          Container(
+              child: TimeTable(
+                  isAfternoon: isAfternoon, toggleAfternoon: toggleAfternoon)),
         ],
       ),
     ));
@@ -280,7 +206,7 @@ class _TimeTableState extends State<TimeTable> {
 
   double kBoxSize = 60.0;
   double left = 22.6;
-  double width = 52.0;
+  double width = 46;
   List week = ['월', '화', '수', '목', '금', '토', '일'];
   static List<dynamic> morningDataList = [];
   static List<dynamic> afternoonDataList = [];
@@ -298,13 +224,13 @@ class _TimeTableState extends State<TimeTable> {
     23: 20 + 60 * 10,
   };
   Map<int, dynamic> dayStart = {
-    1: 22.6,
-    2: 22.6 + 52.5,
-    3: 22.6 + 52.5 * 2,
-    4: 22.6 + 52.5 * 3,
-    5: 22.6 + 52.5 * 4,
-    6: 22.6 + 52.5 * 5,
-    7: 22.6 + 52.5 * 6,
+    1: 21.0,
+    2: 21.0 + 46.9,
+    3: 21.0 + 46.9 * 2,
+    4: 21.0 + 46.9 * 3,
+    5: 21.0 + 46.9 * 4,
+    6: 21.0 + 46.9 * 5,
+    7: 21.0 + 46.9 * 6,
   };
 
   double? getDay(int dayNumber) {
@@ -399,9 +325,11 @@ class _TimeTableState extends State<TimeTable> {
               children: [
                 SizedBox(
                   height: 20,
-                  child: Text(
-                    week[index],
-                    style: TextStyle(fontSize: 14),
+                  child: Center(
+                    child: Text(
+                      week[index],
+                      style: TextStyle(fontSize: 14),
+                    ),
                   ),
                 ),
                 //List.generate() 함수는 첫 번째 인자로 전달한 수만큼 인덱스를 생성하고, 두 번째 인자로 전달한 함수를 이용하여 해당 인덱스의 값으로 구성된 리스트를 생성
@@ -474,7 +402,7 @@ class _TimeTableState extends State<TimeTable> {
     return Expanded(
       child: SingleChildScrollView(
         child: Container(
-            width: 400,
+            width: 360,
             height: widget.isAfternoon
                 ? kColumnLength / 2 * kBoxSize + kColumnLength
                 : kColumnLength / 2 * kBoxSize + kColumnLength + 6,
