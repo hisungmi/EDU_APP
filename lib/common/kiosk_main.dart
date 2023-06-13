@@ -453,7 +453,6 @@ class KioskMainState extends State<KioskMain> {
                                     child: QrImageView(
                                       data:
                                           'https://banbbom.com/data/froala/210318/619072b81882e82473c9fc84436edf7f4ae65ef9.jpg',
-                                      backgroundColor: Color(0xff000000),
                                       size: 450,
                                     ),
                                   ),
