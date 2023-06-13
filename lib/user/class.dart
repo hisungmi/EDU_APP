@@ -275,22 +275,27 @@ class _ClassState extends State<Class> {
                             children: [
                               Container(
                                 alignment: Alignment.centerLeft,
-                                width: 110,
+                                width: 50,
                                 child: Text(
                                   getday,
                                   style: TextStyle(
                                       fontSize: 18, color: Colors.white),
                                 ),
                               ),
-                              Container(
-                                width: 115,
-                                alignment: Alignment.center,
-                                child: AutoSizeText(
-                                  lectureList['lectureName'],
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                  style: TextStyle(
-                                      fontSize: 18, color: Colors.white),
+                              SizedBox(
+                                width: 30,
+                              ),
+                              Center(
+                                child: Container(
+                                  width: 115,
+                                  alignment: Alignment.center,
+                                  child: AutoSizeText(
+                                    lectureList['lectureName'],
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.white),
+                                  ),
                                 ),
                               ),
                               SizedBox(
