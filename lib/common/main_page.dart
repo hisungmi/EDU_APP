@@ -91,13 +91,15 @@ class MainPageState extends State<MainPage> {
         if (result.statusCode == 200) {
           // result.data를 로컬 스토리지에 저장하기
           SharedPreferences prefs = await SharedPreferences.getInstance();
+          String typeJsonData = jsonEncode(data);
+          await prefs.setString('userType', typeJsonData);
           // json 형태의 데이터를 다시 원래 형태로 변환, 즉 데이터 파싱은 jsonDecode(utf8.decode(result.bodyBytes))로 진행해주면 됩니다. 그럼 우리가 원하는 데이터 값을 얻을 수 있어요!
           print(result.data);
           if (!mounted) return;
           if (radioValue == 0) {
+            String userJsonData = jsonEncode(result.data);
+            await prefs.setString('userData', userJsonData);
             //JSON 형식의 문자열로 변환하여 저장
-            String typeJsonData = jsonEncode(data);
-            await prefs.setString('userType', typeJsonData);
             int desiredIndex = 0; //홈으로가기
             await Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
