@@ -1,6 +1,12 @@
+import 'dart:convert';
+
 import 'package:edu_application_pre/user/class.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../http_setup.dart';
 
 class AttendanceStatus extends StatefulWidget {
   AttendanceStatus({
@@ -51,6 +57,53 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
     {'date': '03.02', 'status': '결석'},
     {'date': '03.01', 'status': '보류'},
   ];
+  static List<dynamic> statusList = [];
+
+  String studentKey = '';
+  String name = '';
+  Future<void> loadData() async {
+    // 로컬 스토리지에서 데이터 불러오기
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userData = prefs.getString('userData');
+    if (userData != null) {
+      Map<String, dynamic> dataMap = jsonDecode(userData);
+      setState(() {
+        studentKey = dataMap['studentKey'] ?? '';
+        name = dataMap['name'] ?? '';
+      });
+    }
+    // await getLectureList(studentKey);
+  }
+
+  Future<void> getAttendList() async {
+    Map<String, dynamic> data = {
+      'userKey': '',
+      'lectureKey': widget.isAfternoon
+          ? widget.afternoon['lectureKey']
+          : widget.morning['lectureKey'],
+    };
+    statusList = [];
+    var res = await post('/info/getAttendList/', jsonEncode(data));
+    // mounted 속성을 확인하여 현재 위젯이 여전히 트리에 존재하는지 확인
+    if (res.statusCode == 200) {
+      setState(() {
+        for (Map<String, dynamic> state in res.data['resultData']) {
+          if (name == state['studentName']) {
+            statusList.add(state);
+          }
+        }
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+    setState(() {
+      getAttendList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +176,8 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
                     ),
                     child: Center(
                         child: Text("날짜",
-                            style: TextStyle(color: Color(0xff565656)))),
+                            style: TextStyle(
+                                color: Color(0xff848484), fontSize: 14))),
                   ),
                   Container(
                     width: 280,
@@ -133,7 +187,8 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
                     ),
                     child: Center(
                         child: Text("출석",
-                            style: TextStyle(color: Color(0xff565656)))),
+                            style: TextStyle(
+                                color: Color(0xff848484), fontSize: 14))),
                   ),
                 ],
               ),
@@ -144,10 +199,12 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
                 //스크롤되게
                 child: ListView.builder(
                   shrinkWrap: true, //스크롤되게
-                  itemCount: statuslist.length,
+                  itemCount: statusList.length,
                   itemBuilder: (context, index) {
-                    String? status = statuslist[index]['status'];
-                    String? date = statuslist[index]['date'];
+                    Map<String, dynamic> getStatusList = statusList[index];
+                    String formattedDate = DateFormat('MM.dd')
+                        .format(DateTime.parse(getStatusList['createDate']));
+
                     Color bgColor = Colors.white;
                     Color textColor = Color(0xff565656);
                     Color bg2Color = Colors.white;
@@ -156,19 +213,19 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
                     Color text3Color = Color(0xff565656);
                     Color bg4Color = Colors.white;
                     Color text4Color = Color(0xff565656);
-                    if (status == '출석') {
+                    if (getStatusList['state'] == '출석') {
                       textColor = Colors.white;
                       bgColor = Color(0xffA4CAF8);
                     }
-                    if (status == '결석') {
+                    if (getStatusList['state'] == '결석') {
                       text2Color = Colors.white;
                       bg2Color = Color(0xffFD9494);
                     }
-                    if (status == '지각') {
+                    if (getStatusList['state'] == '지각') {
                       text3Color = Colors.white;
                       bg3Color = Color(0xFFF4C784);
                     }
-                    if (status == '보류') {
+                    if (getStatusList['state'] == '보류') {
                       text4Color = Colors.white;
                       bg4Color = Color(0xffBBBBBB);
                     }
@@ -194,9 +251,10 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
                                       width: 1, color: Color(0xffeaeaea)),
                                 )),
                             child: Center(
-                                child: Text(date!,
+                                child: Text(formattedDate,
                                     style: TextStyle(
-                                      color: Color(0xff565656),
+                                      color: Color(0xff9c9c9c),
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w500,
                                     ))),
                           ),
@@ -211,6 +269,7 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
                                 child: Text("출석",
                                     style: TextStyle(
                                       color: textColor,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w500,
                                     ))),
                           ),
@@ -225,6 +284,7 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
                                 child: Text("결석",
                                     style: TextStyle(
                                       color: text2Color,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w500,
                                     ))),
                           ),
@@ -239,6 +299,7 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
                                 child: Text("지각",
                                     style: TextStyle(
                                       color: text3Color,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w500,
                                     ))),
                           ),
@@ -261,6 +322,7 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
                                   child: Text("보류",
                                       style: TextStyle(
                                         color: text4Color,
+                                        fontSize: 14,
                                         fontWeight: FontWeight.w500,
                                       )))),
                         ],

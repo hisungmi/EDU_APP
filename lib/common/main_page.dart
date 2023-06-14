@@ -128,16 +128,19 @@ class MainPageState extends State<MainPage> {
                 data)); // axios에서 await ApiClient(url, data) 형식으로 사용했던 것과 형태가 매우 유사하죠?
 
         if (result.statusCode == 200) {
-          // json 형태의 데이터를 다시 원래 형태로 변환, 즉 데이터 파싱은 jsonDecode(utf8.decode(result.bodyBytes))로 진행해주면 됩니다. 그럼 우리가 원하는 데이터 값을 얻을 수 있어요!
-          print(result.data);
           // result.data를 로컬 스토리지에 저장하기
           SharedPreferences prefs = await SharedPreferences.getInstance();
-          //JSON 형식의 문자열로 변환하여 저장
           String typeJsonData = jsonEncode(data);
           await prefs.setString('userType', typeJsonData);
-
+          // json 형태의 데이터를 다시 원래 형태로 변환, 즉 데이터 파싱은 jsonDecode(utf8.decode(result.bodyBytes))로 진행해주면 됩니다. 그럼 우리가 원하는 데이터 값을 얻을 수 있어요!
+          print(result.data);
           if (!mounted) return;
-          //현재 스택에서 모든 페이지를 제거하고 새 페이지를 스택에 추가 , false 모든 경로를 제거
+          String userJsonData = jsonEncode(result.data);
+          await prefs.setString('PARData', userJsonData);
+
+          Navigator.pushNamedAndRemoveUntil(
+              context, "/children", (route) => false);
+        } else {
           String userJsonData = jsonEncode(result.data);
           await prefs.setString('userData', userJsonData);
           //현재 스택에서 모든 페이지를 제거하고 새 페이지를 스택에 추가 , false 모든 경로를 제거
@@ -148,41 +151,23 @@ class MainPageState extends State<MainPage> {
             ),
             (route) => false,
           );
-
-          if (radioValue == 1) {
-            String userJsonData = jsonEncode(result.data);
-            await prefs.setString('PARData', userJsonData);
-
-            Navigator.pushNamedAndRemoveUntil(
-                context, "/children", (route) => false);
-          } else {
-            String userJsonData = jsonEncode(result.data);
-            await prefs.setString('userData', userJsonData);
-            //현재 스택에서 모든 페이지를 제거하고 새 페이지를 스택에 추가 , false 모든 경로를 제거
-            int desiredIndex = 0; //홈으로가기
-            await Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (context) => MyHomePage(desiredIndex),
-              ),
-              (route) => false,
-            );
-          }
         }
-      } on DioError catch (e) {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text('로그인 실패'),
-                content: Text('로그인에 실패했습니다.'),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text("확인"),
-                  ),
-                ],
-              );
-            });
+      }
+    } on DioError catch (e) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('로그인 실패'),
+              content: Text('로그인에 실패했습니다.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text("확인"),
+                ),
+              ],
+            );
+          });
       }
     }
   }
