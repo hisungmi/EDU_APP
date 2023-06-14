@@ -8,6 +8,8 @@ import 'dart:math';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../class/class_main.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -21,7 +23,10 @@ class SplashScreenState extends State<SplashScreen> {
     Future.delayed(Duration(seconds: 3), () async {
       final sharedPreferences = await SharedPreferences.getInstance();
       final kioskData = sharedPreferences.getString('kioskData');
-      Widget child = kioskData == null ? MainPage() : KioskMain();
+      final classData = sharedPreferences.getString('classData');
+      Widget child = kioskData == null
+          ? (classData == null ? MainPage() : ClassMain())
+          : KioskMain();
 
       if (!mounted) return;
       await Navigator.push(
