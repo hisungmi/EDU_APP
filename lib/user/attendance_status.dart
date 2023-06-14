@@ -157,7 +157,7 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
                       ? widget.afternoon['lectureName']
                       : widget.morning['lectureName'],
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 16,
                     color: Colors.white,
                   ),
                 ),

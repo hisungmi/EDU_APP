@@ -91,7 +91,7 @@ class _QRScannerState extends State<QRScanner> {
                   if (result != null)
                     Text('Data: ${result!.code}')
                   else
-                    const Text('Scan a code'),
+                    Container(),
                 ],
               ),
             ),
