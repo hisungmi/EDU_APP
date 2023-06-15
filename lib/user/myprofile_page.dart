@@ -1001,7 +1001,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
           ),
         ),
         Container(
-          margin: EdgeInsets.fromLTRB(30.0, 0.0, 0.0, 0.0),
+          margin: EdgeInsets.fromLTRB(40.0, 0.0, 0.0, 0.0),
           width: 114.0,
           height: 30.0,
           color: Colors.white,
@@ -1072,7 +1072,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
           ),
         ),
         Container(
-          margin: EdgeInsets.fromLTRB(30.0, 0.0, 0.0, 0.0),
+          margin: EdgeInsets.fromLTRB(40.0, 0.0, 0.0, 0.0),
           width: 110.0,
           height: 30.0,
           color: Colors.white,

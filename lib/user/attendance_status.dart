@@ -40,23 +40,6 @@ class StateData {
 }
 
 class _AttendanceStatusState extends State<AttendanceStatus> {
-  final List<Map<String, String>> statuslist = [
-    {'date': '03.15', 'status': '출석'},
-    {'date': '03.14', 'status': '결석'},
-    {'date': '03.13', 'status': '출석'},
-    {'date': '03.12', 'status': '출석'},
-    {'date': '03.11', 'status': '출석'},
-    {'date': '03.10', 'status': '출석'},
-    {'date': '03.09', 'status': '출석'},
-    {'date': '03.08', 'status': '출석'},
-    {'date': '03.07', 'status': '지각'},
-    {'date': '03.06', 'status': '보류'},
-    {'date': '03.05', 'status': '결석'},
-    {'date': '03.04', 'status': '출석'},
-    {'date': '03.03', 'status': '지각'},
-    {'date': '03.02', 'status': '결석'},
-    {'date': '03.01', 'status': '보류'},
-  ];
   static List<dynamic> statusList = [];
 
   String studentKey = '';
@@ -156,6 +139,7 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
                   widget.isAfternoon == true
                       ? widget.afternoon['lectureName']
                       : widget.morning['lectureName'],
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.white,
