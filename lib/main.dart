@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:edu_application_pre/class/class_main.dart';
 import 'package:edu_application_pre/children.dart';
 import 'package:edu_application_pre/common/kiosk_main.dart';
@@ -8,7 +7,6 @@ import 'package:edu_application_pre/common/main_page.dart';
 import 'package:edu_application_pre/layout/splash_screen.dart';
 import 'package:edu_application_pre/notice.dart';
 import 'package:edu_application_pre/qr_code_scanner.dart';
-import 'package:edu_application_pre/user/assignment.dart';
 import 'package:edu_application_pre/user/class.dart';
 import 'package:edu_application_pre/user/enter_suggestion.dart';
 import 'package:edu_application_pre/user/myprofile_page.dart';
@@ -26,6 +24,7 @@ Future<void> main() async {
   await initializeDateFormatting('ko_KR');
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => QrProvider()),
+    ChangeNotifierProvider(create: (_) => AttendProvider()),
   ], child: MyApp()));
 }
 
