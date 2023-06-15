@@ -7,6 +7,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../common/kiosk_main.dart';
 import '../http_setup.dart';
+import '../qr_code_scanner.dart';
 
 class ClassMain extends StatefulWidget {
   const ClassMain({Key? key}) : super(key: key);
@@ -47,6 +48,8 @@ class ClassMainState extends State<ClassMain> {
   }
 
   Future<void> getLectureStatus() async {
+    final qrAttendListProvider =
+        Provider.of<AttendProvider>(context, listen: false);
     await getAttendList();
 
     if (attendList.isNotEmpty) {
@@ -69,6 +72,14 @@ class ClassMainState extends State<ClassMain> {
         for (int i = 0; i < lectureStatsList.length; i++) {
           lectureStatsList[i]['studentName'] = lectureStatsList[i]['name'];
           lectureStatsList[i]['state'] = '';
+
+          for (int k = 0; k < qrAttendListProvider.qrAttendList.length; k++) {
+            if (lectureStatsList[i]['lectureKey'] ==
+                qrAttendListProvider.qrAttendList[k]['studentKey']) {
+              lectureStatsList[i]['state'] =
+                  qrAttendListProvider.qrAttendList[k]['state'];
+            }
+          }
         }
       }
     }
