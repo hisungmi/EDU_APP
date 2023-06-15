@@ -80,13 +80,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
+
   int _currentIndex = 0;
   late PageController pagecontroller;
   bool isStudent = true;
-
   String name = '';
   String userType = '';
-  void loadData() async {
+
+  Future<void> loadData() async {
     // 로컬 스토리지에서 데이터 불러오기
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userData = prefs.getString('userData');
@@ -223,25 +226,31 @@ class _MyHomePageState extends State<MyHomePage> {
             )
           ],
         ),
-        endDrawer: Drawer(
-            child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(child: Text('menu')),
-            ListTile(
-              title: Text('item'),
-              onTap: () {},
-            )
-          ],
-        )),
-        body: PageView(
-          controller: pagecontroller,
-          onPageChanged: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
+        // endDrawer: Drawer(
+        //     child: ListView(
+        //   padding: EdgeInsets.zero,
+        //   children: [
+        //     DrawerHeader(child: Text('menu')),
+        //     ListTile(
+        //       title: Text('item'),
+        //       onTap: () {},
+        //     )
+        //   ],
+        // )),
+        body: RefreshIndicator(
+          key: _refreshIndicatorKey,
+          onRefresh: () async {
+            await loadData();
           },
-          children: pages,
+          child: PageView(
+            controller: pagecontroller,
+            onPageChanged: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            children: pages,
+          ),
         ),
         bottomNavigationBar: Container(
           height: 100,
@@ -388,14 +397,15 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: ListTile(
                           leading: FaIcon(FontAwesomeIcons.qrcode),
                           iconColor: Color(0xff9c9c9c),
-                          title: Text('출석 QR',
+                          title: Text('QR Scanner',
                               style: TextStyle(
                                 color: Color(0xff9c9c9c),
                                 fontWeight: FontWeight.bold,
                               )),
                           subtitle: Divider(thickness: 1),
                           onTap: () {
-                            Navigator.pushNamed(context, "/qr").then((_) {
+                            Navigator.pushNamed(context, "/qrscanner")
+                                .then((_) {
                               Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(

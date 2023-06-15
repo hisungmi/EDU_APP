@@ -111,10 +111,17 @@ class _SuggestionsState extends State<Suggestions> {
   }
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 페이지가 의존성이 변경될 때 로드되는 로직을 추가하세요.
     loadData();
   }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   loadData();
+  // }
 
   @override
   Widget build(BuildContext context) {

@@ -15,7 +15,7 @@ class MainPage extends StatefulWidget {
 }
 
 class MainPageState extends State<MainPage> {
-  bool isLogin = false;
+  late bool isLogin = false;
   Map<int, String> userList = {0: 'STU', 1: 'PAR', 2: 'TEA'};
   int? radioValue = 100;
   String selectedUser = '';
