@@ -165,6 +165,39 @@ class ClassMainState extends State<ClassMain> {
     }
   }
 
+  Future<bool?> confirmation(BuildContext context) {
+    return showDialog<bool>(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              title: Text('로그아웃'),
+              content: Text('로그아웃 하시겠습니까?'),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                    child: Text('확인')),
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    },
+                    child: Text('취소')),
+              ]);
+        });
+  }
+
+  Future<void> logOut(BuildContext context) async {
+    bool? confirmed = await confirmation(context);
+    if (confirmed == true) {
+      //로컬 스토리지 지우기
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.remove('roomData');
+
+      Navigator.pushNamedAndRemoveUntil(context, "/mainpage", (route) => false);
+    }
+  }
+
   @override
   void initState() {
     getLectureList();
@@ -175,358 +208,389 @@ class ClassMainState extends State<ClassMain> {
   Widget build(BuildContext context) {
     return Consumer<QrProvider>(builder: (context, qrProvider, child) {
       return Scaffold(
-          body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+          body: Stack(
         children: [
-          lectureDetail.isNotEmpty
-              ? Container(
-                  margin: EdgeInsets.only(bottom: 20.0),
-                  width: 200.0,
-                  height: 50.0,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(12),
-                    ),
-                    color: Color(int.parse(
-                        '0xFF${lectureDetail['color'].substring(1)}')),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+          Positioned(
+            top: 30.0,
+            right: 10.0,
+            width: 100.0,
+            height: 25.0,
+            child: ElevatedButton(
+                onPressed: () {
+                  logOut(context);
+                },
+                child: Text("로그아웃",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ))),
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              lectureDetail.isNotEmpty
+                  ? Container(
+                      margin: EdgeInsets.only(bottom: 20.0),
+                      width: 200.0,
+                      height: 50.0,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(12),
+                        ),
+                        color: Color(int.parse(
+                            '0xFF${lectureDetail['color'].substring(1)}')),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            lectureDetail['lectureName'],
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : Text("현재 진행 중인 강의가 없습니다."),
+              if (qrProvider.isQr)
+                Center(
+                  child: Column(
                     children: [
-                      Text(
-                        lectureDetail['lectureName'],
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20.0,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 50.0),
+                        child: QrImageView(
+                          data: jsonEncode(qrData),
+                          size: 400,
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: ClassTimer(),
+                      ),
+                      Text('어플의 카메라를 이용해서 QR을 스캔해 주세요.',
+                          style: TextStyle(
+                            color: Color(0xff565656),
+                            fontSize: 28.0,
+                            fontWeight: FontWeight.normal,
+                          ))
                     ],
                   ),
-                )
-              : Text("현재 진행 중인 강의가 없습니다."),
-          if (qrProvider.isQr)
-            Center(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 50.0),
-                    child: QrImageView(
-                      data: jsonEncode(qrData),
-                      size: 400,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: ClassTimer(),
-                  ),
-                  Text('어플의 카메라를 이용해서 QR을 스캔해 주세요.',
-                      style: TextStyle(
-                        color: Color(0xff565656),
-                        fontSize: 28.0,
-                        fontWeight: FontWeight.normal,
-                      ))
-                ],
-              ),
-            ),
-          if (!qrProvider.isQr)
-            SizedBox(
-              height: 400.0,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  (ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: lectureStatsList.length,
-                      itemBuilder: (context, index) {
-                        TextStyle myTextStyle = TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16.0);
+                ),
+              if (!qrProvider.isQr)
+                SizedBox(
+                  height: 400.0,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      (ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemCount: lectureStatsList.length,
+                          itemBuilder: (context, index) {
+                            TextStyle myTextStyle = TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16.0);
 
-                        ButtonStyle myBtnStyle = ElevatedButton.styleFrom(
-                          fixedSize: const Size(150, 50),
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(0)),
-                        );
+                            ButtonStyle myBtnStyle = ElevatedButton.styleFrom(
+                              fixedSize: const Size(150, 50),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(0)),
+                            );
 
-                        String name = lectureStatsList[index]['studentName'];
+                            String name =
+                                lectureStatsList[index]['studentName'];
 
-                        return Column(
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
+                            return Column(
                               children: [
-                                Container(
-                                    width: 150.0,
-                                    height: 52.0,
-                                    decoration: BoxDecoration(
-                                        color: Color(0xffeaeaea),
-                                        border: Border.all(
-                                          color: Color(0xffeaeaea),
-                                        )),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          name,
-                                          style: TextStyle(
-                                            color: Color(0xff565656),
-                                          ),
-                                        ),
-                                      ],
-                                    )),
-                                Container(
-                                    padding: EdgeInsets.fromLTRB(
-                                        0.0, 10.0, 0.0, 10.0),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            border: Border(
-                                              top: BorderSide(
-                                                  width: 1,
-                                                  color: Color(0xffeaeaea)),
-                                              // 위쪽 테두리
-                                              right: BorderSide(
-                                                  width: 1,
-                                                  color: Color(0xffeaeaea)),
-                                              // 오른쪽 테두리
-                                              bottom: BorderSide(
-                                                  width: 1,
-                                                  color: Color(
-                                                      0xffeaeaea)), // 아래쪽 테두리
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                        width: 150.0,
+                                        height: 52.0,
+                                        decoration: BoxDecoration(
+                                            color: Color(0xffeaeaea),
+                                            border: Border.all(
+                                              color: Color(0xffeaeaea),
+                                            )),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              name,
+                                              style: TextStyle(
+                                                color: Color(0xff565656),
+                                              ),
                                             ),
-                                          ),
-                                          child: ElevatedButton(
-                                              onPressed: () {
-                                                if (attendList.contains(
-                                                    lectureStatsList[index])) {
-                                                  return;
-                                                }
-                                                setState(() {
-                                                  lectureStatsList[index]
-                                                      ['state'] = '출석';
-                                                });
-                                              },
-                                              style: myBtnStyle.copyWith(
-                                                backgroundColor:
-                                                    MaterialStateProperty.all<
-                                                            Color>(
-                                                        Color(lectureStatsList[
+                                          ],
+                                        )),
+                                    Container(
+                                        padding: EdgeInsets.fromLTRB(
+                                            0.0, 10.0, 0.0, 10.0),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                border: Border(
+                                                  top: BorderSide(
+                                                      width: 1,
+                                                      color: Color(0xffeaeaea)),
+                                                  // 위쪽 테두리
+                                                  right: BorderSide(
+                                                      width: 1,
+                                                      color: Color(0xffeaeaea)),
+                                                  // 오른쪽 테두리
+                                                  bottom: BorderSide(
+                                                      width: 1,
+                                                      color: Color(
+                                                          0xffeaeaea)), // 아래쪽 테두리
+                                                ),
+                                              ),
+                                              child: ElevatedButton(
+                                                  onPressed: () {
+                                                    if (attendList.contains(
+                                                        lectureStatsList[
+                                                            index])) {
+                                                      return;
+                                                    }
+                                                    setState(() {
+                                                      lectureStatsList[index]
+                                                          ['state'] = '출석';
+                                                    });
+                                                  },
+                                                  style: myBtnStyle.copyWith(
+                                                    backgroundColor:
+                                                        MaterialStateProperty.all<
+                                                                Color>(
+                                                            Color(lectureStatsList[
+                                                                            index]
+                                                                        [
+                                                                        'state'] ==
+                                                                    '출석'
+                                                                ? 0xff8fbe61
+                                                                : 0xffffffff)),
+                                                  ),
+                                                  child: Text(
+                                                    "출석",
+                                                    style: myTextStyle.copyWith(
+                                                        color: lectureStatsList[
                                                                         index]
                                                                     ['state'] ==
                                                                 '출석'
-                                                            ? 0xff8fbe61
-                                                            : 0xffffffff)),
-                                              ),
-                                              child: Text(
-                                                "출석",
-                                                style: myTextStyle.copyWith(
-                                                    color: lectureStatsList[
-                                                                    index]
-                                                                ['state'] ==
-                                                            '출석'
-                                                        ? Colors.white
-                                                        : Color(0xff565656)),
-                                              )),
-                                        ),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            border: Border(
-                                              top: BorderSide(
-                                                  width: 1,
-                                                  color: Color(0xffeaeaea)),
-                                              // 위쪽 테두리
-                                              right: BorderSide(
-                                                  width: 1,
-                                                  color: Color(0xffeaeaea)),
-                                              // 오른쪽 테두리
-                                              bottom: BorderSide(
-                                                  width: 1,
-                                                  color: Color(
-                                                      0xffeaeaea)), // 아래쪽 테두리
+                                                            ? Colors.white
+                                                            : Color(
+                                                                0xff565656)),
+                                                  )),
                                             ),
-                                          ),
-                                          child: ElevatedButton(
-                                              onPressed: () {
-                                                if (attendList.contains(
-                                                    lectureStatsList[index])) {
-                                                  return;
-                                                }
-                                                setState(() {
-                                                  lectureStatsList[index]
-                                                      ['state'] = '결석';
-                                                });
-                                              },
-                                              style: myBtnStyle.copyWith(
-                                                backgroundColor:
-                                                    MaterialStateProperty.all<
-                                                            Color>(
-                                                        Color((lectureStatsList[
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                border: Border(
+                                                  top: BorderSide(
+                                                      width: 1,
+                                                      color: Color(0xffeaeaea)),
+                                                  // 위쪽 테두리
+                                                  right: BorderSide(
+                                                      width: 1,
+                                                      color: Color(0xffeaeaea)),
+                                                  // 오른쪽 테두리
+                                                  bottom: BorderSide(
+                                                      width: 1,
+                                                      color: Color(
+                                                          0xffeaeaea)), // 아래쪽 테두리
+                                                ),
+                                              ),
+                                              child: ElevatedButton(
+                                                  onPressed: () {
+                                                    if (attendList.contains(
+                                                        lectureStatsList[
+                                                            index])) {
+                                                      return;
+                                                    }
+                                                    setState(() {
+                                                      lectureStatsList[index]
+                                                          ['state'] = '결석';
+                                                    });
+                                                  },
+                                                  style: myBtnStyle.copyWith(
+                                                    backgroundColor:
+                                                        MaterialStateProperty.all<
+                                                                Color>(
+                                                            Color((lectureStatsList[
+                                                                            index]
+                                                                        [
+                                                                        'state'] ==
+                                                                    '결석'
+                                                                ? 0xffda7e7e
+                                                                : 0xffffffff))),
+                                                  ),
+                                                  child: Text(
+                                                    "결석",
+                                                    style: myTextStyle.copyWith(
+                                                        color: lectureStatsList[
                                                                         index]
                                                                     ['state'] ==
                                                                 '결석'
-                                                            ? 0xffda7e7e
-                                                            : 0xffffffff))),
-                                              ),
-                                              child: Text(
-                                                "결석",
-                                                style: myTextStyle.copyWith(
-                                                    color: lectureStatsList[
-                                                                    index]
-                                                                ['state'] ==
-                                                            '결석'
-                                                        ? Colors.white
-                                                        : Color(0xff565656)),
-                                              )),
-                                        ),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            border: Border(
-                                              top: BorderSide(
-                                                  width: 1,
-                                                  color: Color(0xffeaeaea)),
-                                              // 위쪽 테두리
-                                              right: BorderSide(
-                                                  width: 1,
-                                                  color: Color(0xffeaeaea)),
-                                              // 오른쪽 테두리
-                                              bottom: BorderSide(
-                                                  width: 1,
-                                                  color: Color(
-                                                      0xffeaeaea)), // 아래쪽 테두리
+                                                            ? Colors.white
+                                                            : Color(
+                                                                0xff565656)),
+                                                  )),
                                             ),
-                                          ),
-                                          child: ElevatedButton(
-                                              onPressed: () {
-                                                if (attendList.contains(
-                                                    lectureStatsList[index])) {
-                                                  return;
-                                                }
-                                                setState(() {
-                                                  lectureStatsList[index]
-                                                      ['state'] = '지각';
-                                                });
-                                              },
-                                              style: myBtnStyle.copyWith(
-                                                backgroundColor:
-                                                    MaterialStateProperty.all<
-                                                            Color>(
-                                                        Color(lectureStatsList[
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                border: Border(
+                                                  top: BorderSide(
+                                                      width: 1,
+                                                      color: Color(0xffeaeaea)),
+                                                  // 위쪽 테두리
+                                                  right: BorderSide(
+                                                      width: 1,
+                                                      color: Color(0xffeaeaea)),
+                                                  // 오른쪽 테두리
+                                                  bottom: BorderSide(
+                                                      width: 1,
+                                                      color: Color(
+                                                          0xffeaeaea)), // 아래쪽 테두리
+                                                ),
+                                              ),
+                                              child: ElevatedButton(
+                                                  onPressed: () {
+                                                    if (attendList.contains(
+                                                        lectureStatsList[
+                                                            index])) {
+                                                      return;
+                                                    }
+                                                    setState(() {
+                                                      lectureStatsList[index]
+                                                          ['state'] = '지각';
+                                                    });
+                                                  },
+                                                  style: myBtnStyle.copyWith(
+                                                    backgroundColor:
+                                                        MaterialStateProperty.all<
+                                                                Color>(
+                                                            Color(lectureStatsList[
+                                                                            index]
+                                                                        [
+                                                                        'state'] ==
+                                                                    '지각'
+                                                                ? 0xfff3d97c
+                                                                : 0xffffffff)),
+                                                  ),
+                                                  child: Text(
+                                                    "지각",
+                                                    style: myTextStyle.copyWith(
+                                                        color: lectureStatsList[
                                                                         index]
                                                                     ['state'] ==
                                                                 '지각'
-                                                            ? 0xfff3d97c
-                                                            : 0xffffffff)),
-                                              ),
-                                              child: Text(
-                                                "지각",
-                                                style: myTextStyle.copyWith(
-                                                    color: lectureStatsList[
-                                                                    index]
-                                                                ['state'] ==
-                                                            '지각'
-                                                        ? Colors.white
-                                                        : Color(0xff565656)),
-                                              )),
-                                        ),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            border: Border(
-                                              top: BorderSide(
-                                                  width: 1,
-                                                  color: Color(0xffeaeaea)),
-                                              // 위쪽 테두리
-                                              right: BorderSide(
-                                                  width: 1,
-                                                  color: Color(0xffeaeaea)),
-                                              // 오른쪽 테두리
-                                              bottom: BorderSide(
-                                                  width: 1,
-                                                  color: Color(
-                                                      0xffeaeaea)), // 아래쪽 테두리
+                                                            ? Colors.white
+                                                            : Color(
+                                                                0xff565656)),
+                                                  )),
                                             ),
-                                          ),
-                                          child: ElevatedButton(
-                                              onPressed: () {
-                                                if (attendList.contains(
-                                                    lectureStatsList[index])) {
-                                                  return;
-                                                }
-                                                setState(() {
-                                                  lectureStatsList[index]
-                                                      ['state'] = '보류';
-                                                });
-                                              },
-                                              style: myBtnStyle.copyWith(
-                                                backgroundColor:
-                                                    MaterialStateProperty.all<
-                                                            Color>(
-                                                        Color(lectureStatsList[
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                border: Border(
+                                                  top: BorderSide(
+                                                      width: 1,
+                                                      color: Color(0xffeaeaea)),
+                                                  // 위쪽 테두리
+                                                  right: BorderSide(
+                                                      width: 1,
+                                                      color: Color(0xffeaeaea)),
+                                                  // 오른쪽 테두리
+                                                  bottom: BorderSide(
+                                                      width: 1,
+                                                      color: Color(
+                                                          0xffeaeaea)), // 아래쪽 테두리
+                                                ),
+                                              ),
+                                              child: ElevatedButton(
+                                                  onPressed: () {
+                                                    if (attendList.contains(
+                                                        lectureStatsList[
+                                                            index])) {
+                                                      return;
+                                                    }
+                                                    setState(() {
+                                                      lectureStatsList[index]
+                                                          ['state'] = '보류';
+                                                    });
+                                                  },
+                                                  style: myBtnStyle.copyWith(
+                                                    backgroundColor:
+                                                        MaterialStateProperty.all<
+                                                                Color>(
+                                                            Color(lectureStatsList[
+                                                                            index]
+                                                                        [
+                                                                        'state'] ==
+                                                                    '보류'
+                                                                ? 0xffcccccc
+                                                                : 0xffffffff)),
+                                                  ),
+                                                  child: Text(
+                                                    "보류",
+                                                    style: myTextStyle.copyWith(
+                                                        color: lectureStatsList[
                                                                         index]
                                                                     ['state'] ==
                                                                 '보류'
-                                                            ? 0xffcccccc
-                                                            : 0xffffffff)),
-                                              ),
-                                              child: Text(
-                                                "보류",
-                                                style: myTextStyle.copyWith(
-                                                    color: lectureStatsList[
-                                                                    index]
-                                                                ['state'] ==
-                                                            '보류'
-                                                        ? Colors.white
-                                                        : Color(0xff565656)),
-                                              )),
-                                        ),
-                                      ],
-                                    )),
+                                                            ? Colors.white
+                                                            : Color(
+                                                                0xff565656)),
+                                                  )),
+                                            ),
+                                          ],
+                                        )),
+                                  ],
+                                ),
                               ],
-                            ),
-                          ],
-                        );
-                      })),
-                ],
-              ),
-            ),
-          if (lectureDetail.isNotEmpty &&
-              attendList.isEmpty &&
-              !qrProvider.isQr)
-            Container(
-              margin: EdgeInsets.only(top: 40.0),
-              width: 100.0,
-              height: 40.0,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50)),
+                            );
+                          })),
+                    ],
+                  ),
                 ),
-                onPressed: () {
-                  createAttend();
-                },
-                child: Text('제출',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                    )),
-              ),
-            ),
-          if (lectureDetail.isNotEmpty &&
-              attendList.isNotEmpty &&
-              !qrProvider.isQr)
-            Container(
-                margin: EdgeInsets.only(top: 20.0),
-                child: Text(
-                  '이미 출석 체크가 완료된 과목입니다.',
-                ))
+              if (lectureDetail.isNotEmpty &&
+                  attendList.isEmpty &&
+                  !qrProvider.isQr)
+                Container(
+                  margin: EdgeInsets.only(top: 40.0),
+                  width: 100.0,
+                  height: 40.0,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50)),
+                    ),
+                    onPressed: () {
+                      createAttend();
+                    },
+                    child: Text('제출',
+                        style: TextStyle(
+                          fontSize: 20.0,
+                        )),
+                  ),
+                ),
+              if (lectureDetail.isNotEmpty &&
+                  attendList.isNotEmpty &&
+                  !qrProvider.isQr)
+                Container(
+                    margin: EdgeInsets.only(top: 20.0),
+                    child: Text(
+                      '이미 출석 체크가 완료된 과목입니다.',
+                    ))
+            ],
+          ),
         ],
       ));
     });

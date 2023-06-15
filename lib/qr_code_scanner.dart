@@ -1,10 +1,22 @@
+import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:edu_application_pre/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class AttendProvider extends ChangeNotifier {
+  late List<dynamic> _qrAttendList = [];
+  List<dynamic> get qrAttendList => _qrAttendList;
+
+  void setAttendList(attendInfo) {
+    _qrAttendList.add(attendInfo);
+    notifyListeners();
+  }
+}
 
 class QRScanner extends StatefulWidget {
   const QRScanner({Key? key}) : super(key: key);
@@ -17,6 +29,57 @@ class _QRScannerState extends State<QRScanner> {
   Barcode? result;
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+
+  Future<bool?> confirmation(BuildContext context) {
+    return showDialog<bool>(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              title: Text('출석'),
+              content: Text('출석하시겠습니까?'),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                    child: Text('확인')),
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    },
+                    child: Text('취소')),
+              ]);
+        });
+  }
+
+  Future<void> attendCheck(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userData = prefs.getString('userData');
+    Map<dynamic, dynamic> dataMap = {};
+
+    if (userData != null) {
+      dataMap = jsonDecode(userData);
+    }
+
+    bool? confirmed = await confirmation(context);
+    final qrAttendListProvider =
+        Provider.of<AttendProvider>(context, listen: false);
+
+    if (confirmed == true && qrAttendListProvider.qrAttendList.isEmpty) {
+      var data = {
+        'studentKey': dataMap['studentKey'],
+        'state': '출석',
+      };
+
+      qrAttendListProvider.setAttendList(data);
+
+      Navigator.pop(context, true);
+    } else {
+      // 취소를 누르면 알림창 닫기
+      Navigator.pop(context, false); // 추가된 코드: 알림창 닫기
+      return;
+    }
+  }
 
   // In order to get hot reload to work we need to pause the camera if the platform
   // is android, or resume the camera if the platform is iOS.
@@ -38,7 +101,8 @@ class _QRScannerState extends State<QRScanner> {
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
                 color: Color(0xff0099ff))),
-        centerTitle: true, // 텍스트 중앙 정렬
+        centerTitle: true,
+        // 텍스트 중앙 정렬
         leading: IconButton(
           icon: FaIcon(FontAwesomeIcons.home),
           color: Color(0xff0099ff),
@@ -68,7 +132,8 @@ class _QRScannerState extends State<QRScanner> {
           ),
         ),
         toolbarHeight: 80,
-        elevation: 4.0, //앱바 입체감 없애기
+        elevation: 4.0,
+        //앱바 입체감 없애기
         actions: [
           IconButton(
             icon: Icon(Icons.menu),
@@ -88,10 +153,7 @@ class _QRScannerState extends State<QRScanner> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  if (result != null)
-                    Text('Data: ${result!.code}')
-                  else
-                    Container(),
+                  Text('QR을 스캔하세요.'),
                 ],
               ),
             ),
@@ -103,10 +165,11 @@ class _QRScannerState extends State<QRScanner> {
 
   Widget _buildQrView(BuildContext context) {
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
-    var scanArea = (MediaQuery.of(context).size.width < 400 ||
-            MediaQuery.of(context).size.height < 400)
-        ? 150.0
-        : 300.0;
+    // var scanArea = (MediaQuery.of(context).size.width < 400 ||
+    //         MediaQuery.of(context).size.height < 400)
+    //     ? 300.0
+    //     : 300.0;
+    var scanArea = 300.0;
     // To ensure the Scanner view is properly sizes after rotation
     // we need to listen for Flutter SizeChanged notification and update controller
     return QRView(
@@ -122,14 +185,13 @@ class _QRScannerState extends State<QRScanner> {
     );
   }
 
-  void _onQRViewCreated(QRViewController controller) {
+  void _onQRViewCreated(QRViewController controller) async {
     setState(() {
       this.controller = controller;
     });
+
     controller.scannedDataStream.listen((scanData) {
-      setState(() {
-        result = scanData;
-      });
+      attendCheck(context);
     });
   }
 
