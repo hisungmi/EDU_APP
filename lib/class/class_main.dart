@@ -73,8 +73,10 @@ class ClassMainState extends State<ClassMain> {
           lectureStatsList[i]['studentName'] = lectureStatsList[i]['name'];
           lectureStatsList[i]['state'] = '';
 
+          print(qrAttendListProvider.qrAttendList);
+
           for (int k = 0; k < qrAttendListProvider.qrAttendList.length; k++) {
-            if (lectureStatsList[i]['lectureKey'] ==
+            if (lectureStatsList[i]['studentKey'] ==
                 qrAttendListProvider.qrAttendList[k]['studentKey']) {
               lectureStatsList[i]['state'] =
                   qrAttendListProvider.qrAttendList[k]['state'];
@@ -616,7 +618,7 @@ class ClassTimer extends StatefulWidget {
 }
 
 class ClassTimerState extends State<ClassTimer> {
-  static const int _maxSeconds = 60 * 10;
+  static const int _maxSeconds = 10;
   int _secondsLeft = _maxSeconds;
 
   late Timer _timer;
@@ -637,7 +639,6 @@ class ClassTimerState extends State<ClassTimer> {
         } else {
           _timer.cancel();
           Provider.of<QrProvider>(context, listen: false).setFalseQr();
-          kioskMainKey.currentState!.refresh();
         }
       });
     });
