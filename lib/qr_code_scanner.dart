@@ -145,117 +145,59 @@ class _QRScannerState extends State<QRScanner> {
     // To ensure the Scanner view is properly sizes after rotation
     // we need to listen for Flutter SizeChanged notification and update controller
     return Consumer<AttendProvider>(builder: (context, attendProvider, child) {
-      return QRView(
-        key: qrKey,
-        onQRViewCreated: (controller) => {
-          setState(() {
-            this.controller = controller;
+      return Column(
+        children: [
+          QRView(
+            key: qrKey,
+            onQRViewCreated: _onQRViewCreated,
+            overlay: QrScannerOverlayShape(
+                borderColor: Colors.red,
+                borderRadius: 10,
+                borderLength: 30,
+                borderWidth: 10,
+                cutOutSize: scanArea),
+            onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
+          ),
+          Center(
+            child: (result != null)
+                ? ElevatedButton(
+                    onPressed: () async {
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      String? userData = prefs.getString('userData');
+                      Map<dynamic, dynamic> dataMap = {};
 
-            controller.scannedDataStream.listen((scanData) async {
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              String? userData = prefs.getString('userData');
-              Map<dynamic, dynamic> dataMap = {};
+                      if (userData != null) {
+                        dataMap = jsonDecode(userData);
+                      }
 
-              if (userData != null) {
-                dataMap = jsonDecode(userData);
-              }
+                      var data = {
+                        'studentKey': dataMap['studentKey'],
+                        'state': '출석',
+                      };
 
-              if (!mounted) return;
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text('QR 코드 스캔 완료'),
-                  content: Text('출석을 실행하시겠습니까?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        var data = {
-                          'studentKey': dataMap['studentKey'],
-                          'state': '출석',
-                        };
-
-                        if (attendProvider.qrAttendList.isEmpty) {
-                          attendProvider.setAttendList(data);
-                          print(attendProvider.qrAttendList);
-                        }
-                        Navigator.pop(context, true); // 알림 창 닫기
-                      },
-                      child: Text('확인'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context, false); // 알림 창 닫기
-                      },
-                      child: Text('취소'),
-                    ),
-                  ],
-                ),
-              );
-            });
-          })
-        },
-        overlay: QrScannerOverlayShape(
-            borderColor: Colors.red,
-            borderRadius: 10,
-            borderLength: 30,
-            borderWidth: 10,
-            cutOutSize: scanArea),
-        onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
+                      if (attendProvider.qrAttendList.isEmpty) {
+                        attendProvider.setAttendList(data);
+                        print(attendProvider.qrAttendList);
+                      }
+                    },
+                    child: Text('출석 체크'),
+                  )
+                : Text('Scan a code'),
+          ),
+        ],
       );
     });
   }
 
-  // void _onQRViewCreated(QRViewController controller) async {
-  // final qrAttendListProvider =
-  //     Provider.of<AttendProvider>(context, listen: true);
-  //
-  // setState(() {
-  //   this.controller = controller;
-  // });
-  //
-  //   controller.scannedDataStream.listen((scanData) async {
-  //     // confirmation(context);
-  //     SharedPreferences prefs = await SharedPreferences.getInstance();
-  //     String? userData = prefs.getString('userData');
-  //     Map<dynamic, dynamic> dataMap = {};
-  //
-  //     if (userData != null) {
-  //       dataMap = jsonDecode(userData);
-  //     }
-  //
-  //     if (!mounted) return;
-  //     showDialog(
-  //       context: context,
-  //       builder: (context) => AlertDialog(
-  //         title: Text('QR 코드 스캔 완료'),
-  //         content: Text('출석을 실행하시겠습니까?'),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () {
-  //               var data = {
-  //                 'studentKey': dataMap['studentKey'],
-  //                 'state': '출석',
-  //               };
-  //
-  //               if (qrAttendListProvider.qrAttendList.isEmpty) {
-  //                 qrAttendListProvider.setAttendList(data);
-  //                 print(qrAttendListProvider.qrAttendList);
-  //               }
-  //               Navigator.pop(context, true); // 알림 창 닫기
-  //             },
-  //             child: Text('확인'),
-  //           ),
-  //           TextButton(
-  //             onPressed: () {
-  //               Navigator.pop(context, false); // 알림 창 닫기
-  //             },
-  //             child: Text('취소'),
-  //           ),
-  //         ],
-  //       ),
-  //     );
-  //   });
-  // }
+  void _onQRViewCreated(QRViewController controller) {
+    this.controller = controller;
+    controller.scannedDataStream.listen((scanData) {
+      setState(() {
+        result = scanData;
+      });
+    });
+  }
 
   void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {
     log('${DateTime.now().toIso8601String()}_onPermissionSet $p');

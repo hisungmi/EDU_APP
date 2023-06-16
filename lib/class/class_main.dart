@@ -8,7 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../common/kiosk_main.dart';
 import '../http_setup.dart';
 import '../main.dart';
-import '../qr_code_scanner.dart';
 
 class ClassMain extends StatefulWidget {
   const ClassMain({Key? key}) : super(key: key);
@@ -222,9 +221,6 @@ class ClassMainState extends State<ClassMain> {
 
   @override
   Widget build(BuildContext context) {
-    // final qrAttendListProvider =
-    //     Provider.of<AttendProvider>(context, listen: true);
-
     return Consumer<AttendProvider>(builder: (context, attendProvider, child) {
       return Scaffold(
           body: Stack(
