@@ -9,16 +9,15 @@ import 'package:edu_application_pre/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AttendProvider extends ChangeNotifier {
-  late List<dynamic> _qrAttendList = [];
+  List<dynamic> _qrAttendList = [];
   List<dynamic> get qrAttendList => _qrAttendList;
+  bool _classQr = true;
+  bool get classQr => _classQr;
 
-  void setAttendList(attendInfo) {
+  void setAttendList(Map<String, dynamic> attendInfo) {
     _qrAttendList.add(attendInfo);
     notifyListeners();
   }
-
-  bool _classQr = true;
-  bool get classQr => _classQr;
 
   void setFalseQr() {
     _classQr = false;
@@ -38,29 +37,7 @@ class _QRScannerState extends State<QRScanner> {
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
-  Future<bool?> confirmation(BuildContext context) {
-    return showDialog<bool>(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-              title: Text('출석'),
-              content: Text('출석하시겠습니까?'),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(true);
-                    },
-                    child: Text('확인')),
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(false);
-                    },
-                    child: Text('취소')),
-              ]);
-        });
-  }
-
-  Future<void> attendCheck(BuildContext context) async {
+  Future<void> confirmation(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userData = prefs.getString('userData');
     Map<dynamic, dynamic> dataMap = {};
@@ -69,25 +46,70 @@ class _QRScannerState extends State<QRScanner> {
       dataMap = jsonDecode(userData);
     }
 
-    bool? confirmed = await confirmation(context);
-    final qrAttendListProvider =
-        Provider.of<AttendProvider>(context, listen: false);
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('QR 코드 스캔 완료'),
+        content: Text('출석을 실행하시겠습니까?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              var data = {
+                'studentKey': dataMap['studentKey'],
+                'state': '출석',
+              };
+              final qrAttendListProvider =
+                  Provider.of<AttendProvider>(context, listen: false);
 
-    if (confirmed == true && qrAttendListProvider.qrAttendList.isEmpty) {
-      var data = {
-        'studentKey': dataMap['studentKey'],
-        'state': '출석',
-      };
-
-      qrAttendListProvider.setAttendList(data);
-
-      Navigator.pop(context, true);
-    } else {
-      // 취소를 누르면 알림창 닫기
-      Navigator.pop(context, false); // 추가된 코드: 알림창 닫기
-      return;
-    }
+              if (qrAttendListProvider.qrAttendList.isEmpty) {
+                qrAttendListProvider.setAttendList(data);
+                print(qrAttendListProvider.qrAttendList);
+              }
+              Navigator.pop(context, true); // 알림 창 닫기
+            },
+            child: Text('확인'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, false); // 알림 창 닫기
+            },
+            child: Text('취소'),
+          ),
+        ],
+      ),
+    );
   }
+
+  // Future<void> attendCheck(BuildContext context) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? userData = prefs.getString('userData');
+  //   Map<dynamic, dynamic> dataMap = {};
+  //
+  //   if (userData != null) {
+  //     dataMap = jsonDecode(userData);
+  //   }
+  //
+  //   bool? confirmed = await confirmation(context);
+  //   final qrAttendListProvider =
+  //       Provider.of<AttendProvider>(context, listen: false);
+  //
+  //   if (confirmed == true && qrAttendListProvider.qrAttendList.isEmpty) {
+  //     var data = {
+  //       'studentKey': dataMap['studentKey'],
+  //       'state': '출석',
+  //     };
+  //
+  //     qrAttendListProvider.setAttendList(data);
+  //     print(qrAttendListProvider.setAttendList);
+  //
+  //     Navigator.pop(context, true);
+  //   } else {
+  //     // 취소를 누르면 알림창 닫기
+  //     Navigator.pop(context, false); // 추가된 코드: 알림창 닫기
+  //     return;
+  //   }
+  // }
 
   // In order to get hot reload to work we need to pause the camera if the platform
   // is android, or resume the camera if the platform is iOS.
@@ -199,7 +221,7 @@ class _QRScannerState extends State<QRScanner> {
     });
 
     controller.scannedDataStream.listen((scanData) {
-      attendCheck(context);
+      confirmation(context);
     });
   }
 
