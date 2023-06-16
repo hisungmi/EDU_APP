@@ -219,7 +219,7 @@ class ClassMainState extends State<ClassMain> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<QrProvider>(builder: (context, qrProvider, child) {
+    return Consumer<AttendProvider>(builder: (context, attendProvider, child) {
       return Scaffold(
           body: Stack(
         children: [
@@ -269,7 +269,7 @@ class ClassMainState extends State<ClassMain> {
                       ),
                     )
                   : Text("현재 진행 중인 강의가 없습니다."),
-              if (qrProvider.isQr)
+              if (attendProvider.classQr)
                 Center(
                   child: Column(
                     children: [
@@ -293,7 +293,7 @@ class ClassMainState extends State<ClassMain> {
                     ],
                   ),
                 ),
-              if (!qrProvider.isQr)
+              if (!attendProvider.classQr)
                 SizedBox(
                   height: 400.0,
                   child: Column(
@@ -575,7 +575,7 @@ class ClassMainState extends State<ClassMain> {
                 ),
               if (lectureDetail.isNotEmpty &&
                   attendList.isEmpty &&
-                  !qrProvider.isQr)
+                  !attendProvider.classQr)
                 Container(
                   margin: EdgeInsets.only(top: 40.0),
                   width: 100.0,
@@ -596,7 +596,7 @@ class ClassMainState extends State<ClassMain> {
                 ),
               if (lectureDetail.isNotEmpty &&
                   attendList.isNotEmpty &&
-                  !qrProvider.isQr)
+                  !attendProvider.classQr)
                 Container(
                     margin: EdgeInsets.only(top: 20.0),
                     child: Text(

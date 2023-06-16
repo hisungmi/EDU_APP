@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class QrProvider extends ChangeNotifier {
-  bool _isQr = true;
+  bool _isQr = false;
   bool get isQr => _isQr;
 
   void setFalseQr() {
