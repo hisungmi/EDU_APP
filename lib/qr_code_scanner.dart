@@ -16,6 +16,14 @@ class AttendProvider extends ChangeNotifier {
     _qrAttendList.add(attendInfo);
     notifyListeners();
   }
+
+  bool _classQr = true;
+  bool get classQr => _classQr;
+
+  void setFalseQr() {
+    _classQr = false;
+    notifyListeners();
+  }
 }
 
 class QRScanner extends StatefulWidget {
