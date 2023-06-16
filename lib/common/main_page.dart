@@ -134,7 +134,7 @@ class MainPageState extends State<MainPage> {
           String typeJsonData = jsonEncode(data);
           await prefs.setString('userType', typeJsonData);
           // json 형태의 데이터를 다시 원래 형태로 변환, 즉 데이터 파싱은 jsonDecode(utf8.decode(result.bodyBytes))로 진행해주면 됩니다. 그럼 우리가 원하는 데이터 값을 얻을 수 있어요!
-          print(result.data);
+          // print(result.data);
           if (!mounted) return;
           if (radioValue == 0) {
             String userJsonData = jsonEncode(result.data);
