@@ -231,7 +231,10 @@ class ClassMainState extends State<ClassMain> {
             height: 25.0,
             child: ElevatedButton(
                 onPressed: () {
-                  logOut(context);
+                  // logOut(context);
+                  final qrAttendListProvider =
+                      Provider.of<AttendProvider>(context, listen: true);
+                  print(qrAttendListProvider.qrAttendList);
                 },
                 child: Text("로그아웃",
                     style: TextStyle(

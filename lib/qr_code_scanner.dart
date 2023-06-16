@@ -37,49 +37,8 @@ class _QRScannerState extends State<QRScanner> {
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
-  Future<void> confirmation(BuildContext context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userData = prefs.getString('userData');
-    Map<dynamic, dynamic> dataMap = {};
-
-    if (userData != null) {
-      dataMap = jsonDecode(userData);
-    }
-
-    if (!mounted) return;
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('QR 코드 스캔 완료'),
-        content: Text('출석을 실행하시겠습니까?'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              var data = {
-                'studentKey': dataMap['studentKey'],
-                'state': '출석',
-              };
-              final qrAttendListProvider =
-                  Provider.of<AttendProvider>(context, listen: false);
-
-              if (qrAttendListProvider.qrAttendList.isEmpty) {
-                qrAttendListProvider.setAttendList(data);
-                print(qrAttendListProvider.qrAttendList);
-              }
-              Navigator.pop(context, true); // 알림 창 닫기
-            },
-            child: Text('확인'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context, false); // 알림 창 닫기
-            },
-            child: Text('취소'),
-          ),
-        ],
-      ),
-    );
-  }
+  // Future<void> confirmation(BuildContext context) async {
+  // }
 
   // Future<void> attendCheck(BuildContext context) async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -220,8 +179,49 @@ class _QRScannerState extends State<QRScanner> {
       this.controller = controller;
     });
 
-    controller.scannedDataStream.listen((scanData) {
-      confirmation(context);
+    controller.scannedDataStream.listen((scanData) async {
+      // confirmation(context);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? userData = prefs.getString('userData');
+      Map<dynamic, dynamic> dataMap = {};
+
+      if (userData != null) {
+        dataMap = jsonDecode(userData);
+      }
+
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('QR 코드 스캔 완료'),
+          content: Text('출석을 실행하시겠습니까?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                var data = {
+                  'studentKey': dataMap['studentKey'],
+                  'state': '출석',
+                };
+                final qrAttendListProvider =
+                    Provider.of<AttendProvider>(context, listen: true);
+
+                if (qrAttendListProvider.qrAttendList.isEmpty) {
+                  qrAttendListProvider.setAttendList(data);
+                  print(qrAttendListProvider.qrAttendList);
+                }
+                Navigator.pop(context, true); // 알림 창 닫기
+              },
+              child: Text('확인'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, false); // 알림 창 닫기
+              },
+              child: Text('취소'),
+            ),
+          ],
+        ),
+      );
     });
   }
 
