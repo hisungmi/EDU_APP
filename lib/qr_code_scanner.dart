@@ -20,9 +20,6 @@ class _QRScannerState extends State<QRScanner> {
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
-  // Future<void> confirmation(BuildContext context) async {
-  // }
-
   // Future<void> attendCheck(BuildContext context) async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
   //   String? userData = prefs.getString('userData');
@@ -66,126 +63,132 @@ class _QRScannerState extends State<QRScanner> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('QR',
-            style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Color(0xff0099ff))),
-        centerTitle: true,
-        // 텍스트 중앙 정렬
-        leading: IconButton(
-          icon: FaIcon(FontAwesomeIcons.home),
-          color: Color(0xff0099ff),
-          iconSize: 30,
-          onPressed: () {
-            int desiredIndex = 0; // 2번째 인덱스로 이동하려면 1로 설정
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (context) => MyHomePage(desiredIndex),
-              ),
-              (route) => false,
-            );
-          },
-        ),
-        backgroundColor: Colors.white,
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(4.0),
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: Color(0xFFE8E8E8).withOpacity(0.8),
-                  width: 1.0,
+    return Consumer<AttendProvider>(builder: (context, attendProvider, child) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('QR',
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xff0099ff))),
+          centerTitle: true,
+          // 텍스트 중앙 정렬
+          leading: IconButton(
+            icon: FaIcon(FontAwesomeIcons.home),
+            color: Color(0xff0099ff),
+            iconSize: 30,
+            onPressed: () {
+              int desiredIndex = 0; // 2번째 인덱스로 이동하려면 1로 설정
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => MyHomePage(desiredIndex),
+                ),
+                (route) => false,
+              );
+            },
+          ),
+          backgroundColor: Colors.white,
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(4.0),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: Color(0xFFE8E8E8).withOpacity(0.8),
+                    width: 1.0,
+                  ),
                 ),
               ),
             ),
           ),
+          toolbarHeight: 80,
+          elevation: 4.0,
+          //앱바 입체감 없애기
+          actions: [
+            IconButton(
+              icon: Icon(Icons.menu),
+              color: Color(0xff0099ff),
+              iconSize: 35,
+              onPressed: () {},
+            )
+          ],
         ),
-        toolbarHeight: 80,
-        elevation: 4.0,
-        //앱바 입체감 없애기
-        actions: [
-          IconButton(
-            icon: Icon(Icons.menu),
-            color: Color(0xff0099ff),
-            iconSize: 35,
-            onPressed: () {},
-          )
-        ],
-      ),
-      body: Column(
-        children: <Widget>[
-          Expanded(flex: 4, child: _buildQrView(context)),
-          Expanded(
-            flex: 1,
-            child: FittedBox(
-              fit: BoxFit.contain,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Text('QR을 스캔하세요.'),
-                ],
-              ),
+        body: Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            QRView(
+              key: qrKey,
+              onQRViewCreated: _onQRViewCreated,
+              overlay: QrScannerOverlayShape(
+                  borderColor: Color(0xff0099ff),
+                  borderRadius: 10,
+                  borderLength: 30,
+                  borderWidth: 10,
+                  cutOutSize: 250.0),
+              onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
             ),
-          )
-        ],
-      ),
-    );
+            if (result != null)
+              Positioned(
+                bottom: 10.0,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    String? userData = prefs.getString('userData');
+                    Map<dynamic, dynamic> dataMap = {};
+
+                    if (userData != null) {
+                      dataMap = jsonDecode(userData);
+                    }
+
+                    var data = {
+                      'studentKey': dataMap['studentKey'],
+                      'state': '출석',
+                    };
+
+                    if (attendProvider.qrAttendList.isEmpty) {
+                      attendProvider.setAttendList(data);
+                      print(attendProvider.qrAttendList);
+                    }
+                  },
+                  child: Text('출석 체크'),
+                ),
+              )
+            else
+              Positioned(
+                bottom: 40.0,
+                child: Text('Scan a code',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      color: Colors.white,
+                    )),
+              ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildQrView(BuildContext context) {
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
-    // var scanArea = (MediaQuery.of(context).size.width < 400 ||
-    //         MediaQuery.of(context).size.height < 400)
-    //     ? 300.0
-    //     : 300.0;
-    var scanArea = 300.0;
+    var scanArea = (MediaQuery.of(context).size.width < 400 ||
+            MediaQuery.of(context).size.height < 400)
+        ? 150.0
+        : 300.0;
+    // var scanArea = 200.0;
     // To ensure the Scanner view is properly sizes after rotation
     // we need to listen for Flutter SizeChanged notification and update controller
     return Consumer<AttendProvider>(builder: (context, attendProvider, child) {
-      return Column(
-        children: [
-          QRView(
-            key: qrKey,
-            onQRViewCreated: _onQRViewCreated,
-            overlay: QrScannerOverlayShape(
-                borderColor: Colors.red,
-                borderRadius: 10,
-                borderLength: 30,
-                borderWidth: 10,
-                cutOutSize: scanArea),
-            onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
-          ),
-          Center(
-            child: (result != null)
-                ? ElevatedButton(
-                    onPressed: () async {
-                      SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                      String? userData = prefs.getString('userData');
-                      Map<dynamic, dynamic> dataMap = {};
-
-                      if (userData != null) {
-                        dataMap = jsonDecode(userData);
-                      }
-
-                      var data = {
-                        'studentKey': dataMap['studentKey'],
-                        'state': '출석',
-                      };
-
-                      if (attendProvider.qrAttendList.isEmpty) {
-                        attendProvider.setAttendList(data);
-                        print(attendProvider.qrAttendList);
-                      }
-                    },
-                    child: Text('출석 체크'),
-                  )
-                : Text('Scan a code'),
-          ),
-        ],
+      return QRView(
+        key: qrKey,
+        onQRViewCreated: _onQRViewCreated,
+        overlay: QrScannerOverlayShape(
+            borderColor: Colors.red,
+            borderRadius: 10,
+            borderLength: 30,
+            borderWidth: 10,
+            cutOutSize: scanArea),
+        onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
       );
     });
   }
