@@ -69,6 +69,8 @@ class ClassMainState extends State<ClassMain> {
           lectureStatsList = result.data['resultData'];
         });
 
+        print(qrAttendListProvider.qrAttendList);
+
         for (int i = 0; i < lectureStatsList.length; i++) {
           lectureStatsList[i]['studentName'] = lectureStatsList[i]['name'];
           lectureStatsList[i]['state'] = '';
@@ -638,7 +640,8 @@ class ClassTimerState extends State<ClassTimer> {
           _secondsLeft--;
         } else {
           _timer.cancel();
-          Provider.of<QrProvider>(context, listen: false).setFalseQr();
+          Provider.of<AttendProvider>(context, listen: false).setFalseQr();
+          kioskMainKey.currentState!.refresh();
         }
       });
     });
