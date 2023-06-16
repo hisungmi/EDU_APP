@@ -8,7 +8,7 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:edu_application_pre/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AttendProvider extends ChangeNotifier {
+class AttendProvider with ChangeNotifier {
   List<dynamic> _qrAttendList = [];
   List<dynamic> get qrAttendList => _qrAttendList;
   bool _classQr = true;
