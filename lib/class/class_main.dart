@@ -48,8 +48,7 @@ class ClassMainState extends State<ClassMain> {
   }
 
   Future<void> getLectureStatus() async {
-    final qrAttendListProvider =
-        Provider.of<AttendProvider>(context, listen: false);
+    final qrAttendListProvider = Provider.of<AttendProvider>(context);
     await getAttendList();
 
     if (attendList.isNotEmpty) {
