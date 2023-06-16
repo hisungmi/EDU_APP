@@ -7,6 +7,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../common/kiosk_main.dart';
 import '../http_setup.dart';
+import '../main.dart';
 import '../qr_code_scanner.dart';
 
 class ClassMain extends StatefulWidget {
@@ -48,7 +49,7 @@ class ClassMainState extends State<ClassMain> {
   }
 
   Future<void> getLectureStatus() async {
-    final qrAttendListProvider = Provider.of<AttendProvider>(context);
+    // final qrAttendListProvider = Provider.of<AttendProvider>(context);
     await getAttendList();
 
     if (attendList.isNotEmpty) {
@@ -68,22 +69,22 @@ class ClassMainState extends State<ClassMain> {
           lectureStatsList = result.data['resultData'];
         });
 
-        print(qrAttendListProvider.qrAttendList);
+        lectureStatsList[i]['studentName'] = lectureStatsList[i]['name'];
+        lectureStatsList[i]['state'] = '';
+        // print(qrAttendListProvider.qrAttendList);
 
-        for (int i = 0; i < lectureStatsList.length; i++) {
-          lectureStatsList[i]['studentName'] = lectureStatsList[i]['name'];
-          lectureStatsList[i]['state'] = '';
-
-          print(qrAttendListProvider.qrAttendList);
-
-          for (int k = 0; k < qrAttendListProvider.qrAttendList.length; k++) {
-            if (lectureStatsList[i]['studentKey'] ==
-                qrAttendListProvider.qrAttendList[k]['studentKey']) {
-              lectureStatsList[i]['state'] =
-                  qrAttendListProvider.qrAttendList[k]['state'];
-            }
-          }
-        }
+        // for (int i = 0; i < lectureStatsList.length; i++) {
+        //
+        //   print(qrAttendListProvider.qrAttendList);
+        //
+        //   for (int k = 0; k < qrAttendListProvider.qrAttendList.length; k++) {
+        //     if (lectureStatsList[i]['studentKey'] ==
+        //         qrAttendListProvider.qrAttendList[k]['studentKey']) {
+        //       lectureStatsList[i]['state'] =
+        //           qrAttendListProvider.qrAttendList[k]['state'];
+        //     }
+        //   }
+        // }
       }
     }
   }
@@ -159,6 +160,7 @@ class ClassMainState extends State<ClassMain> {
         attendList = result.data['resultData'];
       });
 
+      if (!mounted) return;
       showDialog(
         context: context,
         builder: (context) {
@@ -220,6 +222,9 @@ class ClassMainState extends State<ClassMain> {
 
   @override
   Widget build(BuildContext context) {
+    // final qrAttendListProvider =
+    //     Provider.of<AttendProvider>(context, listen: true);
+
     return Consumer<AttendProvider>(builder: (context, attendProvider, child) {
       return Scaffold(
           body: Stack(
@@ -232,9 +237,7 @@ class ClassMainState extends State<ClassMain> {
             child: ElevatedButton(
                 onPressed: () {
                   // logOut(context);
-                  final qrAttendListProvider =
-                      Provider.of<AttendProvider>(context, listen: true);
-                  print(qrAttendListProvider.qrAttendList);
+                  print(attendProvider.qrAttendList);
                 },
                 child: Text("로그아웃",
                     style: TextStyle(
