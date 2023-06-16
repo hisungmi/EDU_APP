@@ -69,22 +69,22 @@ class ClassMainState extends State<ClassMain> {
           lectureStatsList = result.data['resultData'];
         });
 
-        lectureStatsList[i]['studentName'] = lectureStatsList[i]['name'];
-        lectureStatsList[i]['state'] = '';
         // print(qrAttendListProvider.qrAttendList);
 
-        // for (int i = 0; i < lectureStatsList.length; i++) {
-        //
-        //   print(qrAttendListProvider.qrAttendList);
-        //
-        //   for (int k = 0; k < qrAttendListProvider.qrAttendList.length; k++) {
-        //     if (lectureStatsList[i]['studentKey'] ==
-        //         qrAttendListProvider.qrAttendList[k]['studentKey']) {
-        //       lectureStatsList[i]['state'] =
-        //           qrAttendListProvider.qrAttendList[k]['state'];
-        //     }
-        //   }
-        // }
+        for (int i = 0; i < lectureStatsList.length; i++) {
+          lectureStatsList[i]['studentName'] = lectureStatsList[i]['name'];
+          lectureStatsList[i]['state'] = '';
+          //
+          //   print(qrAttendListProvider.qrAttendList);
+          //
+          //   for (int k = 0; k < qrAttendListProvider.qrAttendList.length; k++) {
+          //     if (lectureStatsList[i]['studentKey'] ==
+          //         qrAttendListProvider.qrAttendList[k]['studentKey']) {
+          //       lectureStatsList[i]['state'] =
+          //           qrAttendListProvider.qrAttendList[k]['state'];
+          //     }
+          //   }
+        }
       }
     }
   }
