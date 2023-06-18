@@ -232,8 +232,8 @@ class ClassMainState extends State<ClassMain> {
             height: 25.0,
             child: ElevatedButton(
                 onPressed: () {
-                  // logOut(context);
                   print(attendProvider.qrAttendList);
+                  logOut(context);
                 },
                 child: Text("로그아웃",
                     style: TextStyle(
@@ -621,7 +621,7 @@ class ClassTimer extends StatefulWidget {
 }
 
 class ClassTimerState extends State<ClassTimer> {
-  static const int _maxSeconds = 10;
+  static const int _maxSeconds = 25;
   int _secondsLeft = _maxSeconds;
 
   late Timer _timer;
@@ -646,6 +646,7 @@ class ClassTimerState extends State<ClassTimer> {
         }
       });
     });
+    _secondsLeft = _maxSeconds; // 타이머 시작 전에 _secondsLeft 초기화
   }
 
   @override

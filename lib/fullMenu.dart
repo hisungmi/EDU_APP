@@ -1,7 +1,27 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
+
 import 'package:edu_application_pre/main.dart';
+import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+String name = '';
+String userType = '';
+
+Future<void> loadData() async {
+  // 로컬 스토리지에서 데이터 불러오기
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? userData = prefs.getString('userData');
+  String? typeData = prefs.getString('userType');
+
+  if (userData != null && typeData != null) {
+    Map<dynamic, dynamic> dataMap = jsonDecode(userData);
+    Map<dynamic, dynamic> typeMap = jsonDecode(typeData);
+
+    name = dataMap['name'] ?? '';
+    userType = typeMap['userType'] ?? '';
+  }
+}
 
 Future<bool?> confirmation(BuildContext context) {
   return showDialog<bool>(
@@ -31,12 +51,15 @@ Future<void> logOut(BuildContext context) async {
     //로컬 스토리지 지우기
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('userData');
+    prefs.remove('PARData');
+    prefs.remove('typeData');
 
     Navigator.pushNamedAndRemoveUntil(context, "/mainpage", (route) => false);
   }
 }
 
-Future<void> fullMenu(BuildContext context) async {
+Future<dynamic> fullMenu(BuildContext context) {
+  loadData();
   return showModalBottomSheet(
       //밑에서 열리는 메뉴
       context: context,
@@ -46,7 +69,9 @@ Future<void> fullMenu(BuildContext context) async {
       ),
       builder: (BuildContext context) {
         return Container(
-            height: MediaQuery.of(context).size.height * 0.7,
+            height: userType == 'STU'
+                ? MediaQuery.of(context).size.height * 0.7
+                : MediaQuery.of(context).size.height * 0.6,
             color: Colors.white,
             child: Center(
                 child: Column(
@@ -110,36 +135,39 @@ Future<void> fullMenu(BuildContext context) async {
                   SizedBox(
                     height: 5,
                   ),
-                  SizedBox(
-                    //카드형식 높이주기위해 감쌈
-                    height: 52,
-                    child: Card(
-                      //카드형식
-                      elevation: 0,
-                      child: ListTile(
-                        leading: FaIcon(FontAwesomeIcons.qrcode),
-                        iconColor: Color(0xff9c9c9c),
-                        title: Text('출석 QR',
-                            style: TextStyle(
-                              color: Color(0xff9c9c9c),
-                              fontWeight: FontWeight.bold,
-                            )),
-                        subtitle: Divider(thickness: 1),
-                        onTap: () {
-                          Navigator.pushNamed(context, "/qr").then((_) {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => MyHomePage(0),
-                                ));
-                          });
-                        },
+                  if (userType == 'STU')
+                    SizedBox(
+                      //카드형식 높이주기위해 감쌈
+                      height: 52,
+                      child: Card(
+                        //카드형식
+                        elevation: 0,
+                        child: ListTile(
+                          leading: FaIcon(FontAwesomeIcons.qrcode),
+                          iconColor: Color(0xff9c9c9c),
+                          title: Text('QR Scanner',
+                              style: TextStyle(
+                                color: Color(0xff9c9c9c),
+                                fontWeight: FontWeight.bold,
+                              )),
+                          subtitle: Divider(thickness: 1),
+                          onTap: () {
+                            Navigator.pushNamed(context, "/qrscanner")
+                                .then((_) {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MyHomePage(0),
+                                  ));
+                            });
+                          },
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
+                  if (userType == 'STU')
+                    SizedBox(
+                      height: 5,
+                    ),
                   SizedBox(
                     //카드형식 높이주기위해 감쌈
                     height: 52,
@@ -308,12 +336,6 @@ Future<void> fullMenu(BuildContext context) async {
                         subtitle: Divider(thickness: 1),
                         onTap: () {
                           logOut(context);
-
-                          Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            "/mainpage",
-                            (route) => false,
-                          );
                         },
                       ),
                     ),

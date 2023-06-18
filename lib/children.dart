@@ -53,14 +53,11 @@ class _ChildrenState extends State<Children> {
     };
     childrenList = [];
     var res = await post('/members/getStudentList/', jsonEncode(data));
-    setState(() {
-      if (res.statusCode == 200) {
-        for (Map<String, dynamic> children in res.data['resultData']) {
-          childrenList.add(children);
-          // print("list : $childrenList");
-        }
-      }
-    });
+    if (res.statusCode == 200) {
+      setState(() {
+        childrenList = res.data['resultData'];
+      });
+    }
   }
 
   void goMain(Map<String, dynamic> getChildren) async {

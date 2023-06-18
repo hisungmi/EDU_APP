@@ -1,4 +1,8 @@
+import 'dart:io';
+import 'package:edu_application_pre/http_setup.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -18,10 +22,38 @@ class DetailAssignment extends StatefulWidget {
 }
 
 class _DetailAssignmentState extends State<DetailAssignment> {
+  late String _fileUrl;
+  late String _fileName;
+  Future<String> get _localPath async {
+    final dir = await getTemporaryDirectory();
+    return dir.path;
+  }
+
   @override
   void initState() {
     super.initState();
+
     initializeDateFormatting('ko_KR'); //한글 로케일 데이터를 초기화 ( 오전,오후로 사용하려고
+    _fileUrl = '$baseUrl/media/${widget.assignmentList['assignment']}';
+    // _fileName = _fileUrl.split('/').last;
+  }
+
+  Future<void> downloadFile() async {
+    try {
+      var request = await http.get(Uri.parse(_fileUrl));
+      // final tempDir = await getTemporaryDirectory();
+      // final file = File('$_fileUrl');
+      // await file.writeAsBytes(request.bodyBytes);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('파일이 다운로드되었습니다.')),
+      );
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('파일 다운로드 중 오류가 발생했습니다.')),
+      );
+      print('error: $error');
+    }
   }
 
   @override
@@ -92,7 +124,7 @@ class _DetailAssignmentState extends State<DetailAssignment> {
                             children: [
                               Text("마감일"),
                               SizedBox(
-                                height: 9,
+                                height: 5,
                               ),
                               Container(
                                 width: 170,
@@ -101,10 +133,11 @@ class _DetailAssignmentState extends State<DetailAssignment> {
                                 decoration: BoxDecoration(
                                     border: Border(
                                         bottom: BorderSide(
-                                            width: 2,
+                                            width: 1,
                                             color: Color(0xff9c9c9c)))),
                                 child: Text(deadLine,
                                     style: TextStyle(
+                                      fontWeight: FontWeight.w500,
                                       color: Color(0xff9c9c9c),
                                     )),
                               ),
@@ -160,6 +193,35 @@ class _DetailAssignmentState extends State<DetailAssignment> {
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500)),
                       ),
+                      SizedBox(
+                        height: 10.0,
+                      ),
+                      widget.assignmentList['assignment'].isNotEmpty
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '파일',
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    downloadFile();
+                                  },
+                                  child: Text(
+                                      widget.assignmentList['assignment'],
+                                      softWrap: true,
+                                      style: TextStyle(
+                                        color: Color(0xff52BAFF),
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 13,
+                                        decoration: TextDecoration.underline,
+                                      )),
+                                )
+                              ],
+                            )
+                          : Text('파일없음',
+                              style: TextStyle(fontWeight: FontWeight.w500)),
                     ]),
               )
             ],

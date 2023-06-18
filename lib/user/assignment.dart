@@ -32,13 +32,11 @@ class _TaskState extends State<Assignment> {
           : widget.morning['lectureKey'],
     };
 
-    assignmentList = [];
+    // assignmentList = [];
     var res = await post('/lectures/getAssignList/', jsonEncode(data));
     if (res.statusCode == 200) {
       setState(() {
-        for (Map<String, dynamic> assignment in res.data['resultData']) {
-          assignmentList.add(assignment);
-        }
+        assignmentList = res.data['resultData'];
       });
     }
   }
@@ -106,113 +104,126 @@ class _TaskState extends State<Assignment> {
               SizedBox(
                 height: 15,
               ),
-              Expanded(
-                  child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: assignmentList.length,
-                      itemBuilder: (context, index) {
-                        Map<String, dynamic> assignList = assignmentList[index];
-                        String formattedDate =
-                            DateFormat('MM월 dd일 a h:mm', 'ko_KR')
+              assignmentList.isNotEmpty
+                  ? Expanded(
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: assignmentList.length,
+                          itemBuilder: (context, index) {
+                            Map<String, dynamic> assignList =
+                                assignmentList[index];
+                            String formattedDate = DateFormat(
+                                    'MM월 dd일 a h:mm', 'ko_KR')
                                 .format(DateTime.parse(assignList['deadLine']));
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => DetailAssignment(
-                                  isSubmission: isSubmission,
-                                  assignmentList: assignmentList[index]),
-                            ));
-                          },
-                          child: Container(
-                            height: 55,
-                            // padding: EdgeInsets.fromLTRB(0.0, 7.0, 0.0, 0.0),
-                            decoration: BoxDecoration(
-                                border: Border(
-                                    bottom: BorderSide(
-                                        width: 1, color: Color(0xff9c9c9c)))),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => DetailAssignment(
+                                      isSubmission: isSubmission,
+                                      assignmentList: assignmentList[index]),
+                                ));
+                              },
+                              child: Container(
+                                height: 55,
+                                // padding: EdgeInsets.fromLTRB(0.0, 7.0, 0.0, 0.0),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            width: 1,
+                                            color: Color(0xff9c9c9c)))),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    SizedBox(
-                                      width: 15,
-                                    ),
-                                    Center(
-                                      child: Icon(
-                                        Icons.library_books,
-                                        size: 32,
-                                        color: Color(0xffA9A9A9),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                    Row(
                                       children: [
+                                        SizedBox(
+                                          width: 15,
+                                        ),
                                         Center(
-                                          child: Text.rich(TextSpan(children: [
-                                            TextSpan(
-                                              text: ('${assignList['type']}\n'),
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 14,
-                                              ),
+                                          child: Icon(
+                                            Icons.library_books,
+                                            size: 32,
+                                            color: Color(0xffA9A9A9),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Center(
+                                              child:
+                                                  Text.rich(TextSpan(children: [
+                                                TextSpan(
+                                                  text:
+                                                      ('${assignList['type']}\n'),
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                                TextSpan(
+                                                    text: "마감 $formattedDate",
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 12,
+                                                    ))
+                                              ])),
                                             ),
-                                            TextSpan(
-                                                text: "마감 $formattedDate",
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          width: 57,
+                                          height: 19,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(7),
+                                            color: Color(0xff9c9c9c),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              isSubmission ? '제출됨' : '미제출',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
                                                   fontSize: 12,
-                                                ))
-                                          ])),
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        Icon(
+                                          FontAwesomeIcons.angleRight,
+                                          size: 25.0,
+                                          color: Color(0xffA9A9A9),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
                                         ),
                                       ],
                                     ),
                                   ],
                                 ),
-                                Row(
-                                  children: [
-                                    Container(
-                                      width: 57,
-                                      height: 19,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(7),
-                                        color: Color(0xff9c9c9c),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          isSubmission ? '제출됨' : '미제출',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.white),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 20,
-                                    ),
-                                    Icon(
-                                      FontAwesomeIcons.angleRight,
-                                      size: 25.0,
-                                      color: Color(0xffA9A9A9),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      }))
+                              ),
+                            );
+                          }))
+                  : Container(
+                      margin: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
+                      child: Text('과제 정보가 없습니다.',
+                          style: TextStyle(color: Color(0xffb7b7b7))),
+                    ),
             ],
           ),
         ));

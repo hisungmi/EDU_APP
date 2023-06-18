@@ -38,14 +38,12 @@ class _NoticeState extends State<Notice> {
       'date': '',
       'type': '전체',
     };
-    getnoticeList = [];
     var res = await post('/info/getNoticeList/', jsonEncode(data));
     if (mounted) {
       setState(() {
         if (res.statusCode == 200) {
-          for (Map<String, dynamic> notice in res.data['resultData']) {
-            getnoticeList.add(notice);
-          }
+          getnoticeList = res.data['resultData'];
+
           getnotice = List<Item>.generate(getnoticeList.length, (index) {
             Map<String, dynamic> noticeList = getnoticeList[index];
             String formattedDate = DateFormat('yyyy/MM/dd HH:mm')
