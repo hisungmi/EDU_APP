@@ -232,8 +232,8 @@ class ClassMainState extends State<ClassMain> {
             height: 25.0,
             child: ElevatedButton(
                 onPressed: () {
-                  print(attendProvider.qrAttendList);
                   logOut(context);
+                  // print(attendProvider.qrAttendList);
                 },
                 child: Text("로그아웃",
                     style: TextStyle(
@@ -271,8 +271,11 @@ class ClassMainState extends State<ClassMain> {
                         ],
                       ),
                     )
-                  : Text("현재 진행 중인 강의가 없습니다."),
-              if (attendProvider.classQr)
+                  : Container(
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                      child: Text("현재 진행 중인 강의가 없습니다.")),
+              if (lectureDetail.isNotEmpty && attendProvider.classQr)
                 Center(
                   child: Column(
                     children: [
@@ -296,7 +299,7 @@ class ClassMainState extends State<ClassMain> {
                     ],
                   ),
                 ),
-              if (!attendProvider.classQr)
+              if (lectureDetail.isNotEmpty && !attendProvider.classQr)
                 SizedBox(
                   height: 400.0,
                   child: Column(
@@ -621,7 +624,7 @@ class ClassTimer extends StatefulWidget {
 }
 
 class ClassTimerState extends State<ClassTimer> {
-  static const int _maxSeconds = 25;
+  static const int _maxSeconds = 60 * 10;
   int _secondsLeft = _maxSeconds;
 
   late Timer _timer;

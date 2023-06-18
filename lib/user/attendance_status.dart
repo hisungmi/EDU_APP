@@ -127,19 +127,25 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.fromLTRB(30.0, 5.0, 30.0, 5.0),
+                padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),
                 height: 35,
                 decoration: BoxDecoration(
                     color: color, borderRadius: BorderRadius.circular(10)),
-                child: Text(
-                  widget.isAfternoon == true
-                      ? widget.afternoon['lectureName']
-                      : widget.morning['lectureName'],
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      widget.isAfternoon == true
+                          ? widget.afternoon['lectureName']
+                          : widget.morning['lectureName'],
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(
