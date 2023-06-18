@@ -480,7 +480,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height: 25.0,
+                height: 27.0,
               ),
               Text(id),
               SizedBox(
@@ -488,20 +488,17 @@ class _MyProfilePageState extends State<MyProfilePage> {
               ),
               Text("$school $grade학년"),
               SizedBox(
-                height: 27.0,
+                height: 23.0,
               ),
               Text(birth),
               SizedBox(
-                height: 27.0,
+                height: 25.0,
               ),
               Container(
                 margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
                 child: Text(phone),
               ),
-              SizedBox(
-                height: 25.0,
-                width: 50.0,
-              ),
+              SizedBox(height: 25.0),
               Container(
                 width: 230, //너비를 지정해주면
                 margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
