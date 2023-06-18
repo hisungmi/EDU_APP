@@ -480,7 +480,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height: 25.0,
+                height: 27.0,
               ),
               Text(id),
               SizedBox(
@@ -488,20 +488,17 @@ class _MyProfilePageState extends State<MyProfilePage> {
               ),
               Text("$school $grade학년"),
               SizedBox(
-                height: 27.0,
+                height: 23.0,
               ),
               Text(birth),
               SizedBox(
-                height: 27.0,
+                height: 25.0,
               ),
               Container(
                 margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
                 child: Text(phone),
               ),
-              SizedBox(
-                height: 25.0,
-                width: 50.0,
-              ),
+              SizedBox(height: 25.0),
               Container(
                 width: 230, //너비를 지정해주면
                 margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 0.0),
@@ -529,7 +526,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 height: 25.0,
               ),
               Container(
-                margin: EdgeInsets.fromLTRB(0.0, 3.0, 0.0, 1.0),
                 child: Text('ID', style: TextStyle(color: Color(0xffCFCFCF))),
               ),
               SizedBox(
@@ -598,99 +594,105 @@ class _MyProfilePageState extends State<MyProfilePage> {
               SizedBox(
                 height: 20.0,
               ),
-              Container(
-                width: 230,
-                height: 32,
-                padding: EdgeInsets.fromLTRB(10.0, 2.0, 0.0, 0.0),
-                decoration: BoxDecoration(
-                  color: Color(0xffd9d9d9).withOpacity(0.3),
-                  border: Border.all(
-                    width: 2,
-                    color: Color(0xffCFCFCF),
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  id,
-                  style: TextStyle(
-                    color: Color(0xffCFCFCF),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 18.0,
-              ),
-              Container(
-                width: 230,
-                height: 32,
-                padding: EdgeInsets.fromLTRB(10.0, 2.0, 0.0, 0.0),
-                decoration: BoxDecoration(
-                  color: Color(0xffd9d9d9).withOpacity(0.3),
-                  border: Border.all(
-                    width: 2,
-                    color: Color(0xffCFCFCF),
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  "$school $grade학년",
-                  style: TextStyle(
-                    color: Color(0xffCFCFCF),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 17.0,
-              ),
-              Container(
-                width: 230,
-                height: 32,
-                padding: EdgeInsets.fromLTRB(10.0, 5.0, 0.0, 0.0),
-                decoration: BoxDecoration(
-                  color: Color(0xffd9d9d9).withOpacity(0.3),
-                  border: Border.all(
-                    width: 2,
-                    color: Color(0xffCFCFCF),
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  birth,
-                  style: TextStyle(color: Color(0xffCFCFCF)),
-                ),
-              ),
-              SizedBox(
-                height: 17.0,
-              ),
-              Container(
+              Center(
+                child: Container(
                   width: 230,
-                  height: 32,
-                  padding: EdgeInsets.fromLTRB(10.0, 5.0, 0.0, 0.0),
+                  padding: EdgeInsets.fromLTRB(10.0, 2.0, 0.0, 2.0),
                   decoration: BoxDecoration(
+                    color: Color(0xffd9d9d9).withOpacity(0.3),
                     border: Border.all(
                       width: 2,
-                      color: Color(0xff9c9c9c),
+                      color: Color(0xffCFCFCF),
                     ),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: TextField(
-                    controller: numController, //컨트롤러롤 넘컨트롤러에 값을 박아
+                  child: Text(
+                    id,
+                    textAlign: TextAlign.start,
                     style: TextStyle(
-                      color: Color(0xff9c9c9c),
-                      fontWeight: FontWeight.w400,
+                      fontSize: 16,
+                      color: Color(0xffCFCFCF),
                     ),
-                    decoration: InputDecoration(
-                        border: InputBorder.none, //테두리없앰
-                        hintStyle: TextStyle(color: Color(0xff9c9c9c))),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly, //숫자만
-                      // NumberFormatter(),
-                      LengthLimitingTextInputFormatter(11) //최대 13글자
-                    ],
-                  )),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 16.0,
+              ),
+              Center(
+                child: Container(
+                  width: 230,
+                  padding: EdgeInsets.fromLTRB(10.0, 2.0, 0.0, 2.0),
+                  decoration: BoxDecoration(
+                    color: Color(0xffd9d9d9).withOpacity(0.3),
+                    border: Border.all(
+                      width: 2,
+                      color: Color(0xffCFCFCF),
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    "$school $grade학년",
+                    style: TextStyle(
+                      color: Color(0xffCFCFCF),
+                    ),
+                  ),
+                ),
+              ),
               SizedBox(
                 height: 15.0,
-                width: 50.0,
+              ),
+              Center(
+                child: Container(
+                  width: 230,
+                  padding: EdgeInsets.fromLTRB(10.0, 2.0, 0.0, 2.0),
+                  decoration: BoxDecoration(
+                    color: Color(0xffd9d9d9).withOpacity(0.3),
+                    border: Border.all(
+                      width: 2,
+                      color: Color(0xffCFCFCF),
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    birth,
+                    style: TextStyle(color: Color(0xffCFCFCF)),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 15.0,
+              ),
+              Center(
+                child: Container(
+                    width: 230,
+                    height: 30,
+                    padding: EdgeInsets.fromLTRB(10.0, 3.0, 0.0, 0.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        width: 2,
+                        color: Color(0xff9c9c9c),
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: TextField(
+                      controller: numController, //컨트롤러롤 넘컨트롤러에 값을 박아
+                      style: TextStyle(
+                        color: Color(0xff9c9c9c),
+                        fontWeight: FontWeight.w400,
+                      ),
+                      decoration: InputDecoration(
+                          border: InputBorder.none, //테두리없앰
+                          hintStyle: TextStyle(color: Color(0xff9c9c9c))),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly, //숫자만
+                        // NumberFormatter(),
+                        LengthLimitingTextInputFormatter(11) //최대 13글자
+                      ],
+                    )),
+              ),
+              SizedBox(
+                height: 15.0,
               ),
               Flexible(
                 child: Container(

@@ -128,7 +128,7 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
             children: [
               Container(
                 padding: EdgeInsets.fromLTRB(30.0, 5.0, 30.0, 5.0),
-                height: 35,
+                height: 30,
                 decoration: BoxDecoration(
                     color: color, borderRadius: BorderRadius.circular(10)),
                 child: Text(
