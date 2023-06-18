@@ -20,6 +20,9 @@ class _QRScannerState extends State<QRScanner> {
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
+  // Future<void> confirmation(BuildContext context) async {
+  // }
+
   // Future<void> attendCheck(BuildContext context) async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
   //   String? userData = prefs.getString('userData');
@@ -78,7 +81,7 @@ class _QRScannerState extends State<QRScanner> {
             color: Color(0xff0099ff),
             iconSize: 30,
             onPressed: () {
-              int desiredIndex = 0; // 2번째 인덱스로 이동하려면 1로 설정
+              int desiredIndex = 0;
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
                   builder: (context) => MyHomePage(desiredIndex),
@@ -109,7 +112,15 @@ class _QRScannerState extends State<QRScanner> {
               icon: Icon(Icons.menu),
               color: Color(0xff0099ff),
               iconSize: 35,
-              onPressed: () {},
+              onPressed: () {
+                int desiredIndex = 0; // 2번째 인덱스로 이동하려면 1로 설정
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => MyHomePage(desiredIndex),
+                  ),
+                  (route) => false,
+                );
+              },
             )
           ],
         ),

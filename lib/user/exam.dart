@@ -37,13 +37,11 @@ class _ExamState extends State<Exam> {
       'type': '',
       'testDate': '',
     };
-
-    testList = [];
     var res = await post('/lectures/getTestList/', jsonEncode(data));
     if (res.statusCode == 200) {
       setState(() {
+        testList = res.data['resultData'];
         for (Map<String, dynamic> test in res.data['resultData']) {
-          testList.add(test);
           testKey = test['testKey'] ?? '';
         }
         getTestStatusList(testKey);
@@ -58,9 +56,7 @@ class _ExamState extends State<Exam> {
     var res = await post('/lectures/getTestStatusList/', jsonEncode(data));
     if (res.statusCode == 200) {
       setState(() {
-        for (Map<String, dynamic> testStatus in res.data['resultData']) {
-          testStatusList.add(testStatus);
-        }
+        testStatusList = res.data['resultData'];
       });
     }
   }
@@ -145,13 +141,13 @@ class _ExamState extends State<Exam> {
                         decoration: BoxDecoration(
                             border: Border(
                                 bottom: BorderSide(
-                                    width: 2, color: Color(0xff8a8a8a)))),
+                                    width: 2, color: Color(0xffa3a3a3)))),
                         height: 40,
                         child: Center(
                           child: Text(
                             "시험 일자",
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Color(0xff8a8a8a)),
+                            style: TextStyle(color: Color(0xffa3a3a3)),
                           ),
                         ),
                       ),
@@ -162,13 +158,13 @@ class _ExamState extends State<Exam> {
                         decoration: BoxDecoration(
                             border: Border(
                                 bottom: BorderSide(
-                                    width: 2, color: Color(0xff8a8a8a)))),
+                                    width: 2, color: Color(0xffa3a3a3)))),
                         child: Center(
                           child: Text(
                             "시험 유형",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: Color(0xff8a8a8a),
+                              color: Color(0xffa3a3a3),
                             ),
                           ),
                         ),
@@ -179,13 +175,13 @@ class _ExamState extends State<Exam> {
                         decoration: BoxDecoration(
                             border: Border(
                                 bottom: BorderSide(
-                                    width: 2, color: Color(0xff8a8a8a)))),
+                                    width: 2, color: Color(0xffa3a3a3)))),
                         height: 40,
                         child: Center(
                           child: Text(
                             "",
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Color(0xff8a8a8a)),
+                            style: TextStyle(color: Color(0xffa3a3a3)),
                           ),
                         ),
                       ),
@@ -195,13 +191,13 @@ class _ExamState extends State<Exam> {
                         decoration: BoxDecoration(
                             border: Border(
                                 bottom: BorderSide(
-                                    width: 2, color: Color(0xff8a8a8a)))),
+                                    width: 2, color: Color(0xffa3a3a3)))),
                         height: 40,
                         child: Center(
                           child: Text(
                             "상태",
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Color(0xff8a8a8a)),
+                            style: TextStyle(color: Color(0xffa3a3a3)),
                           ),
                         ),
                       ),
@@ -209,69 +205,51 @@ class _ExamState extends State<Exam> {
                   ]),
                 ],
               ),
-              Expanded(
-                  child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: testList.length,
-                itemBuilder: (context, index) {
-                  Map<dynamic, dynamic> testdataList = testList[index];
-                  String formattedDate = DateFormat('MM월 dd일 HH시', 'ko_KR')
-                      .format(DateTime.parse(testdataList['testDate']));
-                  return Container(
-                    child: Table(
-                      columnWidths: const {
-                        0: FlexColumnWidth(3),
-                        1: FlexColumnWidth(3),
-                        2: FlexColumnWidth(2),
-                        3: FlexColumnWidth(2),
-                      },
-                      defaultVerticalAlignment:
-                          TableCellVerticalAlignment.middle,
-                      children: <TableRow>[
-                        TableRow(children: [
-                          TableCell(
-                              child: Container(
-                            decoration: BoxDecoration(
-                                border: Border(
-                                    bottom: BorderSide(
-                                        width: 1, color: Color(0xff9c9c9c)))),
-                            height: 55,
-                            child: Center(
-                              child: Text(
-                                formattedDate,
-                                textAlign: TextAlign.center,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          )),
-                          TableCell(
-                            child: Container(
-                              padding: EdgeInsets.fromLTRB(13.0, 0.0, 0.0, 0.0),
-                              decoration: BoxDecoration(
-                                  border: Border(
-                                      bottom: BorderSide(
-                                          width: 1, color: Color(0xff9c9c9c)))),
-                              height: 55,
-                              child: Center(
-                                child: Text(
-                                  testdataList['testType'],
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
+              testList.isNotEmpty
+                  ? Expanded(
+                      child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: testList.length,
+                      itemBuilder: (context, index) {
+                        Map<dynamic, dynamic> testdataList = testList[index];
+                        String formattedDate = DateFormat(
+                                'MM월 dd일 HH시', 'ko_KR')
+                            .format(DateTime.parse(testdataList['testDate']));
+                        return Container(
+                          child: Table(
+                            columnWidths: const {
+                              0: FlexColumnWidth(3),
+                              1: FlexColumnWidth(3),
+                              2: FlexColumnWidth(2),
+                              3: FlexColumnWidth(2),
+                            },
+                            defaultVerticalAlignment:
+                                TableCellVerticalAlignment.middle,
+                            children: <TableRow>[
+                              TableRow(children: [
+                                TableCell(
+                                    child: Container(
+                                  decoration: BoxDecoration(
+                                      border: Border(
+                                          bottom: BorderSide(
+                                              width: 1,
+                                              color: Color(0xff9c9c9c)))),
+                                  height: 55,
+                                  child: Center(
+                                    child: Text(
+                                      formattedDate,
+                                      textAlign: TextAlign.center,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          TableCell(
-                            child: isScore
-                                ? Container(
+                                )),
+                                TableCell(
+                                  child: Container(
                                     padding: EdgeInsets.fromLTRB(
-                                        15.0, 0.0, 0.0, 0.0),
+                                        13.0, 0.0, 0.0, 0.0),
                                     decoration: BoxDecoration(
                                         border: Border(
                                             bottom: BorderSide(
@@ -280,17 +258,81 @@ class _ExamState extends State<Exam> {
                                     height: 55,
                                     child: Center(
                                       child: Text(
-                                        "80",
+                                        testdataList['testType'],
                                         textAlign: TextAlign.center,
+                                        overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                     ),
-                                  )
-                                : Container(
-                                    padding: EdgeInsets.fromLTRB(
-                                        15.0, 0.0, 0.0, 0.0),
+                                  ),
+                                ),
+                                TableCell(
+                                  child: isScore
+                                      ? Container(
+                                          padding: EdgeInsets.fromLTRB(
+                                              15.0, 0.0, 0.0, 0.0),
+                                          decoration: BoxDecoration(
+                                              border: Border(
+                                                  bottom: BorderSide(
+                                                      width: 1,
+                                                      color:
+                                                          Color(0xff9c9c9c)))),
+                                          height: 55,
+                                          child: Center(
+                                            child: Text(
+                                              "80",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      : Container(
+                                          padding: EdgeInsets.fromLTRB(
+                                              15.0, 0.0, 0.0, 0.0),
+                                          decoration: BoxDecoration(
+                                              border: Border(
+                                                  bottom: BorderSide(
+                                                      width: 1,
+                                                      color:
+                                                          Color(0xff9c9c9c)))),
+                                          height: 55,
+                                          child: Center(
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  isScore = true;
+                                                });
+                                              },
+                                              child: Container(
+                                                width: 57,
+                                                height: 19,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(7),
+                                                  color: Color(0xff9c9c9c),
+                                                ),
+                                                child: Center(
+                                                  child: Text(
+                                                    '성적확인',
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                        fontSize: 11,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                ),
+                                TableCell(
+                                  child: Container(
                                     decoration: BoxDecoration(
                                         border: Border(
                                             bottom: BorderSide(
@@ -298,59 +340,27 @@ class _ExamState extends State<Exam> {
                                                 color: Color(0xff9c9c9c)))),
                                     height: 55,
                                     child: Center(
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            isScore = true;
-                                          });
-                                        },
-                                        child: Container(
-                                          width: 57,
-                                          height: 19,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(7),
-                                            color: Color(0xff9c9c9c),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              '성적확인',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                  fontSize: 11,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Colors.white),
-                                            ),
-                                          ),
+                                      child: Text(
+                                        isComplete ? "완료" : "예정",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                     ),
                                   ),
-                          ),
-                          TableCell(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  border: Border(
-                                      bottom: BorderSide(
-                                          width: 1, color: Color(0xff9c9c9c)))),
-                              height: 55,
-                              child: Center(
-                                child: Text(
-                                  isComplete ? "완료" : "예정",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                  ),
                                 ),
-                              ),
-                            ),
+                              ]),
+                            ],
                           ),
-                        ]),
-                      ],
+                        );
+                      },
+                    ))
+                  : Container(
+                      margin: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
+                      child: Text('시험 정보가 없습니다.',
+                          style: TextStyle(color: Color(0xffb7b7b7))),
                     ),
-                  );
-                },
-              ))
             ],
           ),
         ));

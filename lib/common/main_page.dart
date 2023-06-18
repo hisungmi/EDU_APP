@@ -156,7 +156,7 @@ class MainPageState extends State<MainPage> {
           } else {
             String userJsonData = jsonEncode(result.data);
             await prefs.setString('userData', userJsonData);
-            //현재 스택에서 모든 페이지를 제거하고 새 페이지를 스택에 추가 , false 모든 경로를 제거
+
             int desiredIndex = 0; //홈으로가기
             await Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(

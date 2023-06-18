@@ -65,16 +65,14 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
           ? widget.afternoon['lectureKey']
           : widget.morning['lectureKey'],
     };
-    statusList = [];
     var res = await post('/info/getAttendList/', jsonEncode(data));
     // mounted 속성을 확인하여 현재 위젯이 여전히 트리에 존재하는지 확인
     if (res.statusCode == 200) {
+      List<dynamic> state = res.data['resultData']
+          .where((state) => state['studentName'] == name)
+          .toList();
       setState(() {
-        for (Map<String, dynamic> state in res.data['resultData']) {
-          if (name == state['studentName']) {
-            statusList.add(state);
-          }
-        }
+        statusList = state;
       });
     }
   }
@@ -90,10 +88,9 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
 
   @override
   Widget build(BuildContext context) {
-    Color morningtitlecolor =
+    Color color =
         Color(int.parse('0xFF${widget.morning['color'].substring(1)}'));
-    Color afternoontitlecolor =
-        Color(int.parse('0xFF${widget.afternoon['color'].substring(1)}'));
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -133,8 +130,7 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
                 padding: EdgeInsets.fromLTRB(30.0, 5.0, 30.0, 5.0),
                 height: 35,
                 decoration: BoxDecoration(
-                    color: morningtitlecolor,
-                    borderRadius: BorderRadius.circular(10)),
+                    color: color, borderRadius: BorderRadius.circular(10)),
                 child: Text(
                   widget.isAfternoon == true
                       ? widget.afternoon['lectureName']
@@ -179,142 +175,147 @@ class _AttendanceStatusState extends State<AttendanceStatus> {
               SizedBox(
                 height: 2,
               ),
-              Expanded(
-                //스크롤되게
-                child: ListView.builder(
-                  shrinkWrap: true, //스크롤되게
-                  itemCount: statusList.length,
-                  itemBuilder: (context, index) {
-                    Map<String, dynamic> getStatusList = statusList[index];
-                    String formattedDate = DateFormat('MM.dd')
-                        .format(DateTime.parse(getStatusList['createDate']));
+              statusList.isNotEmpty
+                  ? Expanded(
+                      //스크롤되게
+                      child: ListView.builder(
+                      shrinkWrap: true, //스크롤되게
+                      itemCount: statusList.length,
+                      itemBuilder: (context, index) {
+                        Map<String, dynamic> getStatusList = statusList[index];
+                        String formattedDate = DateFormat('MM.dd').format(
+                            DateTime.parse(getStatusList['createDate']));
 
-                    Color bgColor = Colors.white;
-                    Color textColor = Color(0xff565656);
-                    Color bg2Color = Colors.white;
-                    Color text2Color = Color(0xff565656);
-                    Color bg3Color = Colors.white;
-                    Color text3Color = Color(0xff565656);
-                    Color bg4Color = Colors.white;
-                    Color text4Color = Color(0xff565656);
-                    if (getStatusList['state'] == '출석') {
-                      textColor = Colors.white;
-                      bgColor = Color(0xffA4CAF8);
-                    }
-                    if (getStatusList['state'] == '결석') {
-                      text2Color = Colors.white;
-                      bg2Color = Color(0xffFD9494);
-                    }
-                    if (getStatusList['state'] == '지각') {
-                      text3Color = Colors.white;
-                      bg3Color = Color(0xFFF4C784);
-                    }
-                    if (getStatusList['state'] == '보류') {
-                      text4Color = Colors.white;
-                      bg4Color = Color(0xffBBBBBB);
-                    }
-                    return Container(
-                      width: 360,
-                      height: 37,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 78,
-                            height: 37,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border(
-                                  left: BorderSide(
-                                      width: 2, color: Color(0xffeaeaea)),
-                                  right: BorderSide(
-                                      width: 1, color: Color(0xffeaeaea)),
-                                  top: BorderSide(
-                                      width: 1, color: Color(0xffeaeaea)),
-                                  bottom: BorderSide(
-                                      width: 1, color: Color(0xffeaeaea)),
-                                )),
-                            child: Center(
-                                child: Text(formattedDate,
-                                    style: TextStyle(
-                                      color: Color(0xff9c9c9c),
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ))),
+                        Color bgColor = Colors.white;
+                        Color textColor = Color(0xff565656);
+                        Color bg2Color = Colors.white;
+                        Color text2Color = Color(0xff565656);
+                        Color bg3Color = Colors.white;
+                        Color text3Color = Color(0xff565656);
+                        Color bg4Color = Colors.white;
+                        Color text4Color = Color(0xff565656);
+                        if (getStatusList['state'] == '출석') {
+                          textColor = Colors.white;
+                          bgColor = Color(0xffA4CAF8);
+                        }
+                        if (getStatusList['state'] == '결석') {
+                          text2Color = Colors.white;
+                          bg2Color = Color(0xffFD9494);
+                        }
+                        if (getStatusList['state'] == '지각') {
+                          text3Color = Colors.white;
+                          bg3Color = Color(0xFFF4C784);
+                        }
+                        if (getStatusList['state'] == '보류') {
+                          text4Color = Colors.white;
+                          bg4Color = Color(0xffBBBBBB);
+                        }
+                        return Container(
+                          width: 360,
+                          height: 37,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 78,
+                                height: 37,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border(
+                                      left: BorderSide(
+                                          width: 2, color: Color(0xffeaeaea)),
+                                      right: BorderSide(
+                                          width: 1, color: Color(0xffeaeaea)),
+                                      top: BorderSide(
+                                          width: 1, color: Color(0xffeaeaea)),
+                                      bottom: BorderSide(
+                                          width: 1, color: Color(0xffeaeaea)),
+                                    )),
+                                child: Center(
+                                    child: Text(formattedDate,
+                                        style: TextStyle(
+                                          color: Color(0xff9c9c9c),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        ))),
+                              ),
+                              Container(
+                                width: 70,
+                                height: 37,
+                                decoration: BoxDecoration(
+                                    color: bgColor,
+                                    border: Border.all(
+                                        color: Color(0xffeaeaea), width: 1)),
+                                child: Center(
+                                    child: Text("출석",
+                                        style: TextStyle(
+                                          color: textColor,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        ))),
+                              ),
+                              Container(
+                                width: 70,
+                                height: 37,
+                                decoration: BoxDecoration(
+                                    color: bg2Color,
+                                    border: Border.all(
+                                        color: Color(0xffeaeaea), width: 1)),
+                                child: Center(
+                                    child: Text("결석",
+                                        style: TextStyle(
+                                          color: text2Color,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        ))),
+                              ),
+                              Container(
+                                width: 70,
+                                height: 37,
+                                decoration: BoxDecoration(
+                                    color: bg3Color,
+                                    border: Border.all(
+                                        color: Color(0xffeaeaea), width: 1)),
+                                child: Center(
+                                    child: Text("지각",
+                                        style: TextStyle(
+                                          color: text3Color,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        ))),
+                              ),
+                              Container(
+                                  width: 70,
+                                  height: 37,
+                                  decoration: BoxDecoration(
+                                      color: bg4Color,
+                                      border: Border(
+                                        left: BorderSide(
+                                            width: 1, color: Color(0xffeaeaea)),
+                                        right: BorderSide(
+                                            width: 2, color: Color(0xffeaeaea)),
+                                        top: BorderSide(
+                                            width: 1, color: Color(0xffeaeaea)),
+                                        bottom: BorderSide(
+                                            width: 1, color: Color(0xffeaeaea)),
+                                      )),
+                                  child: Center(
+                                      child: Text("보류",
+                                          style: TextStyle(
+                                            color: text4Color,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                          )))),
+                            ],
                           ),
-                          Container(
-                            width: 70,
-                            height: 37,
-                            decoration: BoxDecoration(
-                                color: bgColor,
-                                border: Border.all(
-                                    color: Color(0xffeaeaea), width: 1)),
-                            child: Center(
-                                child: Text("출석",
-                                    style: TextStyle(
-                                      color: textColor,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ))),
-                          ),
-                          Container(
-                            width: 70,
-                            height: 37,
-                            decoration: BoxDecoration(
-                                color: bg2Color,
-                                border: Border.all(
-                                    color: Color(0xffeaeaea), width: 1)),
-                            child: Center(
-                                child: Text("결석",
-                                    style: TextStyle(
-                                      color: text2Color,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ))),
-                          ),
-                          Container(
-                            width: 70,
-                            height: 37,
-                            decoration: BoxDecoration(
-                                color: bg3Color,
-                                border: Border.all(
-                                    color: Color(0xffeaeaea), width: 1)),
-                            child: Center(
-                                child: Text("지각",
-                                    style: TextStyle(
-                                      color: text3Color,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ))),
-                          ),
-                          Container(
-                              width: 70,
-                              height: 37,
-                              decoration: BoxDecoration(
-                                  color: bg4Color,
-                                  border: Border(
-                                    left: BorderSide(
-                                        width: 1, color: Color(0xffeaeaea)),
-                                    right: BorderSide(
-                                        width: 2, color: Color(0xffeaeaea)),
-                                    top: BorderSide(
-                                        width: 1, color: Color(0xffeaeaea)),
-                                    bottom: BorderSide(
-                                        width: 1, color: Color(0xffeaeaea)),
-                                  )),
-                              child: Center(
-                                  child: Text("보류",
-                                      style: TextStyle(
-                                        color: text4Color,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                      )))),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              )
+                        );
+                      },
+                    ))
+                  : Container(
+                      margin: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
+                      child: Text('출결 정보가 없습니다.',
+                          style: TextStyle(color: Color(0xffb7b7b7))),
+                    ),
             ],
           )),
     );

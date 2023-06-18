@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:edu_application_pre/fullMenu.dart';
 import 'package:edu_application_pre/http_setup.dart';
 import 'package:edu_application_pre/main.dart';
 import 'package:edu_application_pre/user/check_suggestion.dart';
@@ -89,25 +90,37 @@ class _SuggestionsState extends State<Suggestions> {
       'search': '',
       'writerType': '',
     };
-    nSuggestList = [];
-    ySuggestList = [];
+    // nSuggestList = [];
+    // ySuggestList = [];
     var res = await post('/info/getSuggestList/', jsonEncode(data));
     if (res.statusCode == 200) {
+      List<dynamic> ySuggest = res.data['resultData']
+          .where((assignment) => assignment['state'] == 'Y')
+          .toList();
+      List<dynamic> nSuggest = res.data['resultData']
+          .where((assignment) => assignment['state'] == 'N')
+          .toList();
       setState(() {
-        for (Map<String, dynamic> suggest in res.data['resultData']) {
-          //state - Y or N
-          // print('suggest : $suggest');
-          if (suggest['state'] == 'Y') {
-            ySuggestList.add(suggest);
-          }
-          if (suggest['state'] == 'N') {
-            nSuggestList.add(suggest);
-          }
-        }
+        ySuggestList = ySuggest;
+        nSuggestList = nSuggest;
+        // for (Map<String, dynamic> suggest in res.data['resultData']) {
+        //   //state - Y or N
+        //   // print('suggest : $suggest');
+        //   if (suggest['state'] == 'Y') {
+        //     ySuggestList.add(suggest);
+        //   }
+        //   if (suggest['state'] == 'N') {
+        //     nSuggestList.add(suggest);
+        //   }
+        // }
       });
 
       // lectureList = res.data['resultData'];
     }
+  }
+
+  void menu(BuildContext context) {
+    fullMenu(context);
   }
 
   @override
@@ -168,7 +181,9 @@ class _SuggestionsState extends State<Suggestions> {
               icon: Icon(Icons.menu),
               color: Color(0xff0099ff),
               iconSize: 35,
-              onPressed: () {},
+              onPressed: () {
+                menu(context);
+              },
             )
           ],
         ),
@@ -356,230 +371,257 @@ class _SuggestionsState extends State<Suggestions> {
                               ]),
                             ],
                           ),
-                          isProcess
-                              ? Expanded(
-                                  //컨테이너 크기에 맞게 리스트 뷰어가 스크롤됨 지리네
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: nSuggestList.length,
-                                    itemBuilder: (context, index) {
-                                      Map<String, dynamic> suggestList =
-                                          nSuggestList[index];
-                                      String formattedDate =
-                                          DateFormat('yyyy/MM/dd').format(
-                                              DateTime.parse(
-                                                  suggestList['createDate']));
-                                      return Container(
-                                        child: Table(
-                                          border: TableBorder(
-                                            verticalInside: BorderSide(
-                                              color: Color(0xffcfcfcf),
-                                              width: 1,
+                          if (isProcess)
+                            nSuggestList.isNotEmpty
+                                ? Expanded(
+                                    //컨테이너 크기에 맞게 리스트 뷰어가 스크롤됨 지리네
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: nSuggestList.length,
+                                      itemBuilder: (context, index) {
+                                        Map<String, dynamic> suggestList =
+                                            nSuggestList[index];
+                                        String formattedDate =
+                                            DateFormat('yyyy/MM/dd').format(
+                                                DateTime.parse(
+                                                    suggestList['createDate']));
+                                        return Container(
+                                          child: Table(
+                                            border: TableBorder(
+                                              verticalInside: BorderSide(
+                                                color: Color(0xffcfcfcf),
+                                                width: 1,
+                                              ),
                                             ),
-                                          ),
-                                          columnWidths: const {
-                                            0: FlexColumnWidth(3),
-                                            1: FlexColumnWidth(2),
-                                            2: FlexColumnWidth(4),
-                                          },
-                                          defaultVerticalAlignment:
-                                              TableCellVerticalAlignment.middle,
-                                          children: <TableRow>[
-                                            // tableData,
-                                            TableRow(children: [
-                                              TableCell(
-                                                child: Container(
-                                                  height: 40,
-                                                  child: Center(
-                                                    child: Text(
-                                                      formattedDate,
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        fontSize: 14,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              TableCell(
-                                                child: Container(
-                                                  height: 40,
-                                                  child: Center(
-                                                    child: Text(
-                                                      suggestList['type'],
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        fontSize: 14,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              TableCell(
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    Navigator.of(context)
-                                                        .push(MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          CheckSuggestion(
-                                                              isProcess:
-                                                                  isProcess,
-                                                              suggestList:
-                                                                  nSuggestList[
-                                                                      index]),
-                                                    ));
-                                                  },
+                                            columnWidths: const {
+                                              0: FlexColumnWidth(3),
+                                              1: FlexColumnWidth(2),
+                                              2: FlexColumnWidth(4),
+                                            },
+                                            defaultVerticalAlignment:
+                                                TableCellVerticalAlignment
+                                                    .middle,
+                                            children: <TableRow>[
+                                              // tableData,
+                                              TableRow(children: [
+                                                TableCell(
                                                   child: Container(
                                                     height: 40,
-                                                    padding:
-                                                        EdgeInsets.fromLTRB(
-                                                            15.0,
-                                                            0.0,
-                                                            5.0,
-                                                            0.0),
                                                     child: Center(
                                                       child: Text(
-                                                        suggestList['content'],
-                                                        maxLines: 1,
+                                                        formattedDate,
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontSize: 14,
+                                                        ),
                                                         textAlign:
                                                             TextAlign.center,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          decoration:
-                                                              TextDecoration
-                                                                  .underline,
-                                                        ),
                                                       ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                            ]),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                )
-                              : Expanded(
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: ySuggestList.length,
-                                    itemBuilder: (context, index) {
-                                      Map<String, dynamic> suggestList =
-                                          ySuggestList[index];
-                                      String formattedDate =
-                                          DateFormat('yyyy/MM/dd').format(
-                                              DateTime.parse(
-                                                  suggestList['createDate']));
-                                      return Container(
-                                        child: Table(
-                                          border: TableBorder(
-                                            verticalInside: BorderSide(
-                                              color: Color(0xffcfcfcf),
-                                              width: 1,
-                                            ),
-                                          ),
-                                          columnWidths: const {
-                                            0: FlexColumnWidth(3),
-                                            1: FlexColumnWidth(2),
-                                            2: FlexColumnWidth(4),
-                                          },
-                                          defaultVerticalAlignment:
-                                              TableCellVerticalAlignment.middle,
-                                          children: <TableRow>[
-                                            // tableData,
-                                            TableRow(children: [
-                                              TableCell(
-                                                child: Container(
-                                                  height: 40,
-                                                  child: Center(
-                                                    child: Text(
-                                                      formattedDate,
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        fontSize: 14,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              TableCell(
-                                                child: Container(
-                                                  height: 40,
-                                                  child: Center(
-                                                    child: Text(
-                                                      suggestList['type'],
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        fontSize: 14,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              TableCell(
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    Navigator.of(context)
-                                                        .push(MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          CheckSuggestion(
-                                                              isProcess:
-                                                                  isProcess,
-                                                              suggestList:
-                                                                  ySuggestList[
-                                                                      index]),
-                                                    ));
-                                                  },
+                                                TableCell(
                                                   child: Container(
                                                     height: 40,
-                                                    padding:
-                                                        EdgeInsets.fromLTRB(
-                                                            15.0,
-                                                            0.0,
-                                                            5.0,
-                                                            0.0),
                                                     child: Center(
                                                       child: Text(
-                                                        suggestList['content'],
-                                                        maxLines: 1,
-                                                        textAlign:
-                                                            TextAlign.end,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
+                                                        suggestList['type'],
                                                         style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
                                                           fontSize: 14,
-                                                          decoration:
-                                                              TextDecoration
-                                                                  .underline,
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                TableCell(
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      Navigator.of(context)
+                                                          .push(
+                                                              MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            CheckSuggestion(
+                                                                isProcess:
+                                                                    isProcess,
+                                                                suggestList:
+                                                                    nSuggestList[
+                                                                        index]),
+                                                      ));
+                                                    },
+                                                    child: Container(
+                                                      height: 40,
+                                                      padding:
+                                                          EdgeInsets.fromLTRB(
+                                                              15.0,
+                                                              0.0,
+                                                              5.0,
+                                                              0.0),
+                                                      child: Center(
+                                                        child: Text(
+                                                          suggestList[
+                                                              'content'],
+                                                          maxLines: 1,
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: TextStyle(
+                                                            fontSize: 14,
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .underline,
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
                                                   ),
                                                 ),
+                                              ]),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  )
+                                : Center(
+                                    child: Container(
+                                      margin: EdgeInsets.fromLTRB(
+                                          0.0, 10.0, 0.0, 0.0),
+                                      child: Text('건의 정보가 없습니다.',
+                                          style: TextStyle(
+                                              color: Color(0xffb7b7b7))),
+                                    ),
+                                  )
+                          else
+                            ySuggestList.isNotEmpty
+                                ? Expanded(
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: ySuggestList.length,
+                                      itemBuilder: (context, index) {
+                                        Map<String, dynamic> suggestList =
+                                            ySuggestList[index];
+                                        String formattedDate =
+                                            DateFormat('yyyy/MM/dd').format(
+                                                DateTime.parse(
+                                                    suggestList['createDate']));
+                                        return Container(
+                                          child: Table(
+                                            border: TableBorder(
+                                              verticalInside: BorderSide(
+                                                color: Color(0xffcfcfcf),
+                                                width: 1,
                                               ),
-                                            ]),
-                                          ],
-                                        ),
-                                      );
-                                    },
+                                            ),
+                                            columnWidths: const {
+                                              0: FlexColumnWidth(3),
+                                              1: FlexColumnWidth(2),
+                                              2: FlexColumnWidth(4),
+                                            },
+                                            defaultVerticalAlignment:
+                                                TableCellVerticalAlignment
+                                                    .middle,
+                                            children: <TableRow>[
+                                              // tableData,
+                                              TableRow(children: [
+                                                TableCell(
+                                                  child: Container(
+                                                    height: 40,
+                                                    child: Center(
+                                                      child: Text(
+                                                        formattedDate,
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontSize: 14,
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                TableCell(
+                                                  child: Container(
+                                                    height: 40,
+                                                    child: Center(
+                                                      child: Text(
+                                                        suggestList['type'],
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontSize: 14,
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                TableCell(
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      Navigator.of(context)
+                                                          .push(
+                                                              MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            CheckSuggestion(
+                                                                isProcess:
+                                                                    isProcess,
+                                                                suggestList:
+                                                                    ySuggestList[
+                                                                        index]),
+                                                      ));
+                                                    },
+                                                    child: Container(
+                                                      height: 40,
+                                                      padding:
+                                                          EdgeInsets.fromLTRB(
+                                                              15.0,
+                                                              0.0,
+                                                              5.0,
+                                                              0.0),
+                                                      child: Center(
+                                                        child: Text(
+                                                          suggestList[
+                                                              'content'],
+                                                          maxLines: 1,
+                                                          textAlign:
+                                                              TextAlign.end,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: TextStyle(
+                                                            fontSize: 14,
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .underline,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ]),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  )
+                                : Center(
+                                    child: Container(
+                                      margin: EdgeInsets.fromLTRB(
+                                          0.0, 10.0, 0.0, 0.0),
+                                      child: Text('답변 정보가 없습니다.',
+                                          style: TextStyle(
+                                              color: Color(0xffb7b7b7))),
+                                    ),
                                   ),
-                                ),
                         ],
                       )),
                 ]),
