@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:edu_application_pre/http_setup.dart';
+import 'package:edu_application_pre/user/detail_assignandexam.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Exam extends StatefulWidget {
   const Exam(
@@ -29,6 +31,23 @@ class _ExamState extends State<Exam> {
   static List<dynamic> testStatusList = [];
   String testKey = '';
 
+  bool isSubmission = false;
+  String name = '';
+  Future<void> loadData() async {
+    // 로컬 스토리지에서 데이터 불러오기
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userData = prefs.getString('userData');
+    String? typeData = prefs.getString('userType');
+
+    if (userData != null && typeData != null) {
+      Map<dynamic, dynamic> dataMap = jsonDecode(userData);
+
+      setState(() {
+        name = dataMap['name'] ?? '';
+      });
+    }
+  }
+
   Future<void> getTestList() async {
     Map<String, dynamic> data = {
       'lectureKey': widget.isAfternoon
@@ -40,11 +59,16 @@ class _ExamState extends State<Exam> {
     var res = await post('/lectures/getTestList/', jsonEncode(data));
     if (res.statusCode == 200) {
       setState(() {
-        testList = res.data['resultData'];
-        for (Map<String, dynamic> test in res.data['resultData']) {
-          testKey = test['testKey'] ?? '';
+        if (res.data['resultData'].isNotEmpty) {
+          testList = res.data['resultData'];
+          for (Map<String, dynamic> test in res.data['resultData']) {
+            testKey = test['testKey'] ?? '';
+          }
+          getTestStatusList(testKey);
+        } else {
+          testList = res.data['resultData'];
+          print('시험없음');
         }
-        getTestStatusList(testKey);
       });
     }
   }
@@ -55,8 +79,11 @@ class _ExamState extends State<Exam> {
 
     var res = await post('/lectures/getTestStatusList/', jsonEncode(data));
     if (res.statusCode == 200) {
+      List<dynamic> status = res.data['resultData']
+          .where((status) => status['studentName'] == name)
+          .toList();
       setState(() {
-        testStatusList = res.data['resultData'];
+        testStatusList = status;
       });
     }
   }
@@ -65,11 +92,13 @@ class _ExamState extends State<Exam> {
   void initState() {
     super.initState();
     initializeDateFormatting('ko_KR'); //한글 로케일 데이터를 초기화 ( 오전,오후로 사용하려고
+    loadData();
     setState(() {
       getTestList();
     });
   }
 
+  String progress = '';
   @override
   Widget build(BuildContext context) {
     Map<String, dynamic> morningList = widget.morning;
@@ -212,44 +241,42 @@ class _ExamState extends State<Exam> {
                       itemCount: testList.length,
                       itemBuilder: (context, index) {
                         Map<dynamic, dynamic> testdataList = testList[index];
+                        Map<dynamic, dynamic> testStatus =
+                            testStatusList[index];
+                        if (testStatus['testProgress'] == '예정') {
+                          progress = '예정';
+                          isSubmission = false;
+                        } else {
+                          progress = '완료';
+                          isSubmission = true;
+                        }
                         String formattedDate = DateFormat(
                                 'MM월 dd일 HH시', 'ko_KR')
                             .format(DateTime.parse(testdataList['testDate']));
-                        return Container(
-                          child: Table(
-                            columnWidths: const {
-                              0: FlexColumnWidth(3),
-                              1: FlexColumnWidth(3),
-                              2: FlexColumnWidth(2),
-                              3: FlexColumnWidth(2),
-                            },
-                            defaultVerticalAlignment:
-                                TableCellVerticalAlignment.middle,
-                            children: <TableRow>[
-                              TableRow(children: [
-                                TableCell(
-                                    child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border(
-                                          bottom: BorderSide(
-                                              width: 1,
-                                              color: Color(0xff9c9c9c)))),
-                                  height: 55,
-                                  child: Center(
-                                    child: Text(
-                                      formattedDate,
-                                      textAlign: TextAlign.center,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                )),
-                                TableCell(
-                                  child: Container(
-                                    padding: EdgeInsets.fromLTRB(
-                                        13.0, 0.0, 0.0, 0.0),
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => DetailAssignment(
+                                data: testList[index],
+                                type: 'exam',
+                                isSubmission: isSubmission,
+                              ),
+                            ));
+                          },
+                          child: Container(
+                            child: Table(
+                              columnWidths: const {
+                                0: FlexColumnWidth(3),
+                                1: FlexColumnWidth(3),
+                                2: FlexColumnWidth(2),
+                                3: FlexColumnWidth(2),
+                              },
+                              defaultVerticalAlignment:
+                                  TableCellVerticalAlignment.middle,
+                              children: <TableRow>[
+                                TableRow(children: [
+                                  TableCell(
+                                      child: Container(
                                     decoration: BoxDecoration(
                                         border: Border(
                                             bottom: BorderSide(
@@ -258,7 +285,7 @@ class _ExamState extends State<Exam> {
                                     height: 55,
                                     child: Center(
                                       child: Text(
-                                        testdataList['testType'],
+                                        formattedDate,
                                         textAlign: TextAlign.center,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
@@ -266,92 +293,116 @@ class _ExamState extends State<Exam> {
                                         ),
                                       ),
                                     ),
+                                  )),
+                                  TableCell(
+                                    child: Container(
+                                      padding: EdgeInsets.fromLTRB(
+                                          13.0, 0.0, 0.0, 0.0),
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                              bottom: BorderSide(
+                                                  width: 1,
+                                                  color: Color(0xff9c9c9c)))),
+                                      height: 55,
+                                      child: Center(
+                                        child: Text(
+                                          testdataList['testType'],
+                                          textAlign: TextAlign.center,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                TableCell(
-                                  child: isScore
-                                      ? Container(
-                                          padding: EdgeInsets.fromLTRB(
-                                              15.0, 0.0, 0.0, 0.0),
-                                          decoration: BoxDecoration(
-                                              border: Border(
-                                                  bottom: BorderSide(
-                                                      width: 1,
-                                                      color:
-                                                          Color(0xff9c9c9c)))),
-                                          height: 55,
-                                          child: Center(
-                                            child: Text(
-                                              "80",
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w500,
+                                  TableCell(
+                                    child: isScore
+                                        ? Container(
+                                            padding: EdgeInsets.fromLTRB(
+                                                15.0, 0.0, 0.0, 0.0),
+                                            decoration: BoxDecoration(
+                                                border: Border(
+                                                    bottom: BorderSide(
+                                                        width: 1,
+                                                        color: Color(
+                                                            0xff9c9c9c)))),
+                                            height: 55,
+                                            child: Center(
+                                              child: Text(
+                                                "80",
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        )
-                                      : Container(
-                                          padding: EdgeInsets.fromLTRB(
-                                              15.0, 0.0, 0.0, 0.0),
-                                          decoration: BoxDecoration(
-                                              border: Border(
-                                                  bottom: BorderSide(
-                                                      width: 1,
-                                                      color:
-                                                          Color(0xff9c9c9c)))),
-                                          height: 55,
-                                          child: Center(
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  isScore = true;
-                                                });
-                                              },
-                                              child: Container(
-                                                width: 57,
-                                                height: 19,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(7),
-                                                  color: Color(0xff9c9c9c),
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    '성적확인',
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                        fontSize: 11,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.white),
+                                          )
+                                        : Container(
+                                            padding: EdgeInsets.fromLTRB(
+                                                15.0, 0.0, 0.0, 0.0),
+                                            decoration: BoxDecoration(
+                                                border: Border(
+                                                    bottom: BorderSide(
+                                                        width: 1,
+                                                        color: Color(
+                                                            0xff9c9c9c)))),
+                                            height: 55,
+                                            child: Center(
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    isScore = true;
+                                                  });
+                                                },
+                                                child: Container(
+                                                  width: 57,
+                                                  height: 19,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            7),
+                                                    color: Color(0xff9c9c9c),
+                                                  ),
+                                                  child: Center(
+                                                    child: Text(
+                                                      '성적확인',
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                          fontSize: 11,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.white),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                ),
-                                TableCell(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        border: Border(
-                                            bottom: BorderSide(
-                                                width: 1,
-                                                color: Color(0xff9c9c9c)))),
-                                    height: 55,
-                                    child: Center(
-                                      child: Text(
-                                        isComplete ? "완료" : "예정",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w500,
+                                  ),
+                                  TableCell(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                              bottom: BorderSide(
+                                                  width: 1,
+                                                  color: Color(0xff9c9c9c)))),
+                                      height: 55,
+                                      child: Center(
+                                        child: Text(
+                                          progress,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ]),
-                            ],
+                                ]),
+                              ],
+                            ),
                           ),
                         );
                       },

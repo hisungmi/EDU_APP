@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:edu_application_pre/http_setup.dart';
-import 'package:edu_application_pre/user/detail_assignment.dart';
+import 'package:edu_application_pre/user/detail_assignandexam.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -36,7 +36,12 @@ class _TaskState extends State<Assignment> {
     var res = await post('/lectures/getAssignList/', jsonEncode(data));
     if (res.statusCode == 200) {
       setState(() {
-        assignmentList = res.data['resultData'];
+        if (res.data['resultData'].isNotEmpty) {
+          assignmentList = res.data['resultData'];
+        } else {
+          assignmentList = res.data['resultData'];
+          print('과제 없음');
+        }
       });
     }
   }
@@ -120,7 +125,8 @@ class _TaskState extends State<Assignment> {
                                 Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => DetailAssignment(
                                       isSubmission: isSubmission,
-                                      assignmentList: assignmentList[index]),
+                                      type: 'assignment',
+                                      data: assignmentList[index]),
                                 ));
                               },
                               child: Container(
