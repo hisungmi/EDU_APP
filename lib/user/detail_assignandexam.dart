@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:edu_application_pre/http_setup.dart';
+import 'package:edu_application_pre/user/exam.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
@@ -10,12 +12,14 @@ import 'package:intl/intl.dart';
 class DetailAssignment extends StatefulWidget {
   const DetailAssignment({
     Key? key,
-    required this.assignmentList,
     required this.isSubmission,
+    required this.data,
+    required this.type,
   }) : super(key: key);
 
-  final Map<String, dynamic> assignmentList;
+  final Map<String, dynamic> data;
   final bool isSubmission;
+  final String type;
 
   @override
   State<DetailAssignment> createState() => _DetailAssignmentState();
@@ -32,9 +36,12 @@ class _DetailAssignmentState extends State<DetailAssignment> {
   @override
   void initState() {
     super.initState();
-
     initializeDateFormatting('ko_KR'); //한글 로케일 데이터를 초기화 ( 오전,오후로 사용하려고
-    _fileUrl = '$baseUrl/media/${widget.assignmentList['assignment']}';
+    if (widget.type == 'exam') {
+      _fileUrl = '$baseUrl/media/${widget.data['testSheet']}';
+    } else if (widget.type == 'assignment') {
+      _fileUrl = '$baseUrl/media/${widget.data['assignment']}';
+    }
     // _fileName = _fileUrl.split('/').last;
   }
 
@@ -56,13 +63,34 @@ class _DetailAssignmentState extends State<DetailAssignment> {
     }
   }
 
+  String deadLine = "";
+  String createDate = "";
+  String tcreateDate = "";
+  String testDate = "";
+  Map<String, dynamic> testList = {};
+  Map<String, dynamic> assList = {};
+  bool ass = false;
   @override
   Widget build(BuildContext context) {
-    String deadLine = DateFormat('MM월dd일 a HH:mm', 'ko_KR')
-        .format(DateTime.parse(widget.assignmentList['deadLine']));
-    String createDate = DateFormat('yyyy/MM/dd a HH:mm', 'ko_KR')
-        .format(DateTime.parse(widget.assignmentList['createDate']));
+    if (widget.type == 'exam') {
+      testList = widget.data;
+      ass = false;
+    } else if (widget.type == 'assignment') {
+      assList = widget.data;
+      ass = true;
+    }
 
+    if (ass == true) {
+      deadLine = DateFormat('MM월dd일 a HH:mm', 'ko_KR')
+          .format(DateTime.parse(assList['deadLine']));
+      createDate = DateFormat('yyyy/MM/dd a HH:mm', 'ko_KR')
+          .format(DateTime.parse(assList['createDate']));
+    } else {
+      testDate = DateFormat('MM월dd일 a HH:mm', 'ko_KR')
+          .format(DateTime.parse(testList['testDate']));
+      tcreateDate = DateFormat('yyyy/MM/dd a HH:mm', 'ko_KR')
+          .format(DateTime.parse(testList['createDate']));
+    }
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -70,7 +98,7 @@ class _DetailAssignmentState extends State<DetailAssignment> {
           elevation: 4.0, //앱바 입체감 없애기
           title: Center(
             child: Text(
-              '과제 상세정보',
+              ass ? '과제 상세정보' : '시험 상세정보',
               style: TextStyle(
                   color: Color(0xff0099ff), fontWeight: FontWeight.w600),
               textAlign: TextAlign.center,
@@ -104,7 +132,7 @@ class _DetailAssignmentState extends State<DetailAssignment> {
                 height: 35,
                 color: Color(0xffbbbbbb),
                 child: Center(
-                    child: Text(widget.assignmentList['type'],
+                    child: Text(ass ? assList['type'] : testList['testType'],
                         textAlign: TextAlign.center,
                         style: TextStyle(color: Colors.white))),
               ),
@@ -122,7 +150,7 @@ class _DetailAssignmentState extends State<DetailAssignment> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("마감일"),
+                              Text(ass ? "마감일" : "시험일자"),
                               SizedBox(
                                 height: 5,
                               ),
@@ -135,7 +163,7 @@ class _DetailAssignmentState extends State<DetailAssignment> {
                                         bottom: BorderSide(
                                             width: 1,
                                             color: Color(0xff9c9c9c)))),
-                                child: Text(deadLine,
+                                child: Text(ass ? deadLine : testDate,
                                     style: TextStyle(
                                       fontWeight: FontWeight.w500,
                                       color: Color(0xff9c9c9c),
@@ -179,14 +207,20 @@ class _DetailAssignmentState extends State<DetailAssignment> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: SingleChildScrollView(
-                          child: Text(widget.assignmentList['content'],
+                          child: Text(
+                              ass
+                                  ? assList['content']
+                                  : testList['content'].isNotEmpty
+                                      ? testList['content']
+                                      : '내용 없음',
                               style: TextStyle(fontWeight: FontWeight.w500)),
                         ),
                       ),
                       Container(
                         margin: EdgeInsets.fromLTRB(0.0, 3.0, 0, 0.0),
                         width: 348,
-                        child: Text("생성일  $createDate",
+                        child: Text(
+                            ass ? "생성일  $createDate" : '생성일 $tcreateDate',
                             textAlign: TextAlign.end,
                             style: TextStyle(
                                 color: Color(0xff9c9c9c),
@@ -196,32 +230,60 @@ class _DetailAssignmentState extends State<DetailAssignment> {
                       SizedBox(
                         height: 10.0,
                       ),
-                      widget.assignmentList['assignment'].isNotEmpty
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '파일',
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    downloadFile();
-                                  },
-                                  child: Text(
-                                      widget.assignmentList['assignment'],
-                                      softWrap: true,
-                                      style: TextStyle(
-                                        color: Color(0xff52BAFF),
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 13,
-                                        decoration: TextDecoration.underline,
-                                      )),
+                      ass
+                          ? assList['assignment'].isNotEmpty
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '파일',
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        downloadFile();
+                                      },
+                                      child: Text(assList['assignment'],
+                                          softWrap: true,
+                                          style: TextStyle(
+                                            color: Color(0xff52BAFF),
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 13,
+                                            decoration:
+                                                TextDecoration.underline,
+                                          )),
+                                    )
+                                  ],
                                 )
-                              ],
-                            )
-                          : Text('파일없음',
-                              style: TextStyle(fontWeight: FontWeight.w500)),
+                              : Text('파일없음',
+                                  style: TextStyle(fontWeight: FontWeight.w500))
+                          : testList['testSheet'].isNotEmpty
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '파일',
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        downloadFile();
+                                      },
+                                      child: Text(testList['testSheet'],
+                                          softWrap: true,
+                                          style: TextStyle(
+                                            color: Color(0xff52BAFF),
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 13,
+                                            decoration:
+                                                TextDecoration.underline,
+                                          )),
+                                    )
+                                  ],
+                                )
+                              : Text('파일없음',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.w500)),
                     ]),
               )
             ],

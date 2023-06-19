@@ -76,20 +76,6 @@ class _QRScannerState extends State<QRScanner> {
                   color: Color(0xff0099ff))),
           centerTitle: true,
           // 텍스트 중앙 정렬
-          leading: IconButton(
-            icon: FaIcon(FontAwesomeIcons.home),
-            color: Color(0xff0099ff),
-            iconSize: 30,
-            onPressed: () {
-              int desiredIndex = 0;
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (context) => MyHomePage(desiredIndex),
-                ),
-                (route) => false,
-              );
-            },
-          ),
           backgroundColor: Colors.white,
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(4.0),
@@ -109,7 +95,7 @@ class _QRScannerState extends State<QRScanner> {
           //앱바 입체감 없애기
           actions: [
             IconButton(
-              icon: Icon(Icons.menu),
+              icon: FaIcon(FontAwesomeIcons.home),
               color: Color(0xff0099ff),
               iconSize: 35,
               onPressed: () {
