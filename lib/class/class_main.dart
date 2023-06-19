@@ -5,12 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../common/kiosk_main.dart';
 import '../http_setup.dart';
 import '../main.dart';
 
+final GlobalKey<ClassMainState> classMainKey = GlobalKey<ClassMainState>();
+
 class ClassMain extends StatefulWidget {
-  const ClassMain({Key? key}) : super(key: key);
+  ClassMain({Key? key}) : super(key: key);
 
   @override
   State<ClassMain> createState() => ClassMainState();
@@ -24,6 +25,10 @@ class ClassMainState extends State<ClassMain> {
   static Map<String, dynamic> lectureDetail = {};
   static List<dynamic> lectureStatsList = [];
   static List<dynamic> attendList = [];
+
+  void refresh() {
+    setState(() {});
+  }
 
   Future setRoomData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -133,9 +138,11 @@ class ClassMainState extends State<ClassMain> {
       return now.isAfter(lectureStartTime) && now.isBefore(lectureEndTime);
     }).toList();
 
-    lectureDetail = todayLectures[0];
-    if (lectureDetail.isNotEmpty) {
-      await getLectureStatus();
+    if (todayLectures.isNotEmpty) {
+      lectureDetail = todayLectures[0];
+      if (lectureDetail.isNotEmpty) {
+        await getLectureStatus();
+      }
     }
   }
 
@@ -232,8 +239,8 @@ class ClassMainState extends State<ClassMain> {
             height: 25.0,
             child: ElevatedButton(
                 onPressed: () {
-                  print(attendProvider.qrAttendList);
                   logOut(context);
+                  // print(attendProvider.qrAttendList);
                 },
                 child: Text("로그아웃",
                     style: TextStyle(
@@ -271,8 +278,11 @@ class ClassMainState extends State<ClassMain> {
                         ],
                       ),
                     )
-                  : Text("현재 진행 중인 강의가 없습니다."),
-              if (attendProvider.classQr)
+                  : Container(
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                      child: Text("현재 진행 중인 강의가 없습니다.")),
+              if (lectureDetail.isNotEmpty && attendProvider.classQr)
                 Center(
                   child: Column(
                     children: [
@@ -296,7 +306,7 @@ class ClassMainState extends State<ClassMain> {
                     ],
                   ),
                 ),
-              if (!attendProvider.classQr)
+              if (lectureDetail.isNotEmpty && !attendProvider.classQr)
                 SizedBox(
                   height: 400.0,
                   child: Column(
@@ -621,7 +631,7 @@ class ClassTimer extends StatefulWidget {
 }
 
 class ClassTimerState extends State<ClassTimer> {
-  static const int _maxSeconds = 25;
+  static const int _maxSeconds = 60 * 10;
   int _secondsLeft = _maxSeconds;
 
   late Timer _timer;
@@ -642,7 +652,7 @@ class ClassTimerState extends State<ClassTimer> {
         } else {
           _timer.cancel();
           Provider.of<AttendProvider>(context, listen: false).setFalseQr();
-          kioskMainKey.currentState!.refresh();
+          classMainKey.currentState!.refresh();
         }
       });
     });

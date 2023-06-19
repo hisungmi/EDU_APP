@@ -30,7 +30,7 @@ class QrProvider extends ChangeNotifier {
 final GlobalKey<KioskMainState> kioskMainKey = GlobalKey<KioskMainState>();
 
 class KioskMain extends StatefulWidget {
-  KioskMain({Key? key}) : super(key: kioskMainKey);
+  const KioskMain({Key? key}) : super(key: key);
 
   @override
   State<KioskMain> createState() => KioskMainState();
@@ -38,6 +38,9 @@ class KioskMain extends StatefulWidget {
 
 class KioskMainState extends State<KioskMain> {
   Map<String, dynamic> qrData = {'qrKey': 'kiosk'};
+  static List<dynamic> todayLectures = [];
+  static Map<String, dynamic> lectureDetail = {};
+  static List<dynamic> lectureStatsList = [];
 
   void refresh() {
     setState(() {});
@@ -79,7 +82,28 @@ class KioskMainState extends State<KioskMain> {
     }
   }
 
-  Future getLectureList() async {
+  // Future getLectureList() async {
+  //   Map<String, dynamic> data = {
+  //     'userKey': '',
+  //     'roomKey': '',
+  //     'roomName': '',
+  //     'lectureName': '',
+  //     'target': '',
+  //   };
+  //
+  //   var result = await post('/lectures/getLectureList/', jsonEncode(data));
+  //   if (result.statusCode == 200) {
+  //     List<Map<String, dynamic>> filteredLectures =
+  //         List<Map<String, dynamic>>.from(result.data['resultData'])
+  //             .where((lecture) => lecture['progress'] == '등록')
+  //             .toList();
+  //     setState(() {
+  //       lectureList = filteredLectures;
+  //     });
+  //   }
+  // }
+
+  Future<void> getLectureList() async {
     Map<String, dynamic> data = {
       'userKey': '',
       'roomKey': '',
@@ -89,6 +113,7 @@ class KioskMainState extends State<KioskMain> {
     };
 
     var result = await post('/lectures/getLectureList/', jsonEncode(data));
+
     if (result.statusCode == 200) {
       List<Map<String, dynamic>> filteredLectures =
           List<Map<String, dynamic>>.from(result.data['resultData'])
@@ -97,6 +122,32 @@ class KioskMainState extends State<KioskMain> {
       setState(() {
         lectureList = filteredLectures;
       });
+    }
+
+    DateTime now = DateTime.now();
+    int todayWeekday = now.weekday;
+
+    todayLectures = lectureList.where((lecture) {
+      int lectureWeekday = lecture['day'];
+
+      if (lectureWeekday != todayWeekday) {
+        return false;
+      }
+
+      int lectureStartHour = int.parse(lecture['startTime'].substring(0, 2));
+      int lectureStartMinute = int.parse(lecture['startTime'].substring(3, 5));
+      int lectureDuration = lecture['duration'];
+
+      DateTime lectureStartTime = DateTime(
+          now.year, now.month, now.day, lectureStartHour, lectureStartMinute);
+      DateTime lectureEndTime =
+          lectureStartTime.add(Duration(minutes: lectureDuration));
+
+      return now.isAfter(lectureStartTime) && now.isBefore(lectureEndTime);
+    }).toList();
+
+    if (todayLectures.isNotEmpty) {
+      lectureDetail = todayLectures[0];
     }
   }
 
@@ -110,6 +161,10 @@ class KioskMainState extends State<KioskMain> {
   @override
   Widget build(BuildContext context) {
     final random = Random();
+    DateTime today = DateTime.now();
+    String date = today.toLocal().toString().split(' ')[0];
+    String time = today.toLocal().toString().split(' ')[1].substring(0, 5);
+
     return Consumer<QrProvider>(builder: (context, qrProvider, child) {
       return Scaffold(
           body: GestureDetector(
@@ -143,99 +198,48 @@ class KioskMainState extends State<KioskMain> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(right: 20.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          margin: EdgeInsets.only(bottom: 20.0),
-                                          child: Image.asset(
-                                            '../assets/img/iconsample01.png',
-                                            width: 96.0,
-                                          ),
-                                        ),
-                                        Text(
-                                          "현재 통합 대기",
-                                          style: TextStyle(
-                                            fontSize: 16.0,
-                                            color: Color.fromRGBO(
-                                                255, 255, 255, 0.6),
-                                          ),
-                                        ),
-                                        Text(
-                                          '나쁨',
-                                          style: TextStyle(
-                                              fontSize: 20.0,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
+                                    children: [
+                                      // Container(
+                                      //   margin: EdgeInsets.only(bottom: 20.0),
+                                      //   child: Image.asset(
+                                      //     '../assets/img/iconsample01.png',
+                                      //     width: 96.0,
+                                      //   ),
+                                      // ),
                                       Text(
-                                        "실내 대기",
+                                        "오늘은?",
                                         style: TextStyle(
-                                          fontSize: 18.0,
+                                          fontSize: 40.0,
                                           color: Color.fromRGBO(
                                               255, 255, 255, 0.6),
                                         ),
                                       ),
-                                      Padding(
-                                        padding: EdgeInsets.fromLTRB(
-                                            0, 10.0, 0, 20.0),
-                                        child: Text(
-                                          '보통',
-                                          style: TextStyle(
-                                              fontSize: 44.0,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white),
+                                      Text(
+                                        date,
+                                        style: TextStyle(
+                                            fontSize: 45.0,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white),
+                                      ),
+                                      Text(
+                                        "지금은?",
+                                        style: TextStyle(
+                                          fontSize: 40.0,
+                                          color: Color.fromRGBO(
+                                              255, 255, 255, 0.6),
                                         ),
                                       ),
-                                      Text.rich(
-                                        TextSpan(
-                                            text: "미세 먼지 ",
-                                            style: TextStyle(
-                                              fontSize: 18.0,
-                                              color: Color.fromRGBO(
-                                                  255, 255, 255, 0.5),
-                                            ),
-                                            children: <TextSpan>[
-                                              TextSpan(
-                                                text: "보통(35)",
-                                                style: TextStyle(
-                                                    fontSize: 18.0,
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              )
-                                            ]),
+                                      Text(
+                                        time,
+                                        style: TextStyle(
+                                            fontSize: 45.0,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white),
                                       ),
-                                      Text.rich(
-                                        TextSpan(
-                                            text: "초미세 먼지 ",
-                                            style: TextStyle(
-                                              fontSize: 18.0,
-                                              color: Color.fromRGBO(
-                                                  255, 255, 255, 0.5),
-                                            ),
-                                            children: <TextSpan>[
-                                              TextSpan(
-                                                text: "나쁨(68)",
-                                                style: TextStyle(
-                                                    fontSize: 18.0,
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              )
-                                            ]),
-                                      )
                                     ],
-                                  )
+                                  ),
                                 ],
                               )),
                         ),
@@ -301,126 +305,154 @@ class KioskMainState extends State<KioskMain> {
                     ),
                     SizedBox(
                         height: 580.0,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          shrinkWrap: true,
-                          itemCount: lectureList.length,
-                          itemBuilder: (context, index) {
-                            TextStyle myTextStyle = TextStyle(
-                              color: Colors.white,
-                              fontSize: 32.0,
-                              fontWeight: FontWeight.bold,
-                            );
+                        child: todayLectures.isNotEmpty
+                            ? ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                shrinkWrap: true,
+                                itemCount: todayLectures.length,
+                                itemBuilder: (context, index) {
+                                  TextStyle myTextStyle = TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 32.0,
+                                    fontWeight: FontWeight.bold,
+                                  );
 
-                            String room = lectureList[index]['roomName'];
-                            String name = lectureList[index]['lectureName'];
-                            String startTime = lectureList[index]['startTime']
-                                .toString()
-                                .replaceAll('-', ':');
-                            if (startTime.length < 3) {
-                              startTime = '$startTime:00';
-                            }
-                            String teacher = lectureList[index]['teacherName'];
+                                  String room =
+                                      todayLectures[index]['roomName'];
+                                  String name =
+                                      todayLectures[index]['lectureName'];
+                                  String startTime = todayLectures[index]
+                                          ['startTime']
+                                      .toString()
+                                      .replaceAll('-', ':');
+                                  if (startTime.length < 3) {
+                                    startTime = '$startTime:00';
+                                  }
+                                  String teacher =
+                                      todayLectures[index]['teacherName'];
+                                  String total =
+                                      todayLectures[index]['total'].toString();
 
-                            return Stack(children: [
-                              Container(
-                                  width: 380,
-                                  height: 550,
-                                  margin:
-                                      EdgeInsets.fromLTRB(30.00, 0, 30.0, 0),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.4),
-                                    borderRadius: BorderRadius.circular(30),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color:
-                                            Color(0xff000000).withOpacity(0.1),
-                                        blurRadius: 30,
-                                        offset: Offset(
-                                            0, 0), // changes position of shadow
-                                      ),
-                                    ],
-                                  ),
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(room,
-                                            overflow: TextOverflow.ellipsis,
-                                            textAlign: TextAlign.center,
-                                            style: myTextStyle.copyWith(
-                                                fontSize: 60.0)),
-                                        Container(
-                                          margin:
-                                              EdgeInsets.fromLTRB(0, 30, 0, 30),
-                                          width: 100,
-                                          height: 1, //// 선의 높이를 지정합니다
-                                          color: Colors.white, // 선의 색상을 지정합니다
+                                  return Stack(children: [
+                                    Container(
+                                        width: 380,
+                                        height: 550,
+                                        margin: EdgeInsets.fromLTRB(
+                                            30.00, 0, 30.0, 0),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(0.4),
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Color(0xff000000)
+                                                  .withOpacity(0.1),
+                                              blurRadius: 30,
+                                              offset: Offset(0,
+                                                  0), // changes position of shadow
+                                            ),
+                                          ],
                                         ),
-                                        Text(name,
-                                            overflow: TextOverflow.ellipsis,
-                                            textAlign: TextAlign.center,
-                                            style: myTextStyle.copyWith(
-                                                fontSize: 48.0)),
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(0, 20, 0, 20),
-                                          child: Text('$startTime 에 시작',
-                                              style: myTextStyle.copyWith(
-                                                  fontSize: 28.0,
-                                                  fontWeight:
-                                                      FontWeight.normal)),
-                                        ),
-                                        Text.rich(
-                                          textAlign: TextAlign.center,
-                                          TextSpan(
-                                            text: teacher,
-                                            style: myTextStyle,
-                                            children: <TextSpan>[
-                                              TextSpan(
-                                                text: ' 강사님',
-                                                style: myTextStyle.copyWith(
-                                                    fontWeight:
-                                                        FontWeight.normal),
+                                        child: Center(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Text(room,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  textAlign: TextAlign.center,
+                                                  style: myTextStyle.copyWith(
+                                                      fontSize: 60.0)),
+                                              Container(
+                                                margin: EdgeInsets.fromLTRB(
+                                                    0, 30, 0, 30),
+                                                width: 100,
+                                                height: 1, //// 선의 높이를 지정합니다
+                                                color: Colors
+                                                    .white, // 선의 색상을 지정합니다
+                                              ),
+                                              Text(name,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  textAlign: TextAlign.center,
+                                                  style: myTextStyle.copyWith(
+                                                      fontSize: 48.0)),
+                                              Padding(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    0, 20, 0, 20),
+                                                child: Text('$startTime 에 시작',
+                                                    style: myTextStyle.copyWith(
+                                                        fontSize: 28.0,
+                                                        fontWeight:
+                                                            FontWeight.normal)),
+                                              ),
+                                              Text.rich(
+                                                textAlign: TextAlign.center,
+                                                TextSpan(
+                                                  text: teacher,
+                                                  style: myTextStyle,
+                                                  children: <TextSpan>[
+                                                    TextSpan(
+                                                      text: ' 강사님',
+                                                      style:
+                                                          myTextStyle.copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 30.0),
+                                                child: Text.rich(
+                                                  textAlign: TextAlign.center,
+                                                  TextSpan(
+                                                    text: '전체 ',
+                                                    style: myTextStyle.copyWith(
+                                                        fontWeight:
+                                                            FontWeight.normal),
+                                                    children: <TextSpan>[
+                                                      TextSpan(
+                                                          text: total,
+                                                          style: myTextStyle
+                                                              .copyWith(
+                                                            fontSize: 36.0,
+                                                          )),
+                                                      TextSpan(
+                                                        text: ' 명',
+                                                        style: myTextStyle
+                                                            .copyWith(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
                                               ),
                                             ],
                                           ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(top: 30.0),
-                                          child: Text.rich(
-                                            textAlign: TextAlign.center,
-                                            TextSpan(
-                                              text: '출석 ',
-                                              style: myTextStyle,
-                                              children: <TextSpan>[
-                                                TextSpan(
-                                                  text: '10',
-                                                  style: myTextStyle.copyWith(
-                                                      fontSize: 36.0),
-                                                ),
-                                                TextSpan(
-                                                  text: ' / 전체 24 인',
-                                                  style: myTextStyle.copyWith(
-                                                      fontWeight:
-                                                          FontWeight.normal),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )),
-                            ]);
-                            // child: Text(
-                            //   name,
-                            // ));
-                          },
-                        )),
+                                        )),
+                                  ]);
+                                  // child: Text(
+                                  //   name,
+                                  // ));
+                                },
+                              )
+                            : Padding(
+                                padding: const EdgeInsets.only(top: 180.0),
+                                child: Text("현재 진행 중인 강의가 없습니다.",
+                                    style: TextStyle(
+                                      fontSize: 60.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    )),
+                              )),
                   ]),
                 if (qrProvider.isQr)
                   Stack(
