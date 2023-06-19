@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Assignment extends StatefulWidget {
   const Assignment(
@@ -22,25 +23,81 @@ class Assignment extends StatefulWidget {
 }
 
 class _TaskState extends State<Assignment> {
-  bool isSubmission = false;
   static List<dynamic> assignmentList = [];
+  static List<dynamic>? assignStatusList = [];
+  String assignKey = '';
+  String studentKey = '';
 
-  Future<void> getAssignList() async {
+  Future<void> loadData() async {
+    // 로컬 스토리지에서 데이터 불러오기
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userData = prefs.getString('userData');
+    String? typeData = prefs.getString('userType');
+
+    if (userData != null && typeData != null) {
+      Map<dynamic, dynamic> dataMap = jsonDecode(userData);
+
+      setState(() {
+        studentKey = dataMap['studentKey'] ?? '';
+        getAssignList(studentKey);
+      });
+    }
+  }
+
+  Future<void> getAssignList(String studentKey) async {
     Map<String, dynamic> data = {
       'lectureKey': widget.isAfternoon
           ? widget.afternoon['lectureKey']
           : widget.morning['lectureKey'],
+      'studentKey': '',
+      'type': 'ALL',
     };
-
-    // assignmentList = [];
+    Map<String, dynamic> data2 = {
+      'lectureKey': widget.isAfternoon
+          ? widget.afternoon['lectureKey']
+          : widget.morning['lectureKey'],
+      'studentKey': studentKey,
+      'type': 'PER',
+    };
+    assignmentList = [];
     var res = await post('/lectures/getAssignList/', jsonEncode(data));
-    if (res.statusCode == 200) {
+    var res2 = await post('/lectures/getAssignList/', jsonEncode(data2));
+    if (res.statusCode == 200 && res2.statusCode == 200) {
       setState(() {
-        if (res.data['resultData'].isNotEmpty) {
-          assignmentList = res.data['resultData'];
+        if (res.data['resultData'].isNotEmpty ||
+            res2.data['resultData'].isNotEmpty) {
+          for (Map<String, dynamic> assign in res.data['resultData']) {
+            assignmentList.add(assign);
+          }
+          for (Map<String, dynamic> assign2 in res2.data['resultData']) {
+            assignmentList.add(assign2);
+          }
+          for (var i = 0; i < assignmentList.length; i++) {
+            assignmentList[i]['assignKey'];
+            getAssignStatusList(assignmentList[i]['assignKey']);
+          }
         } else {
           assignmentList = res.data['resultData'];
           print('과제 없음');
+        }
+      });
+    }
+  }
+
+  Future<void> getAssignStatusList(String assignKey) async {
+    Map<String, dynamic> data = {
+      'assignKey': assignKey,
+    };
+    var res = await post('/lectures/getAssignStatusList/', jsonEncode(data));
+    if (res.statusCode == 200) {
+      setState(() {
+        if (res.data['resultData'].isNotEmpty) {
+          for (Map<String, dynamic> status in res.data['resultData']) {
+            assignStatusList?.add(status);
+          }
+        } else {
+          assignStatusList = res.data['resultData'];
+          print('현황 없음');
         }
       });
     }
@@ -51,7 +108,7 @@ class _TaskState extends State<Assignment> {
     super.initState();
     initializeDateFormatting('ko_KR'); //한글 로케일 데이터를 초기화 ( 오전,오후로 사용하려고
     setState(() {
-      getAssignList();
+      loadData();
     });
   }
 
@@ -117,6 +174,8 @@ class _TaskState extends State<Assignment> {
                           itemBuilder: (context, index) {
                             Map<String, dynamic> assignList =
                                 assignmentList[index];
+                            Map<String, dynamic> stateList =
+                                assignStatusList?[index];
                             String formattedDate = DateFormat(
                                     'MM월 dd일 a h:mm', 'ko_KR')
                                 .format(DateTime.parse(assignList['deadLine']));
@@ -124,9 +183,10 @@ class _TaskState extends State<Assignment> {
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => DetailAssignment(
-                                      isSubmission: isSubmission,
-                                      type: 'assignment',
-                                      data: assignmentList[index]),
+                                    status: assignStatusList?[index],
+                                    type: 'assignment',
+                                    data: assignmentList[index],
+                                  ),
                                 ));
                               },
                               child: Container(
@@ -198,7 +258,10 @@ class _TaskState extends State<Assignment> {
                                           ),
                                           child: Center(
                                             child: Text(
-                                              isSubmission ? '제출됨' : '미제출',
+                                              stateList['assignState']
+                                                      .isNotEmpty
+                                                  ? stateList['assignState']
+                                                  : '내꺼아님',
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
                                                   fontSize: 12,

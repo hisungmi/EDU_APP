@@ -26,12 +26,10 @@ class Exam extends StatefulWidget {
 
 class _ExamState extends State<Exam> {
   bool isScore = false;
-  bool isComplete = false;
   static List<dynamic> testList = [];
   static List<dynamic> testStatusList = [];
-  String testKey = '';
 
-  bool isSubmission = false;
+  String testKey = '';
   String name = '';
   Future<void> loadData() async {
     // 로컬 스토리지에서 데이터 불러오기
@@ -98,7 +96,6 @@ class _ExamState extends State<Exam> {
     });
   }
 
-  String progress = '';
   @override
   Widget build(BuildContext context) {
     Map<String, dynamic> morningList = widget.morning;
@@ -243,13 +240,6 @@ class _ExamState extends State<Exam> {
                         Map<dynamic, dynamic> testdataList = testList[index];
                         Map<dynamic, dynamic> testStatus =
                             testStatusList[index];
-                        if (testStatus['testProgress'] == '예정') {
-                          progress = '예정';
-                          isSubmission = false;
-                        } else {
-                          progress = '완료';
-                          isSubmission = true;
-                        }
                         String formattedDate = DateFormat(
                                 'MM월 dd일 HH시', 'ko_KR')
                             .format(DateTime.parse(testdataList['testDate']));
@@ -259,7 +249,7 @@ class _ExamState extends State<Exam> {
                               builder: (context) => DetailAssignment(
                                 data: testList[index],
                                 type: 'exam',
-                                isSubmission: isSubmission,
+                                status: testStatusList[index],
                               ),
                             ));
                           },
@@ -317,68 +307,82 @@ class _ExamState extends State<Exam> {
                                     ),
                                   ),
                                   TableCell(
-                                    child: isScore
-                                        ? Container(
-                                            padding: EdgeInsets.fromLTRB(
-                                                15.0, 0.0, 0.0, 0.0),
-                                            decoration: BoxDecoration(
-                                                border: Border(
-                                                    bottom: BorderSide(
-                                                        width: 1,
-                                                        color: Color(
-                                                            0xff9c9c9c)))),
-                                            height: 55,
-                                            child: Center(
-                                              child: Text(
-                                                "80",
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ),
-                                          )
-                                        : Container(
-                                            padding: EdgeInsets.fromLTRB(
-                                                15.0, 0.0, 0.0, 0.0),
-                                            decoration: BoxDecoration(
-                                                border: Border(
-                                                    bottom: BorderSide(
-                                                        width: 1,
-                                                        color: Color(
-                                                            0xff9c9c9c)))),
-                                            height: 55,
-                                            child: Center(
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    isScore = true;
-                                                  });
-                                                },
-                                                child: Container(
-                                                  width: 57,
-                                                  height: 19,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            7),
-                                                    color: Color(0xff9c9c9c),
-                                                  ),
-                                                  child: Center(
-                                                    child: Text(
-                                                      '성적확인',
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                          fontSize: 11,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: Colors.white),
+                                    child: testStatus['testProgress'] != '예정'
+                                        ? isScore
+                                            ? Container(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    15.0, 0.0, 0.0, 0.0),
+                                                decoration: BoxDecoration(
+                                                    border: Border(
+                                                        bottom: BorderSide(
+                                                            width: 1,
+                                                            color: Color(
+                                                                0xff9c9c9c)))),
+                                                height: 55,
+                                                child: Center(
+                                                  child: Text(
+                                                    "80",
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w500,
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                            ),
+                                              )
+                                            : Container(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    15.0, 0.0, 0.0, 0.0),
+                                                decoration: BoxDecoration(
+                                                    border: Border(
+                                                        bottom: BorderSide(
+                                                            width: 1,
+                                                            color: Color(
+                                                                0xff9c9c9c)))),
+                                                height: 55,
+                                                child: Center(
+                                                  child: GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        isScore = true;
+                                                      });
+                                                    },
+                                                    child: Container(
+                                                      width: 57,
+                                                      height: 19,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(7),
+                                                        color:
+                                                            Color(0xff9c9c9c),
+                                                      ),
+                                                      child: Center(
+                                                        child: Text(
+                                                          '성적확인',
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                              fontSize: 11,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              color:
+                                                                  Colors.white),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                        : Container(
+                                            height: 55,
+                                            decoration: BoxDecoration(
+                                                border: Border(
+                                                    bottom: BorderSide(
+                                                        width: 1,
+                                                        color: Color(
+                                                            0xff9c9c9c)))),
                                           ),
                                   ),
                                   TableCell(
@@ -391,7 +395,7 @@ class _ExamState extends State<Exam> {
                                       height: 55,
                                       child: Center(
                                         child: Text(
-                                          progress,
+                                          testStatus['testProgress'],
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             fontWeight: FontWeight.w500,
