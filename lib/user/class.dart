@@ -62,18 +62,16 @@ class _ClassState extends State<Class> {
     // mounted 속성을 확인하여 현재 위젯이 여전히 트리에 존재하는지 확인
     if (mounted) {
       setState(() {
-        if (res.statusCode == 200) {
-          List<dynamic> lecture = res.data['resultData']
-              .where((lecture) =>
-                  lecture['progress'] == '등록' &&
-                  lecture['startTime'].isNotEmpty)
-              .toList();
-          for (var i in lecture) {
-            int startTime = int.parse(i['startTime'].substring(0, 2));
+        for (Map<String, dynamic> lecture in res.data['resultData']) {
+          if (lecture['startTime'] != null &&
+              lecture['startTime'].isNotEmpty &&
+              lecture['progress'] == "등록") {
+            int startTime = int.parse(lecture['startTime'].substring(0, 2));
+
             if (startTime >= 13) {
-              afternoonDataList = lecture;
+              afternoonDataList.add(lecture);
             } else {
-              morningDataList = lecture;
+              morningDataList.add(lecture);
             }
           }
         }
@@ -420,7 +418,6 @@ class _ClassState extends State<Class> {
                                   }
                                 },
                                 child: Container(
-                                  width: 358,
                                   height: 71,
                                   margin:
                                       EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 15.0),
@@ -434,14 +431,17 @@ class _ClassState extends State<Class> {
                                         MainAxisAlignment.spaceAround,
                                     children: [
                                       Container(
+                                        width: 50,
                                         alignment: Alignment.centerLeft,
-                                        width: 110,
                                         child: Text(
                                           getday,
                                           style: TextStyle(
                                               fontSize: 18,
                                               color: Colors.white),
                                         ),
+                                      ),
+                                      SizedBox(
+                                        width: 30,
                                       ),
                                       Container(
                                         width: 115,
