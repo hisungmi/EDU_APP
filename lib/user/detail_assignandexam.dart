@@ -1,7 +1,4 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:edu_application_pre/http_setup.dart';
-import 'package:edu_application_pre/user/exam.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
@@ -12,13 +9,13 @@ import 'package:intl/intl.dart';
 class DetailAssignment extends StatefulWidget {
   const DetailAssignment({
     Key? key,
-    required this.isSubmission,
+    required this.status,
     required this.data,
     required this.type,
   }) : super(key: key);
 
   final Map<String, dynamic> data;
-  final bool isSubmission;
+  final Map<String, dynamic> status;
   final String type;
 
   @override
@@ -67,16 +64,27 @@ class _DetailAssignmentState extends State<DetailAssignment> {
   String createDate = "";
   String tcreateDate = "";
   String testDate = "";
+  String submission = '';
   Map<String, dynamic> testList = {};
   Map<String, dynamic> assList = {};
+  Map<String, dynamic> assStatusList = {};
+  Map<String, dynamic> testStatusList = {};
   bool ass = false;
   @override
   Widget build(BuildContext context) {
     if (widget.type == 'exam') {
       testList = widget.data;
+      testStatusList = widget.status;
+      if (testStatusList['studentName'] == '김성미') {
+        submission = testStatusList['testProgress'];
+      }
       ass = false;
     } else if (widget.type == 'assignment') {
       assList = widget.data;
+      assStatusList = widget.status;
+      if (assStatusList['studentName'] == '김성미') {
+        submission = assStatusList['assignState'];
+      }
       ass = true;
     }
 
@@ -171,21 +179,37 @@ class _DetailAssignmentState extends State<DetailAssignment> {
                               ),
                             ],
                           ),
-                          widget.isSubmission
-                              ? Icon(Icons.check_circle,
-                                  size: 40, color: Color(0xff4DCC69))
-                              : Container(
-                                  width: 35,
-                                  height: 35,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.red,
-                                  ),
-                                  child: Center(
-                                    child: Icon(FontAwesomeIcons.times,
-                                        size: 30, color: Colors.white),
-                                  ),
-                                ),
+                          ass
+                              ? submission == '제출'
+                                  ? Icon(Icons.check_circle,
+                                      size: 40, color: Color(0xff4DCC69))
+                                  : Container(
+                                      width: 35,
+                                      height: 35,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.red,
+                                      ),
+                                      child: Center(
+                                        child: Icon(FontAwesomeIcons.times,
+                                            size: 30, color: Colors.white),
+                                      ),
+                                    )
+                              : submission == '예정'
+                                  ? Container(
+                                      width: 35,
+                                      height: 35,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.red,
+                                      ),
+                                      child: Center(
+                                        child: Icon(FontAwesomeIcons.times,
+                                            size: 30, color: Colors.white),
+                                      ),
+                                    )
+                                  : Icon(Icons.check_circle,
+                                      size: 40, color: Color(0xff4DCC69))
                         ],
                       ),
                       SizedBox(
