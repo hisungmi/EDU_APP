@@ -76,7 +76,7 @@ class _DetailAssignmentState extends State<DetailAssignment> {
       testList = widget.data;
       testStatusList = widget.status;
       if (testStatusList['studentName'] == '김성미') {
-        submission = testStatusList['testProgress'];
+        submission = testList['testProgress'];
       }
       ass = false;
     } else if (widget.type == 'assignment') {
@@ -99,6 +99,7 @@ class _DetailAssignmentState extends State<DetailAssignment> {
       tcreateDate = DateFormat('yyyy/MM/dd a HH:mm', 'ko_KR')
           .format(DateTime.parse(testList['createDate']));
     }
+    print(testList);
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,

@@ -238,8 +238,7 @@ class _ExamState extends State<Exam> {
                       itemCount: testList.length,
                       itemBuilder: (context, index) {
                         Map<dynamic, dynamic> testdataList = testList[index];
-                        Map<dynamic, dynamic> testStatus =
-                            testStatusList[index];
+
                         String formattedDate = DateFormat(
                                 'MM월 dd일 HH시', 'ko_KR')
                             .format(DateTime.parse(testdataList['testDate']));
@@ -307,7 +306,7 @@ class _ExamState extends State<Exam> {
                                     ),
                                   ),
                                   TableCell(
-                                    child: testStatus['testProgress'] != '예정'
+                                    child: testdataList['testProgress'] != '예정'
                                         ? isScore
                                             ? Container(
                                                 padding: EdgeInsets.fromLTRB(
@@ -395,7 +394,7 @@ class _ExamState extends State<Exam> {
                                       height: 55,
                                       child: Center(
                                         child: Text(
-                                          testStatus['testProgress'],
+                                          testdataList['testProgress'],
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             fontWeight: FontWeight.w500,
