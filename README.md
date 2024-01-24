@@ -26,5 +26,45 @@
 전체 과정을 관리자가 최종적으로 확인하는 과정을 거쳐 프로그램을 통해 일어나는 과정을 관리자가 필수적으로 인지할 수 있도록 하였다. 또한 어플리케이션은 학원에 다니는 학원생들과 자녀의 학업 관리를 위해 힘쓰는 학부모들은 관계자와 소통하고 학원 생활을 편리하게 관리할 수 있도록 하였다.
 ## 🌟기대효과
 학원 관리 업무 특성 상 관리해야 할 정보들이 많은데, 이러한 정보들을 효율적으로 입력 및 출력할 수 있도록 하여 사용자의 프로그램 사용 시 피로도를 절감하여 업무 효율성을 증가를 기대할 수 있다. 학원을 관리하게 되는 관리자 이외 학원 이용 고객인 학부모와 학생 이용자에게도 직관적인 UI를 제공하여 필요한 정보를 쉽게 확인할 수 있도록 한다.
+## EDUcation
+#### 로딩 및 로그인
+<img src="https://github.com/hisungmi/EDU_APP/assets/104122239/813bc819-b681-46a3-8b2a-95d8de76c2c2" width="200" height="400"/>
+<img src="https://github.com/hisungmi/EDU_APP/assets/104122239/38901ec5-9486-4652-99e6-b8a8bb476a72" width="200" height="400"/>
+<img src="https://github.com/hisungmi/EDU_APP/assets/104122239/0061e014-11ce-4fc3-bef8-b43739a2de38" width="200" height="400"/>
+
+#### 시간표 열람 및 강의
+<img src="https://github.com/hisungmi/EDU_APP/assets/104122239/41c12f69-ffa7-4907-9226-2325bd4e4db0" width="200" height="400"/>
+<img src="https://github.com/hisungmi/EDU_APP/assets/104122239/bb465ee3-d958-4a49-bd5f-8ae147700851" width="200" height="400"/>
+<img src="https://github.com/hisungmi/EDU_APP/assets/104122239/561a4bc2-479b-4630-b466-f312209e243d" width="200" height="400"/>
+
+#### 건의사항
+<img src="https://github.com/hisungmi/EDU_APP/assets/104122239/4b565b2e-d76d-48ca-b175-d9feb25ade14" width="200" height="400"/>
+<img src="https://github.com/hisungmi/EDU_APP/assets/104122239/b622a822-78f2-4d37-9348-6266c4d3bdb0" width="200" height="400"/>
+<img src="https://github.com/hisungmi/EDU_APP/assets/104122239/1dc40227-f293-42ed-b970-bdef26ab5d92" width="200" height="400"/>
+
+#### 메뉴 및 프로필
+<img src="https://github.com/hisungmi/EDU_APP/assets/104122239/1692e357-aa25-481e-bdc1-729b55336e60" width="200" height="400"/>
+<img src="https://github.com/hisungmi/EDU_APP/assets/104122239/32b65e47-cd41-4a3c-a6a4-85a567130cfc" width="200" height="400"/>
+<img src="https://github.com/hisungmi/EDU_APP/assets/104122239/aca22821-e480-4b24-8c06-84e23e6e886e" width="200" height="400"/>
+
+#### 출결 현황
+<img src="https://github.com/hisungmi/EDU_APP/assets/104122239/73f306c6-4929-4c20-ae1c-23ed01cfd12d" width="200" height="400"/>
+<img src="https://github.com/hisungmi/EDU_APP/assets/104122239/803226ce-f869-4bad-b4c0-54e8d0dec08e" width="200" height="400"/>
+
+#### 과제 관리
+<img src="https://github.com/hisungmi/EDU_APP/assets/104122239/bda94eaa-151f-4bf6-9b26-3d6473990bd1" width="200" height="400"/>
+<img src="https://github.com/hisungmi/EDU_APP/assets/104122239/68ac91d1-be0b-4997-85df-bf126ee88327" width="200" height="400"/>
+<img src="https://github.com/hisungmi/EDU_APP/assets/104122239/bca45234-e4f2-49df-9f4e-b7e0b02b4322" width="200" height="400"/>
+
+#### 공지 및 로그아웃
+<img src="https://github.com/hisungmi/EDU_APP/assets/104122239/cdbfa84a-626c-4ef4-b528-2ec30122480a" width="200" height="400"/>
+<img src="https://github.com/hisungmi/EDU_APP/assets/104122239/87ea9ef6-e695-48e0-b3bf-ad400b304511" width="200" height="400"/>
+
+## 학부모용 페이지
+#### 자녀 선택 및 자녀 시간표 열람
+<img src="https://github.com/hisungmi/EDU_APP/assets/104122239/29598b23-8839-41ce-b290-396a8bcc385d" width="200" height="400"/>
+<img src="https://github.com/hisungmi/EDU_APP/assets/104122239/a8d0c73e-eb68-48dc-ae48-6eced73d34bf" width="200" height="400"/>
+<img src="https://github.com/hisungmi/EDU_APP/assets/104122239/b202f0ab-328c-40bb-a2bb-015ab268d65f" width="200" height="400"/>
+
 ## 🔍개발언어
 ![js](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)
