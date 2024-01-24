@@ -44,6 +44,12 @@
 전체 과정을 관리자가 최종적으로 확인하는 과정을 거쳐 프로그램을 통해 일어나는 과정을 관리자가 필수적으로 인지할 수 있도록 하였다. 또한 어플리케이션은 학원에 다니는 학원생들과 자녀의 학업 관리를 위해 힘쓰는 학부모들은 관계자와 소통하고 학원 생활을 편리하게 관리할 수 있도록 하였다.
 ## 🌟기대효과
 학원 관리 업무 특성 상 관리해야 할 정보들이 많은데, 이러한 정보들을 효율적으로 입력 및 출력할 수 있도록 하여 사용자의 프로그램 사용 시 피로도를 절감하여 업무 효율성을 증가를 기대할 수 있다. 학원을 관리하게 되는 관리자 이외 학원 이용 고객인 학부모와 학생 이용자에게도 직관적인 UI를 제공하여 필요한 정보를 쉽게 확인할 수 있도록 한다.
+## 🎥구현 영상
+[![Video Label](http://img.youtube.com/vi/wkHJjfJlmok/0.jpg)](https://youtu.be/wkHJjfJlmok)
+##### 🎥발표 영상
+[![Video Label](http://img.youtube.com/vi/DBk3ugJbSwM/0.jpg)](https://youtu.be/DBk3ugJbSwM)
+[![Video Label](http://img.youtube.com/vi/kpkLQyLNy0Y/0.jpg)](https://youtu.be/kpkLQyLNy0Y)
+
 ## 📱EDUcation
 #### 로딩 및 로그인
 <img src="https://github.com/hisungmi/EDU_APP/assets/104122239/813bc819-b681-46a3-8b2a-95d8de76c2c2" width="200" height="400"/>
